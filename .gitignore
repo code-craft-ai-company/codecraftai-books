@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Python (in case any drafting tooling lands here later)
+__pycache__/
+*.pyc
+.venv/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
