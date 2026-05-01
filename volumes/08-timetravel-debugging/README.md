@@ -67,8 +67,8 @@ ingestion, queryable replay.
 |---|---|---|
 | 1 — Why time-travel debugging | drafted | 463 |
 | 2 — Pod instrumentation | drafted | 818 |
-| 3 — The trace-event protocol | pending | — |
-| 4 — Server-side ingestion | pending | — |
+| 3 — The trace-event protocol | drafted | 688 |
+| 4 — Server-side ingestion | drafted | 791 |
 | 5 — Remote debug control | pending | — |
 | 6 — Session management at scale | pending | — |
 | 7 — Case studies | pending | — |
