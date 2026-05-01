@@ -97,7 +97,7 @@ runs in the same process as the system under test.
 
 ## What automation tests need that pytest doesn't ship
 
-There are six gaps.  The remainder of Volume 1 is, in effect, an
+There are seven gaps.  The remainder of Volume 1 is, in effect, an
 extended explanation of how testbase fills them.
 
 ### 1. A lifecycle wider than the test function
@@ -249,6 +249,61 @@ hooks where the lifecycle actually fires.
 
 Chapter 9 carries the single-host half of this contract; Volume 2
 carries the distributed half.
+
+### 7. Single actor, multiple observers — tandem testing, not parallel
+
+The least-obvious gap, and the one that most cleanly distinguishes
+automation testing from application testing.  In a distributed
+environment where the machines under test interact with each other,
+a test is only deterministic when *one actor* causes effects in the
+environment at a time.  When the controller (the test) interacts
+with a machine, the test must wait for the effect to propagate to
+all the other machines in the environment before checking that
+the effect took hold.  Often there are multiple checks — a poll
+loop watching for a state, or an event subscription waiting for
+a state change.  If more than one actor is allowed to cause
+effects concurrently, the ordering of events stops being
+deterministic, and the test stops being deterministic with it.
+
+This is *not* a parallelism problem the framework can solve by
+adding locks.  It is a determinism property of the system under
+test.  Application testing avoids it by running the system under
+test inside the test process, where the test is the only
+controller; automation testing has to enforce it explicitly,
+because the system under test is *outside* the process and
+nothing prevents another actor from reaching it.
+
+Pytest's plugin ecosystem includes `pytest-xdist` for parallel
+test execution.  That plugin is exactly the wrong tool for an
+automation suite where the tests share an environment.  Two
+parallel tests against the same fleet *will* race on shared
+state and the suite *will* turn flaky.
+
+Testbase enforces single-actor execution by treating the test
+itself as the actor and providing a separate mechanism for
+*observers*:
+
+- The **test** is the single actor.
+- **Observers** are `Validator` instances (subclassing
+  `ValidatorCoupling`) that the framework attaches to the test
+  scope via `attach_to_test(testscope, suffix)`.  They watch
+  for effects, run *in tandem* with the test, and produce their
+  own per-observer outcomes recorded alongside the test's result.
+
+This is **tandem testing**: one actor + N attached observers.
+File: `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
+
+Where parallelism *does* live: at the **job level**, across
+independent **Pods**.  A Pod is a set of devices configured to
+interoperate with each other (Volume 6 covers Pod formation in
+detail).  Within one Pod, jobs run sequentially because a Pod
+is a shared environment.  Across Pods, jobs run in parallel
+because Pods are independent — effects in one Pod cannot
+propagate to another.  A CI orchestration that wants more
+horizontal scale provisions more Pods, not more parallel tests
+within a Pod.  Volume 3 covers the orchestration side; Volume
+2 covers the distributed test side; the two volumes meet at
+the Pod boundary.
 
 ## What this volume builds
 

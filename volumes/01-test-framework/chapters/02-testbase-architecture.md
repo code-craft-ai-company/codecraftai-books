@@ -251,7 +251,18 @@ some other system.  Three families exist:
   consume a configuration source" — runtime files, landscape
   files, etc.
 - **ValidatorCoupling** — represents "testbase needs to validate
-  something against a schema or policy."
+  something against a schema, a policy, or an evolving system
+  state."  Validators are the framework's *observer* mechanism:
+  one or more validators attach to a test scope via
+  `attach_to_test(testscope, suffix)` and run *in tandem* with
+  the test, producing their own outcomes recorded alongside the
+  test's result.  The base class lives in
+  `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
+  This is the substrate for **tandem testing** — the framework's
+  answer to "how do you run a test deterministically against a
+  distributed system without forbidding observation."  Volume 2
+  covers the tandem model in depth; the single-host text in
+  Chapter 9 of this volume carries the bridge.
 
 Couplings are registered as integrations during the `Collection`
 phase, attached to the framework during `fire_attach_to_framework`,

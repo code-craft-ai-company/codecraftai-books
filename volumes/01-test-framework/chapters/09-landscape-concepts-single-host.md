@@ -25,24 +25,57 @@ exercise multi-host behaviour?  And how does testbase let a
 single-host author write that test without the landscape
 machinery being a hard dependency?
 
-## Vocabulary: what is a "landscape"
+## Vocabulary: Landscape, Topology, Runtime, Pod
 
-In the portfolio's vocabulary, a *landscape* is the structured
-description of the environment a suite runs against:
+Before going further, four words need precise meanings.  Readers
+who have used pytest fixtures or `unittest.mock` will recognise
+none of these as testing-framework vocabulary — they belong to
+the *automation* vocabulary, and conflating them with each other
+is the most common mistake the rest of this chapter exists to
+prevent.
 
-- The **devices** under test.
-- The **services** the suite expects to find running.
-- The **credentials** required to reach those devices and
-  services.
-- The **topology** — what can talk to what.
-- The **configuration profile** — runtime parameters that
-  influence how the suite is constituted.
+**Landscape** answers the question *what resources exist and how
+are they physically connected?*  A Landscape file enumerates the
+devices, services, and other resources the suite has access to
+— their addresses, their protocols, their credentials, the
+network they live on.  It is the **physical inventory + wiring**.
 
-Landscapes live in `automojo-landscaping` (Volume 2).
-Topology lives in `automojo-topology` (Volume 6).  Credentials
-live in `automojo-credentials` (Volumes 0 and 3).
-Configurations live in `automojo-configuration` (Volume 0
-chapter 9 and Volume 3).
+**Topology** answers the question *how are those resources
+logically organised, and what roles do they play together?*  A
+Topology file says things like "Players A, B, C form a Home
+Sound System" or "Nodes A, B, C are cluster members and Node D
+is a spare."  It is the **functional grouping + role assignment**.
+
+The two are distinct.  The same Landscape can underpin many
+Topologies (one fleet of devices, organised differently for
+different test campaigns).  The same Topology pattern can apply
+to many Landscapes (the cluster-with-spare shape, applied to
+different fleets).  In `automojo-configuration`'s loader, they
+live in *separate* MergeMaps — `LANDSCAPE_CONFIGURATION_MAP` and
+`TOPOLOGY_CONFIGURATION_MAP` — exactly because they are
+independent inputs.
+
+**Runtime** answers the question *how should the suite execute?*
+A Runtime is a behavioural / diagnostic profile — `Normal`,
+`Debug`, `Diagnostics`, `UPNP Diagnostics`, `Bluetooth
+Diagnostics`.  Runtimes influence how loud the logging is, what
+extra state to capture, what protocol traces to enable.  They do
+*not* influence what resources exist (that is the Landscape) or
+how those resources are organised (that is the Topology).
+
+**Pod** is the runtime instance produced by combining a
+Landscape with a Topology.  A Pod is what a test job actually
+runs *against* — a concrete set of resources organised concretely.
+Pods are the unit of horizontal scaling at the CI layer (more on
+that below).
+
+There is **no `automojo-topology` package**.  Topology is a
+*configuration category*, not a package.  The shape of a topology
+file beyond a small canonical convention (a `clusters` section
+with `name` / `group` / `nodes` / `spares` keys consumed by
+`LandscapeOperationalLayer._create_clusters` in
+`automojo-landscaping`) is **left to the user to implement**.
+The framework loads the file; the user decides what's in it.
 
 A *single-host* landscape is the special case where the
 "landscape" is one machine — possibly the SDET's laptop, possibly
@@ -288,6 +321,135 @@ side they are on.
 
 The case study in Chapter 10 is the `singlehost/` root of
 `automojo-agent-kit`.
+
+## Determinism: single actor, multiple observers
+
+The biggest single thing distributed automation testing requires
+that single-host application testing does not is *enforced
+single-actor-per-environment*.  This is not a framework feature
+in the implementation sense — there is no lock somewhere
+preventing two tests from running.  It is a *design property*
+the framework commits to and the test author honours.
+
+The argument:
+
+When a test interacts with a machine in a distributed
+environment, the effect of the interaction takes time to
+propagate to the other machines.  The test must *wait* — usually
+by polling or by subscribing to an event — until the effect is
+observable everywhere it needs to be observed.  If a second
+actor can cause effects in the same environment during that
+wait window, the order in which effects appear is not
+controlled by the test.  Two effects that arrive in different
+orders on different runs produce different states; the test is
+no longer deterministic.
+
+The conclusion: in any given environment, *one actor at a time*.
+
+The framework's resolution to "but I want concurrent observation
+of the system under test" is **tandem testing**: the test is the
+single actor, and one or more *validators* attach to the test
+scope as observers.  The validator base class lives in
+`automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`
+and inherits `ValidatorCoupling`.  The framework calls
+`validator.attach_to_test(testscope, suffix)`, the validator
+registers its own `TestResult` alongside the test's, and when
+the test runs the validator runs in tandem — watching, polling,
+producing its own pass/fail outcomes recorded in the JSOS
+stream (Chapter 5) the same way the test's are.
+
+A test with three validators attached is *one test* with *four
+recorded outcomes* — the test plus three observers.  No test
+runs concurrently with another in the same environment.
+
+### Where parallelism lives
+
+Parallelism in distributed automation is at the **job level**,
+not the test level.  The unit of parallelism is the **Pod**.
+
+| Level | Parallel? | Why |
+|---|---|---|
+| Within a test (multiple actors) | **No** | Concurrent actors break determinism |
+| Across tests in one job (one Pod) | **No** | All tests share the Pod's environment |
+| Across jobs on different Pods | **Yes** | Pods are independent environments |
+
+A CI orchestration that wants more horizontal scale provisions
+*more Pods*, not *more parallel tests within a Pod*.  Pytest's
+`pytest-xdist` (parallel test execution within a process) is
+exactly the wrong model for a distributed automation suite.
+
+## The CI hand-off — verified contracts
+
+The Landscape and Topology files are not just configuration.
+They are **contracts** between the CI system and the test job,
+and the test job verifies both before it runs the first test.
+
+- The **Landscape hand-off** says: "Here are the resources
+  allotted to you."  The test job verifies each resource's
+  *contact information is correct* — every resource declared in
+  the Landscape can be reached at its declared address with its
+  declared protocol using its declared credentials.  Failure
+  means the CI system is wrong about what it gave you.
+- The **Topology hand-off** says: "Here is the initial
+  configuration of those resources."  The test job verifies the
+  resources are *configured as the topology indicates* — if the
+  topology says "cluster of A, B, C; spare D," verification
+  confirms the cluster membership and spare assignment.  Failure
+  means the CI system is wrong about how the resources were
+  configured.
+
+The framework supports this through the
+`LandscapeConfigurationLayer.validate_topology()` override hook
+and the `validate_topology` flag on `LandscapeActivationParams`
+(default `True`).  The framework ships a stub validator; users
+override it with the verification logic appropriate to their
+topology schema.
+
+Verification runs **before** the first test fires.  A test
+against an unverified environment cannot be deterministic —
+verification is a precondition for the single-actor model
+above.  Volume 6 walks the verification mechanics in detail;
+this chapter establishes the *principle*.
+
+## Composability across categories
+
+A property of `automojo-configuration` worth establishing here
+because the rest of Volume 1's tests depend on understanding it:
+**every configuration category is composable**.
+
+The six categories Volume 3 walks — Specifications, Landscapes,
+Topologies, Runtimes, Credentials, Data Profiles — all use the
+same `MergeMap` overlay model.  A category-level configuration
+the test job sees is the merged result of one or more named
+source files at that category.  Each category's resolver
+(`resolve_landscape_configuration`, `resolve_topology_configuration`,
+etc.) takes a *list* of names and a *list* of files, loads each
+in order, and overlays them.  Later names override earlier ones
+where keys collide.
+
+Examples:
+
+- **Landscape:** `Checkout Resources + Environment Resources` —
+  the resources that came from a pool checkout, merged with the
+  fixed environment resources (servers, databases, persistent
+  infrastructure).
+- **Topology:** combining a cluster-membership topology with a
+  gateway-routing topology to form the effective topology for a
+  particular test campaign.
+- **Runtime:** `UPNP Diagnostics + Bluetooth Diagnostics` —
+  diagnostic profiles stack to form one effective runtime.
+- **Credentials:** lab-wide credentials merged with
+  experiment-specific overrides.
+
+This composability is the property that makes the same suite
+runnable on a developer laptop (light Runtime, mock Landscape)
+and on a nightly full-sweep run (full Runtime, real Landscape +
+Topology) without rewriting the tests.  Volume 3 chapter 14
+walks the discipline at orchestration scale; this chapter just
+needs the principle named, because Chapter 10's case study is
+itself a worked example: the same agent-kit suite runs at
+`TESTBASE_MAX_EXAMPLES_CAP=10` (a Runtime knob from Chapter 4)
+without changing a single test file.
 
 ## The landscape as a stable contract
 
