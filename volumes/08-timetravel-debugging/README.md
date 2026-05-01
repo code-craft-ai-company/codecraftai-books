@@ -71,8 +71,10 @@ ingestion, queryable replay.
 | 4 — Server-side ingestion | drafted | 791 |
 | 5 — Remote debug control | drafted | 712 |
 | 6 — Session management at scale | drafted | 702 |
-| 7 — Case studies | pending | — |
-| 8 — Performance and storage trade-offs | pending | — |
+| 7 — Case studies | drafted | 674 |
+| 8 — Performance and storage trade-offs | drafted | 551 |
+
+**Volume 8 fully drafted: 8 chapters, 5,399 lines, ~52,000 words.**
 
 ## Drafting conventions
 

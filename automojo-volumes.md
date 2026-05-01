@@ -948,7 +948,7 @@ specific problem of long-running, tool-using, observable agents.
 
 ---
 
-## Volume 8 — Time-Travel Debugging in Production
+## Volume 8 — Time-Travel Debugging in Production — **drafted**
 
 **Subtitle:** *Pod Instrumentation, Server Ingestion, and the
 Replay-Driven Debugging Workflow*
@@ -965,6 +965,10 @@ makes the rest worth it") even though it reads last in technical order.
 
 **Portfolio source:** `automojo-timetravel-pod`,
 `automojo-timetravel-server`.
+
+**Drafting status:** fully drafted, 8 chapters, 5,399 lines, ~52,000
+words, in
+[`volumes/08-timetravel-debugging/`](volumes/08-timetravel-debugging/).
 
 ### Chapters
 
