@@ -99,6 +99,29 @@ one infrastructure service named `someservice` reachable through the
 `adminuser` credentials.  That is the landscape under which the
 orchestration will run.
 
+The two-section split is deliberate.  **`apod`** (the
+**automation pod** — yes, this is where the word *Pod* in the
+"Pod model" comes from; Volume 6 chapter 9 walks the runtime
+realisation in detail) is the hosts that *participate in* the
+automation: runners, drivers, controllers.  **`infrastructure`**
+is the systems that the automation *operates against*: services
+under test, supporting databases, fixtures.  The distinction
+answers a real operational question — *which hosts can the
+orchestration reboot, reset, or re-provision without disrupting
+itself?*  Answer: only `apod` hosts.  An orchestration that
+tried to reboot an `infrastructure` host without coordination
+would interrupt the very service its tests are checking; an
+orchestration that tried to leave an `apod` host alone forever
+could never recover from a runner crash.  The two answers
+require two sections.
+
+This Landscape, paired with a Topology that says how these
+resources are organised (chapter 6), realises into a **Pod** at
+runtime — the actual collection of interoperating apod clients
+and infrastructure services a job runs against.  Volume 6
+chapter 9 walks the realisation; this chapter ends at the
+declaration.
+
 ## The `apod` — who runs the automation
 
 The **apod** (automation pod) names the hosts that *participate in

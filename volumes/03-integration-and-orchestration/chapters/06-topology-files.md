@@ -69,14 +69,35 @@ class is shipped as the runtime hook — but the *schema content* is
 consumer-defined.  Different orchestration teams have different
 notions of what relationships matter to them.
 
+There is **one exception** to the consumer-defined schema rule.
+The framework consumes a `clusters` section with a fixed shape:
+each cluster has a `name`, a `group`, a list of `nodes`, and a
+list of `spares`.  The shape is consumed by
+[`LandscapeOperationalLayer._create_clusters`](../../../automojo-landscaping/source/packages/automojo/landscaping/layers/landscapeoperationallayer.py)
+which materialises `LandscapeDeviceCluster` objects from the
+data.  This is the framework's only structural requirement on
+the Topology file's content — every other top-level section
+the user defines is parsed as raw `MergeMap` data and passed
+through to the user's `Topology` subclass for interpretation.
+
+That single canonical `clusters` shape is also what enables the
+verification contract from chapter 21: the framework knows how
+to verify a `clusters` section ("are these nodes really cluster
+members?  Is the spare really standing by?") because it knows
+the shape.  User-defined sections require user-supplied
+verification logic in a `Topology` subclass.
+
 This chapter therefore proposes a canonical schema with three
-concerns: **clusters**, **dependencies**, and **topology-specific
-roles**.  These three cover the relationship questions that recur
-across every orchestration the author has built.  A reader who
-needs more (routing tables, replication topologies, sharding
+concerns: **clusters** (the framework's shape, extended
+slightly), **dependencies**, and **topology-specific roles**.
+These three cover the relationship questions that recur across
+every orchestration the author has built.  A reader who needs
+more (routing tables, replication topologies, sharding
 strategies) extends the schema additively; the
-`TOPOLOGY_CONFIGURATION_MAP` is a `MergeMap` of arbitrary YAML, so
-new top-level keys are free to add.
+`TOPOLOGY_CONFIGURATION_MAP` is a `MergeMap` of arbitrary YAML,
+so new top-level keys are free to add — but the user is then
+responsible for subclassing `Topology` to interpret them
+(Volume 6 chapter 7 walks the subclassing mechanism).
 
 ## The proposed Topology schema
 

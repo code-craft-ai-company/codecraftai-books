@@ -389,6 +389,60 @@ configurations.  The orchestration's tasks consume them through
 the runtime API (chapter 8's `DataProfileManagerSingleton`,
 chapter 9's `CredentialManagerSingleton`, etc.).
 
+### Step 2.5 — The verification step (the load-bearing precondition)
+
+There is a step between "configurations loaded" and "the first
+task runs" that the framework treats as a *precondition*, not
+a feature: **verification of the resolved Landscape and
+Topology against the actual environment.**
+
+- **Landscape verification.**  The framework walks every
+  resource declared in the resolved Landscape and confirms it
+  is reachable: every host is contactable at its declared
+  address with its declared protocol, every named credential
+  resolves, every named service in the `services` section is
+  alive at the address claimed.  Failure here means the CI
+  system handed the orchestration a Landscape that doesn't
+  match reality — wrong before the first test runs.
+- **Topology verification.**  The framework walks the resolved
+  Topology and confirms the resources are *configured as the
+  Topology declares*.  If the Topology says "Nodes A, B, C are
+  cluster members and Node D is a spare," verification confirms
+  the cluster membership and the spare assignment match.  If
+  the Topology says a sound system has three players in
+  master/slave order, verification confirms the wiring.  The
+  canonical `clusters` shape (chapter 6) is verified by the
+  framework directly; user-defined Topology sections are
+  verified by the user's `Topology` subclass overriding
+  `validate_topology()`.
+
+If either verification fails, the orchestration refuses to
+proceed.  This is **the** load-bearing contract that makes
+distributed automation deterministic.  Volume 2 chapter 2's
+single-actor determinism model — one driver, observers
+attached in tandem — depends on the *environment* matching
+the *expectation* before the actor starts acting.  An
+orchestration that ran tests against an unverified Landscape
+would be running against an environment whose state is not
+what the tests assume; a test that says "modify cluster member
+A" against an environment where A is actually a spare would
+produce non-deterministic outcomes.  Verification removes that
+class of failure before it can happen.
+
+The verification contract also explains why the
+`InteropLibraryTestJob` from Volume 2 chapter 4 fires
+`fire_attach_to_environment` *before* the first test — that
+hook is where the test job runs the verification on the
+landscape it was handed.  This volume's orchestration layer
+hands the job the *names*; the job realises the names into
+typed configurations *and verifies* them; only then does the
+test sequencer start traversing tests.
+
+Step 2 produced typed configurations; step 2.5 made them
+*verified* typed configurations.  Step 3 (below) is the first
+moment the orchestration begins doing work in the realised
+environment.
+
 ### Step 3 — Task spawns a subprocess
 
 A `RunCommand` task spawns a subprocess.  The subprocess inherits

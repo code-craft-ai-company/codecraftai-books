@@ -78,6 +78,15 @@ being conflated with it:
   may run on multiple hosts; jobs may have internal sequencing of
   their own (Volume 2 on distributed automation is about exactly this).
   But a job is invoked *by* an orchestration; it is not an orchestration.
+
+  A point of vocabulary worth pinning down here: the *test job*
+  hierarchy in Volume 2 (`TestJob` → `InteropLibraryTestJob` →
+  `DistributedTestJob`) and the *orchestration job* class
+  (`OrchestrationJob` in `automojo-landscaping/source/.../orchestrationjob.py:34`)
+  are **separate hierarchies**.  `OrchestrationJob` inherits from
+  `ContextUser`, not from `TestJob`.  This volume treats orchestration
+  jobs; Volume 2 treats test jobs.  They meet at the bridge tasks of
+  chapter 25 and not before.
 - **Provisioning.**  Creating cloud resources, allocating containers,
   setting up databases — these are *resources* an orchestration
   consumes, expressed declaratively as Specifications (chapter 4).

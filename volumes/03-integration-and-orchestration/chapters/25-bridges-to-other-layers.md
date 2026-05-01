@@ -41,6 +41,22 @@ that:
    the active runtime are all already loaded by the time the
    task's `perform_task` runs.
 
+   *A nuance worth pinning down:* "already loaded" means
+   different things for different bridges.  For
+   `DistributedTestJobTask`, the downstream `DistributedTestJob`
+   reads Landscape, Topology, Runtime, and Credentials *itself*
+   through the singleton managers (Volume 2 chapter 6's landscape
+   activation hooks are where this happens) — the bridge task
+   does not pre-load them.  For `ProvisioningTask`, the
+   downstream `ProvisioningEngine` consumes Specifications
+   *directly* (chapter 4) rather than through the configuration
+   loader — credentials travel via the Specification's
+   `CloudVenue` references, not via the orchestration's
+   `AM_CREDENTIAL_NAMES` resolution.  The bridge task never
+   duplicates the downstream API's loading; it relies on it.
+   The orchestration's job is to hand off the *names*; the
+   downstream library's job is to *resolve* them.
+
 2. **Calls into the downstream library through its public API.**
    The downstream library — testplus, sysman-X, provisioning —
    exposes a small surface that the bridge task uses.  No

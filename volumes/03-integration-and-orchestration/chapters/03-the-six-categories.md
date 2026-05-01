@@ -36,6 +36,27 @@ file does not contain runtimes; a topology does not contain
 infrastructure listings.  The separation is what makes them
 independently versionable, swappable, and reviewable.
 
+A note on a *seventh* file the reader will encounter in
+`automojo-docs/userguide/03-07-user-file.rst`: **`user.yaml` is
+not a seventh category.**  It is the **default Runtime overlay
+for local-user runs** — the bottom layer of the runtime
+composition stack on a developer laptop, with explicitly-
+selected Runtime files merging on top.  CI runs do not include
+`user.yaml`.  Functionally the User file is a Runtime; it is
+documented separately because its *role* is operator-personal
+(my preferences on my laptop), not orchestration-shared.
+
+**A property worth naming up front: all six categories are
+uniformly composable.**  Every category resolver in
+`automojo-configuration` takes a *list* of names and a *list*
+of files and merges them via `MergeMap` overlay; later names
+override earlier names where keys collide.  Composability is
+what enables profile composition (Part IV) — the same machinery
+that overlays `UPNP Diagnostics + Bluetooth Diagnostics` for a
+Runtime overlays `Checkout Resources + Environment Resources`
+for a Landscape and `lab-wide + experiment-overrides` for
+Credentials.  One pattern, six categories.
+
 ## What every category has in common
 
 Five rules apply to all six categories:

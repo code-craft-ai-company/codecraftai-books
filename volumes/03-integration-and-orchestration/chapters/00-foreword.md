@@ -31,6 +31,17 @@ CI but not locally" problem disappears, because there is nothing in CI
 that wasn't on your laptop — there are only different *profiles* that
 select different *named* configurations of the same shape.
 
+A word the reader will meet repeatedly: a **Pod** is the runtime
+realisation of a Landscape and a Topology — the actual collection of
+interoperating resources a job runs against.  Pods are the unit of
+horizontal CI parallelism (Volume 2 chapter 3, Volume 6 chapter 9):
+within one Pod, a job runs sequentially because the Pod is a shared
+environment; across independent Pods, jobs run in parallel because
+Pods are independent.  When the rest of this volume talks about
+"more horizontal scale," the answer is *more Pods* — provisioned
+through more Specifications — not more parallel tests inside one
+Pod.
+
 The portfolio of `automojo-*` packages implements this discipline.
 The configuration loader supports five of the six categories today
 (the sixth is in flight).  The orchestration layer is `automojo-taskplus`.

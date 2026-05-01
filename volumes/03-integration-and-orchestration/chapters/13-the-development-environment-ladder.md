@@ -466,6 +466,36 @@ code is plumbing-level passive.
 
 This is the discipline.
 
+### A note on the runtime realisation: the Pod model
+
+The four environments above are *configurations* — names that
+select a Landscape, a Topology, a Runtime, a set of Credentials.
+The *runtime realisation* of any one of those configurations is
+called a **Pod** — a concrete, interoperating set of resources
+the test runs against (Volume 6 chapter 9 walks the realisation
+in detail; Volume 2 chapter 3 covers it from the test side).  A
+local-dev profile realises into a one-host laptop Pod; an
+integration-CI profile realises into a Pod with the CI-pool
+runners and the staging service; a staging-east profile
+realises into a Pod with real staging hosts.  Same code, four
+profiles, four Pods.
+
+The Pod model also explains where horizontal CI scaling lives.
+When a test campaign needs to run faster, the answer is *more
+Pods* (more Specifications provisioning more independent
+environments) — not parallel tests within one Pod.  Tests
+within a Pod run sequentially because the Pod is a shared
+environment; the framework's tandem-testing model from Volume
+2 chapter 5 (one test = one driver, validators = observers
+along for the ride) is what makes a single test deterministic
+inside a single Pod.  Scaling up means scaling out the *Pod
+count*, not the *test concurrency within a Pod*.
+
+This volume's chapter 27 returns to the point.  Part IV's
+discipline answers "how do we make the same test runnable
+across four environments;" the Pod model answers "how do we
+parallelise across many of those environments at once."
+
 ## What the discipline asks of the codebase
 
 Three concrete commitments make the discipline possible:
