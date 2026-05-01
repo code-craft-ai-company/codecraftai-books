@@ -29,10 +29,21 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
 | 4 | [Cross-Platform System Management](automojo-volumes.md#volume-4--cross-platform-system-management) | 50 Cross-OS Contracts and 5 Reference Implementations | planned |
 | 5 | [Interop and Protocols](automojo-volumes.md#volume-5--interop-and-protocols) | The Aspects Pattern, the Wire, and the Extension Model | planned |
-| 6 | [Topology, Provisioning, and UI Automation](automojo-volumes.md#volume-6--topology-provisioning-and-ui-automation) | Modelling the Environment Under Automation | planned |
+| **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
 | 7 | [Building an AI Agent SDK](automojo-volumes.md#volume-7--building-an-ai-agent-sdk) | Lifecycle, Tools, Memory, and Observability for Production Agents | planned |
 | 8 | [Time-Travel Debugging in Production](automojo-volumes.md#volume-8--time-travel-debugging-in-production) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | planned |
 | App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+
+### Volume 6 — drafted
+
+Volume 6 is fully drafted in [`volumes/06-topology-provisioning-ui/`](volumes/06-topology-provisioning-ui/).
+
+| Part | Chapters | Theme |
+|---|---|---|
+| I — The Environment Model | 1, 2, 3, 4 | Landscape, device declaration, Coordinator/Agent/ProtocolExtension/Feature, FriendlyIdentifier |
+| II — Topology and Customisation | 5, 6, 7, 8, 9 | Canonical clusters shape, verification overload, subclassing, BaseExt, Pod realisation |
+| III — Beyond the Environment | 10, 11, 12, 13, 14 | Provisioning scaffolding, UI automation, declarative mappings, GitLab, Flask |
+| IV — Worked Example | 15 | 4-OS sysman feature campaign with the full machinery |
 
 ### Volume 2 — drafted
 

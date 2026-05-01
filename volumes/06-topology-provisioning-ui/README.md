@@ -65,21 +65,23 @@ GUI application.
 
 | Chapter | Status | Lines |
 |---|---|---|
-| 1 — Landscape — physical inventory and wiring | drafting | — |
-| 2 — Inside a device declaration | pending | — |
-| 3 — Coordinators, Agents, ProtocolExtensions, Features | pending | — |
-| 4 — Device discovery and friendly identifiers | pending | — |
-| 5 — Topology — logical organisation and roles, with verification | pending | — |
-| 6 — Topology as an executable assertion | pending | — |
-| 7 — Subclassing `Landscape` and `Topology` — the customisation mechanism | pending | — |
-| 8 — Service-specific framework extensions | pending | — |
-| 9 — The Pod model — landscape + topology realised | pending | — |
-| 10 — Cloud provisioning model | pending | — |
-| 11 — Cross-platform UI automation | pending | — |
-| 12 — Declarative UI mappings | pending | — |
-| 13 — GitLab integration | pending | — |
-| 14 — Web-service scaffolding with Flask | pending | — |
-| 15 — Case study | pending | — |
+| 1 — Landscape — physical inventory and wiring | drafted | 400 |
+| 2 — Inside a device declaration | drafted | 321 |
+| 3 — Coordinators, Agents, ProtocolExtensions, Features | drafted | 386 |
+| 4 — Device discovery and friendly identifiers | drafted | 324 |
+| 5 — Topology — logical organisation and roles, with verification | drafted | 296 |
+| 6 — Topology as an executable assertion | drafted | 364 |
+| 7 — Subclassing `Landscape` and `Topology` — the customisation mechanism | drafted | 385 |
+| 8 — Service-specific framework extensions | drafted | 229 |
+| 9 — The Pod model — landscape + topology realised | drafted | 238 |
+| 10 — Cloud provisioning model | drafted | 293 |
+| 11 — Cross-platform UI automation | drafted | 353 |
+| 12 — Declarative UI mappings | drafted | 380 |
+| 13 — GitLab integration | drafted | 344 |
+| 14 — Web-service scaffolding with Flask | drafted | 310 |
+| 15 — Case study | drafted | 475 |
+
+**Volume 6 fully drafted: 15 chapters, 5,098 lines, ~47,000 words.**
 
 ## Drafting conventions
 
