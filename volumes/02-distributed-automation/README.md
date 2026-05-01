@@ -64,22 +64,24 @@ when host 7 of 12 went down mid-run.
 
 | Chapter | Status | Lines |
 |---|---|---|
-| 1 — Why distributed automation is genuinely hard | drafting | — |
-| 2 — Single actor, multiple observers — the determinism model | pending | — |
-| 3 — The Pod model — where parallelism actually lives | pending | — |
-| 4 — The TestJob inheritance chain — the customisation cascade | pending | — |
-| 5 — Tandem testing in depth | pending | — |
-| 6 — Landscape activation | pending | — |
-| 7 — The CI → job hand-off as a verified contract | pending | — |
-| 8 — The `DistributedTestSequencer` | pending | — |
-| 9 — `job_seed` and reproducibility | pending | — |
-| 10 — The remote-execution wire | pending | — |
-| 11 — Credentials at scale | pending | — |
-| 12 — Data profiles in remote workers | pending | — |
-| 13 — Result aggregation | pending | — |
-| 14 — Partial-run semantics | pending | — |
-| 15 — Debugging a distributed failure | pending | — |
-| 16 — Case study: a 5-host integration test for a sysman feature | pending | — |
+| 1 — Why distributed automation is genuinely hard | drafted | 279 |
+| 2 — Single actor, multiple observers — the determinism model | drafted | 294 |
+| 3 — The Pod model — where parallelism actually lives | drafted | 258 |
+| 4 — The TestJob inheritance chain — the customisation cascade | drafted | 443 |
+| 5 — Tandem testing in depth | drafted | 437 |
+| 6 — Landscape activation | drafted | 418 |
+| 7 — The CI → job hand-off as a verified contract | drafted | 386 |
+| 8 — The `DistributedTestSequencer` | drafted | 304 |
+| 9 — `job_seed` and reproducibility | drafted | 313 |
+| 10 — The remote-execution wire | drafted | 380 |
+| 11 — Credentials at scale | drafted | 348 |
+| 12 — Data profiles in remote workers | drafted | 294 |
+| 13 — Result aggregation | drafted | 274 |
+| 14 — Partial-run semantics | drafted | 314 |
+| 15 — Debugging a distributed failure | drafted | 361 |
+| 16 — Case study: a 5-host integration test for a sysman feature | drafted | 492 |
+
+**Volume 2 fully drafted: 16 chapters, 5,595 lines, ~52,000 words.**
 
 ## Drafting conventions
 

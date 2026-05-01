@@ -25,7 +25,7 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 |----:|-------|----------|--------|
 | **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/) | The AutomationX Discipline and the Foundation Tier | **drafted** |
 | **1** | [**Building a Test Framework**](volumes/01-test-framework/) | testbase, arcli, and Single-Host Test Infrastructure | **drafted** |
-| 2 | [Distributed Automation](automojo-volumes.md#volume-2--distributed-automation) | The TestJob Inheritance Chain and Multi-Host Test Execution | planned |
+| **2** | [**Distributed Automation**](volumes/02-distributed-automation/) | The TestJob Inheritance Chain and Multi-Host Test Execution | **drafted** |
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
 | 4 | [Cross-Platform System Management](automojo-volumes.md#volume-4--cross-platform-system-management) | 50 Cross-OS Contracts and 5 Reference Implementations | planned |
 | 5 | [Interop and Protocols](automojo-volumes.md#volume-5--interop-and-protocols) | The Aspects Pattern, the Wire, and the Extension Model | planned |
@@ -33,6 +33,17 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | 7 | [Building an AI Agent SDK](automojo-volumes.md#volume-7--building-an-ai-agent-sdk) | Lifecycle, Tools, Memory, and Observability for Production Agents | planned |
 | 8 | [Time-Travel Debugging in Production](automojo-volumes.md#volume-8--time-travel-debugging-in-production) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | planned |
 | App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+
+### Volume 2 — drafted
+
+Volume 2 is fully drafted in [`volumes/02-distributed-automation/`](volumes/02-distributed-automation/).
+
+| Part | Chapters | Theme |
+|---|---|---|
+| I — The Discipline | 1, 2, 3 | Why distributed automation is hard; single-actor determinism; the Pod model |
+| II — The Customisation Cascade | 4, 5, 6, 7 | TestJob inheritance chain; tandem testing; landscape activation; verified CI hand-off |
+| III — The Runtime Machinery | 8, 9, 10, 11, 12, 13 | Sequencer; job_seed; the wire; credentials; data profiles; result aggregation |
+| IV — Honesty and Diagnosis | 14, 15, 16 | Partial-run semantics; debugging a distributed failure; 5-host case study |
 
 ### Volume 1 — drafted
 
