@@ -47,16 +47,18 @@ test is no longer a single Python process.
 
 | Chapter | Status | Lines |
 |---|---|---|
-| 1 — Why `unittest` / `pytest` fall short for automation | drafted | — |
-| 2 — `testbase` architecture | drafted | — |
-| 3 — Resource factories and dependency injection | drafted | — |
-| 4 — Property-based testing with `@given` | drafted | — |
-| 5 — Streaming JSOS results | drafted | — |
-| 6 — The `testbase agents` machine-readable CLI | drafted | — |
-| 7 — Mocking and stubbing without the framework getting in the way | drafted | — |
-| 8 — `arcli` — the declarative CLI toolkit | drafted | — |
-| 9 — Building tests around landscape concepts (single-host edition) | drafted | — |
-| 10 — Case study: a 3,700-test suite that runs on one host | drafted | — |
+| 1 — Why `unittest` / `pytest` fall short for automation | drafted | 334 |
+| 2 — `testbase` architecture | drafted | 386 |
+| 3 — Resource factories and dependency injection | drafted | 415 |
+| 4 — Property-based testing with `@given` | drafted | 377 |
+| 5 — Streaming JSOS results | drafted | 390 |
+| 6 — The `testbase agents` machine-readable CLI | drafted | 380 |
+| 7 — Mocking and stubbing without the framework getting in the way | drafted | 372 |
+| 8 — `arcli` — the declarative CLI toolkit | drafted | 501 |
+| 9 — Building tests around landscape concepts (single-host edition) | drafted | 339 |
+| 10 — Case study: a 3,700-test suite that runs on one host | drafted | 378 |
+
+**Volume 1 fully drafted: 10 chapters, 3,872 lines, ~36,000 words.**
 
 ## Drafting conventions
 

@@ -24,7 +24,7 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | Vol | Title | Subtitle | Status |
 |----:|-------|----------|--------|
 | **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/) | The AutomationX Discipline and the Foundation Tier | **drafted** |
-| 1 | [Building a Test Framework](automojo-volumes.md#volume-1--building-a-test-framework) | testbase, arcli, and Single-Host Test Infrastructure | planned |
+| **1** | [**Building a Test Framework**](volumes/01-test-framework/) | testbase, arcli, and Single-Host Test Infrastructure | **drafted** |
 | 2 | [Distributed Automation](automojo-volumes.md#volume-2--distributed-automation) | The TestJob Inheritance Chain and Multi-Host Test Execution | planned |
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
 | 4 | [Cross-Platform System Management](automojo-volumes.md#volume-4--cross-platform-system-management) | 50 Cross-OS Contracts and 5 Reference Implementations | planned |
@@ -33,6 +33,23 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | 7 | [Building an AI Agent SDK](automojo-volumes.md#volume-7--building-an-ai-agent-sdk) | Lifecycle, Tools, Memory, and Observability for Production Agents | planned |
 | 8 | [Time-Travel Debugging in Production](automojo-volumes.md#volume-8--time-travel-debugging-in-production) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | planned |
 | App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+
+### Volume 1 — drafted
+
+Volume 1 is fully drafted in [`volumes/01-test-framework/`](volumes/01-test-framework/).
+
+| Chapter | Theme |
+|---|---|
+| 1 | Why `unittest` / `pytest` fall short for automation |
+| 2 | `testbase` architecture: TestRef, TestCollector, TestSequencer, TestJob, JsonResultRecorder |
+| 3 | Resource factories and dependency injection (originators, attachments, the Graph phase) |
+| 4 | Property-based testing with `@given`, `TESTBASE_MAX_EXAMPLES_CAP`, deterministic per-test seeds |
+| 5 | Streaming JSOS results (JSON Separated Object Stream) |
+| 6 | The `testbase agents` machine-readable CLI (`summary`, `testresult`, `config`) |
+| 7 | Mocking and stubbing — testbase's bespoke `Mock` / `SpecViolationError` / `SideEffect` |
+| 8 | `arcli` — the declarative CLI toolkit underneath every `automojo-*` CLI |
+| 9 | Single-host landscape contract — the boundary Volume 2 extends |
+| 10 | Case study: the `automojo-agent-kit` 3,700-test single-host suite |
 
 ### Volume 3 — drafted
 
