@@ -368,6 +368,112 @@ codebase where the discipline has been broken without being
 replaced.  Either follow the philosophy or replace it; don't half-
 follow it.
 
+## The meta-thesis: framework as skeleton and patterns
+
+Beyond the ten engineering principles there is a single
+load-bearing design choice that shapes the entire portfolio.
+Every later volume references it and every chapter that says
+"this is left to the user" is an instance of it:
+
+> *The test framework just sets up the skeleton and patterns;
+> the organization customises and refines them to meet the needs
+> of the automation scenarios.*
+
+This is the *meta-thesis* of the `automojo-*` portfolio.  It
+explains why so much of the framework's surface is "left to the
+organisation":
+
+- Topology schemas — the framework supplies the loader and one
+  canonical shape (`clusters` with `name` / `group` / `nodes` /
+  `spares`); the organisation supplies the rest by subclassing
+  `Topology`.
+- Feature handling on devices — the framework dispatches a small
+  set of built-in Features; the organisation adds the rest by
+  subclassing `Landscape`.
+- Verification logic — the framework supplies hooks
+  (`validate_topology` and friends); the organisation
+  implements the project-specific verification.
+- Runtime profiles — the framework supplies the composition
+  machinery (the `MergeMap` overlay covered in chapter 9); the
+  organisation defines the actual profiles (`Normal`, `Debug`,
+  `UPNP Diagnostics`, `Bluetooth Diagnostics`, etc.).
+- Coordinators / Agents / ProtocolExtensions — the framework
+  supplies built-ins for common protocols (SSH, UPnP, Serial,
+  Power) and the *pattern* for adding more; the organisation
+  adds the protocols their automation actually needs.
+- Tandem validators — the framework supplies the `Validator`
+  base class (in
+  `automojo-testbase/source/packages/automojo/testbase/tandem/`)
+  and the attachment mechanism; the organisation writes the
+  validators that watch the system states their tests care
+  about.
+
+What the framework *is* opinionated about (the skeleton):
+
+- The `TestJob` lifecycle and its five `fire_*` hooks.
+- The single-actor + multi-observer determinism model
+  (Volume 1 chapter 1; Volume 2 chapter 2).
+- The Pod-as-unit-of-parallelism principle (Volume 2 chapter 3).
+- The six configuration categories (Specifications, Landscapes,
+  Topologies, Runtimes, Credentials, Data Profiles), all
+  uniformly composable via `MergeMap` (chapter 9 of this volume,
+  Volume 3 part II).
+- The CI hand-off as a *verified contract* — Landscape
+  reachability + Topology configured-state checked before the
+  first test runs (Volume 3 chapter 21).
+- The JSOS streaming results format and the `agents` CLI shape
+  (Volume 1 chapters 5 and 6).
+- The `arcli` decorator surface for command-line tooling
+  (Volume 1 chapter 8).
+- The Aspects pattern for behaviour parameterisation (Volume 5
+  chapter 1).
+
+What the framework is *not* opinionated about (left to the
+organisation):
+
+- The shape of any individual Topology beyond the canonical
+  `clusters` form.
+- Which Features any given device has.
+- What the organisation's validators check for.
+- What the organisation's runtime profiles do.
+- What protocols the organisation needs Agents for.
+- What the organisation's Specifications declare to provision.
+
+### How the customisation actually plugs in
+
+The concrete mechanism: the user subclasses `TestJob` (or one
+of its descendants — `InteropLibraryTestJob`,
+`DistributedTestJob`).  The subclass overrides the template
+methods that return the user's `Landscape` subclass, the user's
+`Topology` subclass, the user's sequencer, and so on.  The
+framework's entry points (`generic_test_entrypoint(job_type=...)`
+and `distributed_test_entrypoint(job_type=...)`) accept the
+user's job class via the `job_type=` parameter.
+
+That single chain — `TestJob` subclass → custom `Landscape` /
+`Topology` returned by template methods → custom Features and
+schemas dispatched inside those subclasses — is the entire
+customisation contract.  Volume 2 chapter 4 walks the
+inheritance hierarchy in detail; Volume 6 walks Landscape and
+Topology subclassing as it applies to the environment model.
+
+### Why the meta-thesis matters
+
+Without this framing, every "left to the user" note in every
+chapter reads as *gap*.  With it, every "left to the user" note
+reads as *intentional design*.  The framework is *opinionated
+about patterns and unopinionated about domain*, and that
+distinction is the design choice that makes the portfolio
+coherent across automation scenarios as different as a
+single-host unit suite, a 12-host distributed integration suite,
+a cloud-provisioned reference platform, and an embedded
+firmware test rig.
+
+This series treats every "left to the user" as a feature.  When
+a chapter says "users implement this by subclassing X," the
+implication is *this is exactly where the framework expects you
+to specialise*, not *this is where the framework stops short*.
+
 ## How the philosophy shapes the rest of the series
 
 Every later chapter of this volume — and every later volume —

@@ -152,7 +152,7 @@ at a particular phase boundary (the docstrings call out which
 ones — `fire_diagnostic_capture_pre_testrun`'s docstring at
 `testjob.py:524–529` documents its position).
 
-## TestJob: the lifecycle owner
+## TestJob: the lifecycle owner — and the customisation entry point
 
 `TestJob`
 (`automojo-testbase/source/packages/automojo/testbase/testjob.py:50–131`)
@@ -205,6 +205,64 @@ inherits the order; it overrides only the no-op hooks.  A reader
 who understands this lifecycle understands the distributed
 runner's lifecycle too — the order doesn't change, just the
 hooks' bodies.
+
+### TestJob is the customisation entry point
+
+`TestJob` is not just the lifecycle owner — it is *the* place
+where the user customises the framework.  Per the meta-thesis
+from Volume 0 chapter 1 ("framework supplies the skeleton and
+patterns; the organisation customises"), `TestJob` is the
+specific, concrete plug-in point.
+
+The customisation works by **subclassing**.  The user picks a
+starting layer and overrides the template methods they need:
+
+- **`TestJob`** (single-host base, this chapter).  Override
+  `_create_sequencer()`, `_create_recorder()`, or any of the
+  five `fire_*` hooks for single-host customisation.
+- **`InteropLibraryTestJob`** (Volume 2; in `automojo-interop`).
+  Override the abstract `_get_landscape()` to return your
+  project's `Landscape` subclass; the framework picks up the
+  custom Features and topology shapes through that landscape.
+- **`DistributedTestJob`** (Volume 2; in `automojo-testplus`).
+  Override `_get_landscape()` and optionally `_create_sequencer()`
+  for distributed multi-host scenarios.
+
+The framework's entry points accept the user's subclass:
+
+```python
+# Single-host
+generic_test_entrypoint(job_type=YourCustomJob)
+
+# Distributed
+distributed_test_entrypoint(job_type=YourCustomDistributedJob)
+```
+
+Real scaffolding examples live in
+`automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
+(`CustomTestJob`, `FailingCustomTestJob`).  An SDET writing a
+custom job type follows that pattern: subclass at the right
+layer, override the template methods, plug into the entry
+point.
+
+The construction cascade that follows from a custom `TestJob`:
+
+```
+User-defined TestJob subclass             ← CUSTOMISATION ENTRY POINT
+    │
+    ├─ creates → TestSequencer (custom or default)
+    │              │
+    │              ├─ creates → Landscape (user's subclass — Vol 6)
+    │              ├─ creates → Topology  (user's subclass — Vol 6)
+    │              └─ orchestrates the lifecycle
+    │
+    └─ owns the lifecycle (the five fire_* hooks above)
+```
+
+Everything Vols 2 and 6 cover about Landscape and Topology
+*subclassing* hangs off this cascade.  The user's `TestJob`
+subclass is the integration point; the rest is what the
+template methods return.
 
 ## The recorder pipeline
 

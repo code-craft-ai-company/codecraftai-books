@@ -291,6 +291,13 @@ itself as the actor and providing a separate mechanism for
   own per-observer outcomes recorded alongside the test's result.
 
 This is **tandem testing**: one actor + N attached observers.
+The mental model is a *tandem bicycle*: one driver pedals and
+steers; one or more observers ride along watching the world go
+by.  The driver is the only one steering — that's the
+single-actor commitment — but the observers are full
+participants in the ride, with their own perspective and their
+own report at the end.
+
 File: `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
 
 Where parallelism *does* live: at the **job level**, across

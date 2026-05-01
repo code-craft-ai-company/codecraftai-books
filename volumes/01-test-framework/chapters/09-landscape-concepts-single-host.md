@@ -411,6 +411,147 @@ verification is a precondition for the single-actor model
 above.  Volume 6 walks the verification mechanics in detail;
 this chapter establishes the *principle*.
 
+## Inside a Landscape file: services, devices, Features
+
+The Landscape is *not* just a flat list of devices.  It has
+two top-level sections that together enable the verification
+contract above:
+
+- **`services`** — declares the *infrastructure services* the
+  devices use.  A serial-concentrator service offering serial
+  connections on an IP and port; a power controller offering
+  per-port power control; a credential vault.  Each service has
+  a name, an address, and a type.
+- **`devices`** — declares each device with its *primary access*
+  (the `deviceType` and the fields that configure it: `host`,
+  `credentials`, `platform`) and its *Features* (additional
+  capabilities provided by the services above).
+
+A real device declaration shape:
+
+```yaml
+- deviceType: network/ssh         # primary access type
+  host: 192.168.1.30              # primary access address
+  platform: linux
+  credentials:
+      - casey-node                # composable list of named credentials
+  features:
+      isolation: true                          # boolean capability flag
+      serial: serial-concentrator: 1           # service-reference Feature
+      power: LPC934: 1                         # service-reference Feature
+  skip: false
+```
+
+Three layers in one declaration:
+
+1. **Primary access** — `deviceType: network/ssh` plus `host`
+   and `credentials`.  The `deviceType` selects the Coordinator
+   that attaches the primary ProtocolExtension; SSH access here
+   is *not* a Feature, it's the deviceType.
+2. **Features** — additional capabilities beyond the primary
+   access.  Two shapes:
+   - *Boolean capability flags* — `isolation: true`.  Pure
+     data; no Agent, no service.  Test code or framework can
+     query "does this device have isolation?"
+   - *Service-reference Features* — `serial: serial-concentrator:1`,
+     `power: LPC934:1`.  Names a service from the `services`
+     section + a port.  At runtime the framework resolves the
+     service, instantiates the matching Agent against the
+     service's address, and exposes a ProtocolExtension on the
+     device (`device.serial`, `device.power`).
+3. **Declarative metadata** — `platform`, `skip`, `credentials`.
+
+### Coordinators, Agents, ProtocolExtensions, Features
+
+Four words that need precise definitions, because casual usage
+of "extension" is ambiguous in the portfolio:
+
+- **Agents** *speak protocols.*  An SSH Agent speaks SSH; a
+  UPnP Agent speaks UPnP; a Serial Agent speaks the serial
+  wire protocol; a Power Agent speaks the power-control
+  protocol.  The Agent is the protocol-speaking object.
+- **Coordinators** *manage devices and attach Agents to
+  devices.*  A Coordinator owns a class of devices (e.g., the
+  SSH Coordinator owns devices reachable over SSH) and
+  attaches the right Agent to each Device it manages.
+- **ProtocolExtensions** *connect a specific protocol Agent to
+  a Device.*  A ProtocolExtension is the binding object that
+  wraps the Agent and exposes its protocol surface on the
+  Device.  This is the user-facing extension point — a user
+  adding a new protocol writes a ProtocolExtension that wraps
+  their Agent.
+- **Features** *are declared on devices in the Landscape* and
+  reference services declared in the same Landscape.  A Feature
+  declaration is configuration data on the Device's `features`
+  tag that says "I have capability X, here's how to access it."
+
+The full layering for a service-reference Feature:
+
+```
+Landscape file
+├── services section
+│     └── serial-concentrator: type=serial-concentrator, address=10.0.0.50
+└── devices section
+      └── device-1
+            └── features tag: { serial: serial-concentrator: 1 }
+                                ↓ at runtime
+              device-1 instance
+                ├── managed by Serial Coordinator
+                └── .serial → ProtocolExtension
+                                └── wraps → Serial Agent
+                                              └── connects to serial-concentrator port 1
+```
+
+This also makes Landscape verification (the CI hand-off check
+above) concrete.  The verification walks every Device's
+Features, resolves each Feature's named service in the
+`services` section, instantiates the Agent against the
+service's address, and confirms it can connect.  A broken
+Feature → service reference, an unreachable service, a
+deviceType whose Coordinator can't reach `host` — these are
+the failures verification catches before the first test fires.
+
+### The customisation mechanism: subclass `Landscape` and `Topology`
+
+Per the meta-thesis from Volume 0 chapter 1, the framework
+supplies the skeleton and patterns; the organisation
+customises.  For the environment model, the concrete
+customisation mechanism is **subclassing `Landscape` and
+`Topology`**.
+
+The framework supplies:
+
+- The base `Landscape` class — knows how to parse the
+  `services` / `devices` / `features` shape and dispatch the
+  built-in Features it ships support for.
+- The base `Topology` class — knows how to parse the canonical
+  `clusters` shape (`name` / `group` / `nodes` / `spares`)
+  consumed by `LandscapeOperationalLayer._create_clusters`.
+- Verification stub hooks (`validate_topology()` and friends)
+  and the activation hooks driven by `TestJob.fire_*`.
+
+The user supplies — by subclassing:
+
+- Recognition and handling of project-specific Feature names
+  (anything beyond serial / power / isolation) — by
+  subclassing `Landscape`.
+- Recognition and handling of project-specific Topology
+  sections (anything beyond `clusters`) — by subclassing
+  `Topology`.
+- The verification logic for what those custom shapes mean —
+  by overriding `validate_topology()` (and friends) in the
+  subclasses.
+
+The subclasses get plugged into a run by being returned from
+the user's `TestJob` subclass's template methods (chapter 2's
+"TestJob as customisation entry point" cascade).
+
+This is the *concrete* mechanism behind every "left to the
+user" note in the books: open schemas + subclassed handlers,
+plumbed in via the user's `TestJob` subclass.  Schema openness
+is the *what*; subclassing is the *how*; `TestJob` is the
+*where*.
+
 ## Composability across categories
 
 A property of `automojo-configuration` worth establishing here
