@@ -53,18 +53,20 @@ portfolio:
 
 ## Status
 
-| Chapter | Status |
-|---|---|
-| 1 — The AutomationX philosophy | drafting |
-| 2 — Coding standards as a tool, not a style guide | outlining |
-| 3 — The error vocabulary | outlining |
-| 4 — Interfaces and contracts | outlining |
-| 5 — Waiting with rich diagnostics | outlining |
-| 6 — Application identity and presence | outlining |
-| 7 — Extension and factory machinery | outlining |
-| 8 — Runtime variables and well-known paths | outlining |
-| 9 — Configuration loading | outlining |
-| 10 — Credentials, data profiles, storage scaffolding | outlining |
+| Chapter | Status | Lines |
+|---|---|---|
+| 1 — The AutomationX philosophy | drafted | 438 |
+| 2 — Coding standards as a tool, not a style guide | drafted | 546 |
+| 3 — The error vocabulary | drafted | 481 |
+| 4 — Interfaces and contracts | drafted | 483 |
+| 5 — Waiting with rich diagnostics | drafted | 600 |
+| 6 — Application identity and presence | drafted | 550 |
+| 7 — Extension and factory machinery | drafted | 458 |
+| 8 — Runtime variables and well-known paths | drafted | 522 |
+| 9 — Configuration loading | drafted | 637 |
+| 10 — Credentials, data profiles, storage scaffolding | drafted | 502 |
+
+**Volume 0 fully drafted: 10 chapters, ~5,200 lines, ~48,000 words.**
 
 ## Drafting conventions
 

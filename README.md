@@ -23,7 +23,7 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 
 | Vol | Title | Subtitle | Status |
 |----:|-------|----------|--------|
-| 0 | [Foundations of Automation Engineering with Python](automojo-volumes.md#volume-0--foundations-of-automation-engineering-with-python) | The AutomationX Discipline and the Foundation Tier | planned |
+| **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/) | The AutomationX Discipline and the Foundation Tier | **drafted** |
 | 1 | [Building a Test Framework](automojo-volumes.md#volume-1--building-a-test-framework) | testbase, arcli, and Single-Host Test Infrastructure | planned |
 | 2 | [Distributed Automation](automojo-volumes.md#volume-2--distributed-automation) | The TestJob Inheritance Chain and Multi-Host Test Execution | planned |
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
