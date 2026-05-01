@@ -267,15 +267,39 @@ machinery half), `automojo-landscaping`.
    distributed automation; why CI horizontal scaling means more Pods,
    not more tests-in-parallel.  Forward to Vol 3 for orchestration of
    Pod fan-out.
-4. **The job inheritance chain** — what each layer adds, why it lives
-   where it lives:
-   - `TestJob` (in `testbase`): single-host execution, fixtures, results,
-     the five `fire_*` lifecycle hooks.
-   - `InteropLibraryTestJob` (in `interop`): landscape activation overrides
-     on the five `fire_*` hooks; the `_get_landscape()` template method
-     that breaks the would-be circular dependency with `landscaping`.
-   - `DistributedTestJob` (in `testplus`): just `_get_landscape()` and
-     `_create_sequencer()`.
+4. **The TestJob inheritance chain — the customisation cascade** —
+   what each layer adds, why it lives where it lives, *and how the
+   chain is the framework's customisation entry point* (Volume 0
+   ch.1's meta-thesis made concrete).  Five classes in the hierarchy
+   today:
+   - `TestJob` (in `testbase`, `testjob.py:50`): single-host execution,
+     fixtures, results, the five `fire_*` lifecycle hooks; template
+     methods `_create_sequencer()` and `_create_recorder()`.
+   - `DefaultTestJob` (in `testbase`, `testjob.py:621`): naming
+     fallback; no overrides.
+   - `InteropLibraryTestJob` (in `interop`, `testjob.py:22`): landscape
+     activation overrides on the five `fire_*` hooks; the abstract
+     `_get_landscape()` template method that breaks the would-be
+     circular dependency with `landscaping`.
+   - `DistributedTestJob` (in `testplus`, `distributedtestjob.py:24`):
+     concrete `_get_landscape()` returning `LandscapeSingleton`;
+     `_create_sequencer()` returning a `DistributedTestSequencer`.
+   - `DefaultDistributedTestJob` (in `testplus`,
+     `distributedtestjob.py:84`): naming fallback for distributed.
+
+   Each layer adds *one* responsibility — single-host execution →
+   landscape awareness → distributed scheduling.  The hierarchy is
+   open: `generic_test_entrypoint(job_type=...)` and
+   `distributed_test_entrypoint(job_type=...)` accept the user's
+   subclass.  Real scaffolding examples live at
+   `automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
+   (`CustomTestJob`, `FailingCustomTestJob`).
+
+   *Note on parallel hierarchies:* `OrchestrationJob` (in
+   `automojo-landscaping`, `orchestrationjob.py:34`) is **not** a
+   `TestJob` subclass — it inherits from `ContextUser`.  Orchestration
+   jobs and test jobs are separate hierarchies; Vol 3 covers
+   orchestration's job model.
 5. **Tandem testing in depth** — the actor / observer model.
    `ValidatorCoupling`, the `attach_to_test(testscope, suffix)`
    mechanism, the per-validator `TestResult` recorded alongside the
@@ -431,6 +455,20 @@ list of files and merges them; later names override earlier ones.
      Diagnostics + Bluetooth Diagnostics` merges both diagnostic
      profiles into one effective runtime.  The diagnostic-stacking
      example is the cleanest demonstration of why composition matters.
+   - *The User file (`user.yaml`, documented separately in
+     `userguide/03-07-user-file.rst`) is **the default Runtime for
+     local-user runs** — not a seventh configuration category.* The
+     User file sits at the bottom of the local-user runtime overlay
+     stack; explicitly-selected Runtime files compose on top.  CI
+     runs do not include the User file.  This explains why the user
+     file is documented but not in the six-category taxonomy:
+     functionally it is a Runtime.
+   - *Note on the userguide's "not extensible" claim:* per
+     `03-04-runtime-file.rst:36–43`, runtime configuration is "not
+     designed to be extensible like the other configuration objects."
+     This refers to extensibility (registering new runtime *types*),
+     not composability (overlaying multiple runtime *files*).
+     Runtimes remain composable.
 8. **Data profiles** — connection profiles for data stores; lookup-by-name
    vs hardcoded URIs scattered through code.  Composable like the
    other categories: lab-wide profiles merged with experiment-specific
@@ -740,59 +778,101 @@ left up to the user to implement.*
    `Landscape`, `LandscapeIntegrationLayer`,
    `LandscapeOperationalLayer`, the layer-installation discipline.
    The `MergeMap`-based composition model (`Checkout Resources +
-   Environment Resources` as the canonical pairing).
-2. **Device discovery and friendly identifiers** — `FriendlyIdentifier`
+   Environment Resources` as the canonical pairing).  The Landscape's
+   *two top-level sections*: `services` (infrastructure services like
+   serial concentrators, power controllers, vaults — each with a
+   name, type, and address) and `devices` (each with a deviceType +
+   primary access fields + Features).
+2. **Inside a device declaration — deviceType, Features, metadata** —
+   the three layers of a device entry in a Landscape file:
+   - *Primary access* — `deviceType: network/ssh` plus `host`,
+     `credentials`, `platform`.  The deviceType selects the
+     Coordinator that attaches the primary ProtocolExtension.
+   - *Features* — additional capabilities beyond primary access.  Two
+     shapes: **boolean capability flags** (e.g. `isolation: true` —
+     pure data) and **service-reference Features** (e.g.
+     `serial: serial-concentrator: 1` — names a service from the
+     services section + a port; materialises into a ProtocolExtension
+     at runtime).
+   - *Declarative metadata* — `platform`, `skip`, the composable
+     `credentials` list.
+3. **Coordinators, Agents, ProtocolExtensions, Features** — the
+   four-word vocabulary for the device-control machinery, used
+   precisely throughout the rest of the volume:
+   - **Agents** *speak protocols* (SSH Agent, UPnP Agent, Serial
+     Agent, Power Agent).
+   - **Coordinators** *manage devices and attach Agents to devices.*
+   - **ProtocolExtensions** *connect a specific Agent to a Device.*
+   - **Features** *are declared on devices and (for service-reference
+     Features) reference services.*
+   The full layering walked end-to-end with the serial-concentrator
+   example.
+4. **Device discovery and friendly identifiers** — `FriendlyIdentifier`
    patterns; identity match vs hint; the equality and matching
    semantics.
-3. **Topology — logical organisation and roles, with verification** —
+5. **Topology — logical organisation and roles, with verification** —
    what a Topology *is* (logical grouping + role assignment, examples
    from sound systems and clustered storage); why Topology and
    Landscape are *different* MergeMaps; the canonical `clusters` shape
    (`name` / `group` / `nodes` / `spares`) consumed by
    `LandscapeOperationalLayer._create_clusters`; the verification
-   contract (`validate_topology` as both flag and override hook); the
-   hybrid scaffolding model where the framework supplies the loader
-   and the cluster shape, the user supplies everything else.
-4. **Topology as an executable assertion** — the verification overload
+   contract (`validate_topology` as both flag and override hook).
+6. **Topology as an executable assertion** — the verification overload
    walked from the source: `LandscapeConfigurationLayer.validate_topology()`
    stub, the user-supplied override pattern, the `validate_topology`
    flag on `LandscapeActivationParams`.  Why a Topology fails
    verification means the CI system mis-configured the resources, not
    the test, and what the orchestrator should do about it.
-5. **Service-specific topology extensions** — the `BaseExt` /
+7. **Subclassing `Landscape` and `Topology` — the customisation
+   mechanism** — the *concrete* realisation of Volume 0 ch.1's
+   meta-thesis for the environment model.  The framework supplies
+   the base classes that handle the canonical shapes; the
+   organisation subclasses them to recognise project-specific
+   Features and Topology sections.  The user's subclasses get
+   plugged into a run by being returned from the user's `TestJob`
+   subclass's template methods (Volume 1 ch.2's customisation
+   cascade; Volume 2 ch.4's inheritance chain).  Worked example: a
+   `MyProjectLandscape(Landscape)` recognising a `cooling` Feature
+   alongside the built-in serial / power / isolation Features.
+8. **Service-specific framework extensions** — the `BaseExt` /
    `TopologyExt` extension model; the VMware vSphere
-   `services/vmware/vsphere/ext/topologyext.py` worked example; how a
-   user provides a custom topology fetcher for their infrastructure
-   (Active Directory topology, Kubernetes topology, IoT-mesh
-   topology) without modifying framework code.
-6. **The Pod model — landscape + topology realised** — a Pod is the
+   `services/vmware/vsphere/ext/topologyext.py` worked example.
+   *This is a different extension point than `Landscape` /
+   `Topology` subclassing* (chapter 7) — `BaseExt` is for
+   service-specific code that fetches state from infrastructure
+   APIs (vSphere, Active Directory, Kubernetes), while subclassing
+   is for project-specific schema interpretation.  The chapter
+   distinguishes the two.
+9. **The Pod model — landscape + topology realised** — a Pod is the
    runtime instance produced by combining a Landscape with a
    Topology.  How a Pod is the unit of horizontal CI parallelism
    (Volume 2 ch.3, Volume 3 ch.27); how Pod independence is what makes
    parallel jobs safe; why test-level parallelism within a Pod
    remains forbidden.
-7. **Cloud provisioning model** — `automojo-provisioning`;
-   vendor-neutral interface; AWS / Azure / GCP backends; the
-   checkout-vs-create story (cross-ref to Vol 3 Specifications); how
-   provisioning emits Landscape + Topology files for the next stage.
-8. **Cross-platform UI automation** — Linux (AT-SPI / X11 / Wayland),
-   macOS (Accessibility / scripting bridges), Windows (UIA); the
-   `Mac*` / `Linux*` wrapper hierarchy; the `UIElement` /
-   `ScreenElement` / `UIWindow` / `UIApplication` model.
-9. **Declarative UI mappings** — `DeclarativeApplication`,
-   `ElementHint`, the per-app mapping classes
-   (`Calculator`, `LibreOfficeCalc`, `MicrosoftExcel`); separation of
-   "what's in the app" from "how to drive it."
-10. **GitLab integration** — anatomy of a real-world REST integration;
+10. **Cloud provisioning model** — `automojo-provisioning`;
+    vendor-neutral interface; AWS / Azure / GCP backends; the
+    checkout-vs-create story (cross-ref to Vol 3 Specifications); how
+    provisioning emits Landscape + Topology files for the next stage.
+11. **Cross-platform UI automation** — Linux (AT-SPI / X11 / Wayland),
+    macOS (Accessibility / scripting bridges), Windows (UIA); the
+    `Mac*` / `Linux*` wrapper hierarchy; the `UIElement` /
+    `ScreenElement` / `UIWindow` / `UIApplication` model.
+12. **Declarative UI mappings** — `DeclarativeApplication`,
+    `ElementHint`, the per-app mapping classes
+    (`Calculator`, `LibreOfficeCalc`, `MicrosoftExcel`); separation of
+    "what's in the app" from "how to drive it."
+13. **GitLab integration** — anatomy of a real-world REST integration;
     what's in the auto-generated client vs the hand-written code;
     testing strategy.
-11. **Web-service scaffolding with Flask** —
+14. **Web-service scaffolding with Flask** —
     `automojo-webservice-flask`; the patterns the website front-end
     uses.
-12. **Case study: a landscape + topology that drives a sysman feature
+15. **Case study: a landscape + topology that drives a sysman feature
     test across four OSes** — full integration walk-through, including
-    Landscape composition, Topology verification, Pod realisation, and
-    cross-references to Vol 2 / Vol 3 / Vol 4.
+    Landscape composition (services + devices + Features), Topology
+    verification, custom Landscape subclass with a project-specific
+    Feature, Pod realisation, and cross-references to Vol 2 / Vol 3 /
+    Vol 4.
 
 ### Cross-references
 
