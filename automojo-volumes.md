@@ -250,7 +250,24 @@ machinery half), `automojo-landscaping`.
    single-host frameworks miss (one host of N down, partial credential
    failure, race conditions in setup/teardown, machine-clock drift,
    network partitions during tests, log aggregation gaps).
-2. **The job inheritance chain** — what each layer adds, why it lives
+2. **Single actor, multiple observers — the determinism model** — the
+   load-bearing design choice that distinguishes automation testing from
+   application testing.  When the controller acts on a distributed
+   environment, the test must wait for effects to propagate before
+   checking; a second actor concurrently causing effects breaks
+   ordering and breaks determinism.  Therefore: one actor per
+   environment.  Tests that need concurrent observation use the
+   tandem-testing mechanism (chapter 5), not parallelism.
+3. **The Pod model — where parallelism actually lives** — at the *job*
+   level, across independent **Pods** (a Pod = one Landscape + one
+   Topology realised as a runtime instance).  Within a Pod, jobs run
+   sequentially because the Pod is a shared environment.  Across Pods,
+   jobs run in parallel because Pods are independent.  Why
+   `pytest-xdist`-style test parallelism is the wrong model for
+   distributed automation; why CI horizontal scaling means more Pods,
+   not more tests-in-parallel.  Forward to Vol 3 for orchestration of
+   Pod fan-out.
+4. **The job inheritance chain** — what each layer adds, why it lives
    where it lives:
    - `TestJob` (in `testbase`): single-host execution, fixtures, results,
      the five `fire_*` lifecycle hooks.
@@ -259,28 +276,48 @@ machinery half), `automojo-landscaping`.
      that breaks the would-be circular dependency with `landscaping`.
    - `DistributedTestJob` (in `testplus`): just `_get_landscape()` and
      `_create_sequencer()`.
-3. **Landscape activation** — what each `fire_*` event does at landscape
-   level (device wake, credential pre-fetch, topology snapshot, etc.).
-4. **The `DistributedTestSequencer`** — coordination, dependency
-   resolution, parallelism control, ordering primitives.
-5. **`job_seed` and reproducibility** — how a single seed survives the
+5. **Tandem testing in depth** — the actor / observer model.
+   `ValidatorCoupling`, the `attach_to_test(testscope, suffix)`
+   mechanism, the per-validator `TestResult` recorded alongside the
+   test's own.  How a test with N validators becomes one test with
+   N+1 outcomes.  When to add a validator (steady-state checks during
+   a test) vs. when to put the check in the test body.  Reference
+   implementation:
+   `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
+6. **Landscape activation** — what each `fire_*` event does at landscape
+   level (device wake, credential pre-fetch, topology realisation, etc.).
+7. **The CI → job hand-off as a verified contract** — Landscape says
+   "here are your resources" and the job verifies reachability;
+   Topology says "here is the configured state" and the job verifies
+   the configured state matches.  The
+   `LandscapeConfigurationLayer.validate_topology()` override hook;
+   the `validate_topology` flag on `LandscapeActivationParams`;
+   verification as a precondition for the determinism model in
+   chapter 2.
+8. **The `DistributedTestSequencer`** — coordination, dependency
+   resolution, ordering primitives.  *(Note: this chapter does **not**
+   cover "parallelism control" — that framing is wrong for the
+   single-actor model.  The sequencer enforces serial execution within
+   a Pod; cross-Pod parallelism is an orchestration concern, Vol 3.)*
+9. **`job_seed` and reproducibility** — how a single seed survives the
    trip across machines.
-6. **The remote-execution wire** — SSH transport (forward to Vol 5),
-   session reuse, command framing, error propagation.
-7. **Credentials at scale** — multi-host specifics; how the framework
-   from Vol 3 Part III applies to live distributed runs.
-8. **Data profiles in remote workers** — why you don't ship config files;
-   why you do ship profile names plus a resolver.
-9. **Result aggregation** — streaming JSOS from N workers back to one
-   coordinator without losing ordering; the failure-mode where one
-   worker's stream stops.
-10. **Partial-run semantics** — what "the suite passed" means when one of
+10. **The remote-execution wire** — SSH transport (forward to Vol 5),
+    session reuse, command framing, error propagation.
+11. **Credentials at scale** — multi-host specifics; how the framework
+    from Vol 3 Part III applies to live distributed runs.
+12. **Data profiles in remote workers** — why you don't ship config files;
+    why you do ship profile names plus a resolver.
+13. **Result aggregation** — streaming JSOS from N workers back to one
+    coordinator without losing ordering; the failure-mode where one
+    worker's stream stops.
+14. **Partial-run semantics** — what "the suite passed" means when one of
     five hosts crashed mid-run.
-11. **Debugging a distributed failure** — forward reference to Vol 8
+15. **Debugging a distributed failure** — forward reference to Vol 8
     (time-travel) for the production version.
-12. **Case study: a 5-host integration test for a sysman feature** —
+16. **Case study: a 5-host integration test for a sysman feature** —
     forward reference to Vol 4 (sysman); landscape configuration,
-    dependency wiring, partial-failure handling.
+    topology verification, dependency wiring, partial-failure handling,
+    tandem-validator coverage of cross-host steady state.
 
 ### Cross-references
 
@@ -342,14 +379,46 @@ across a codebase.
 
 ### Part II — *The Configuration Categories*
 
+The six categories are *uniformly composable* via `MergeMap` overlay
+— a property the chapters in this part name and demonstrate
+consistently.  Each category resolver takes a list of names and a
+list of files and merges them; later names override earlier ones.
+
 4. **Specifications** — declarative resource-creation manifests;
    checkout-or-create semantics; idempotent provisioning; the separation
-   of "what should exist" from "how to make it exist."
-5. **Landscape files** — modelling the environment as data;
-   landscape-vs-implementation; landscape compositions across teams.
-6. **Topology files** — modelling relationships as data; why topology is
-   separate from landscape (a landscape can host many topologies; a
-   topology can apply to many landscapes).
+   of "what should exist" from "how to make it exist."  *The dynamic
+   path:* a Specification declares the resources a Pod needs; CI
+   tooling consumes the Specification, performs the checkout or
+   creation, and **emits the Landscape file and Topology file** that
+   the test job will then verify and run against.  *The static path:*
+   pre-existing Landscape + Topology files; no Specification needed.
+   *The hybrid path:* user tooling generates the Topology file at job
+   startup from the Landscape it was given.  Composition: multiple
+   Specification files compose to assemble a larger Pod.
+5. **Landscape files — physical inventory and wiring** — modelling
+   *what resources exist and how they are physically connected* as
+   data.  Landscape composition (`Checkout Resources + Environment
+   Resources` is a canonical pairing — pool-checkout merged with
+   permanent infrastructure).  The verification contract: the test job
+   verifies every resource in the Landscape is reachable at the
+   declared address with the declared protocol using the declared
+   credentials.  Forward to Vol 6 for what's *inside* a Landscape file
+   schema-wise.
+6. **Topology files — logical organisation and roles** — modelling
+   *how those resources are organised and what roles they play
+   together* as data.  Why Topology is *separate* from Landscape (a
+   Landscape hosts many Topologies; a Topology applies to many
+   Landscapes; they live in separate `MergeMap`s in
+   `automojo-configuration` for a reason).  Examples: "Players A, B, C
+   form a Home Sound System"; "Nodes A, B, C are cluster members;
+   Node D is a spare."  Topology composition (combine cluster
+   topology + gateway topology).  The verification contract: the test
+   job verifies the resources are *configured as the Topology
+   indicates* — Topology is overloaded as both a description *and* an
+   executable assertion.  The canonical `clusters` shape consumed by
+   `LandscapeOperationalLayer._create_clusters` is the only schema
+   the framework imposes; everything else is user-defined.  Forward
+   to Vol 6.
 7. **Runtime files vs environment variables** — the core thesis chapter:
    - Why env vars proliferate (every team adds one, no one removes one).
    - What goes wrong (forgotten exports, namespace collision, type
@@ -358,8 +427,14 @@ across a codebase.
      startup, namespaced overrides, traceable provenance).
    - The migration pattern: env-var-soup → runtime profile + 1-line
      `--profile prod` selector.
+   - *Runtimes are composable:* a Runtime selection of `UPNP
+     Diagnostics + Bluetooth Diagnostics` merges both diagnostic
+     profiles into one effective runtime.  The diagnostic-stacking
+     example is the cleanest demonstration of why composition matters.
 8. **Data profiles** — connection profiles for data stores; lookup-by-name
-   vs hardcoded URIs scattered through code.
+   vs hardcoded URIs scattered through code.  Composable like the
+   other categories: lab-wide profiles merged with experiment-specific
+   overrides.
 
 ### Part III — *Credential Management*
 
@@ -417,13 +492,23 @@ and "works locally but doesn't scale to CI."
 20. **Workflow YAML grammar** — `name` / `environment` / `parameters` /
     `flow` / nesting / `onfailure` / `onsuccess`.
 21. **Passing information to jobs** — the contract between an orchestration
-    and a job:
-    - Orchestration parameters say "use landscape `staging-east`, runtime
-      `verbose`, credentials `ci-runner`."
+    and a job is *named configurations + verification*, not just config:
+    - Orchestration parameters say "use landscape `staging-east + prod-
+      shared`, topology `cluster-of-4 + gateway-pair`, runtime
+      `verbose + upnp-diagnostics`, credentials `ci-runner +
+      experiment-overrides`" — names per category, composable lists.
     - The orchestration injects those *names* into the job's environment
-      (one variable each, just enough to bootstrap).
-    - The job's startup uses `automojo-configuration` to resolve each name
-      into the actual structured config.
+      (one variable per category, just enough to bootstrap).
+    - The job's startup uses `automojo-configuration` to resolve each
+      name list into the actual structured config via `MergeMap`
+      overlay (every category, same pattern).
+    - **The job verifies the realised configuration before the first
+      test runs:** Landscape verification confirms every resource is
+      reachable; Topology verification confirms every resource is
+      configured as the topology declares.  A failed verification
+      means the CI system handed off something it shouldn't have, and
+      the job refuses to run.  This is what makes the determinism
+      contract from Volume 2 ch.2 actually deterministic.
     - Inside the job, code reads typed configurations — never env vars.
 22. **Flow control as data** — `onfailure` / `onsuccess` jumps,
     `JumpContext`, ordinal numbering for trace ("step 2.3.1 failed"),
@@ -445,9 +530,15 @@ and "works locally but doesn't scale to CI."
     30-line taskplus workflow + 5 named configs + 4 profiles.**  Before /
     after, with the working diffs.
 27. **Where this approach is *not* the right fit** — heavy parallel
-    fan-out, dynamic workflow generation from streaming events,
-    sub-second event-driven flows.  Honesty about scope; build-vs-buy
-    chapter.
+    fan-out *within* a Pod (the framework forbids it by design — Vol 2
+    ch.2's determinism model), dynamic workflow generation from
+    streaming events, sub-second event-driven flows.  Honesty about
+    scope; build-vs-buy chapter.  *The right shape of horizontal CI
+    scaling for this discipline:* provision more Specifications →
+    more Pods → more parallel jobs.  Each Pod is independent; jobs
+    across Pods run concurrently; tests within a Pod stay sequential.
+    A "20-fold parallel CI" means twenty Specifications, not twenty
+    parallel tests inside one Pod.
 
 ### Cross-references
 
@@ -612,46 +703,96 @@ bluetooth, can}`.
 **Audience:** test / automation engineers wiring up complex environments;
 platform engineers building automation infrastructure.
 
-**Why it earns its own volume:** these three packages model the
-*environment* the rest of the platform operates on — landscape (what's
-there), provisioning (how to make it appear), and UI automation (how to
-drive applications inside it).  The three are bound by the same
-"environment as data" thesis that runs through Vol 3.
+**Why it earns its own volume:** these packages model the *environment*
+the rest of the platform operates on — landscape (what's there),
+topology (how it's organised), provisioning (how to make it appear),
+and UI automation (how to drive applications inside it).  The volume
+is bound by the same "environment as data" thesis that runs through
+Vol 3 — but where Vol 3 covers the *category-level* concerns (what's
+in a Landscape file, what's in a Topology file, how they compose),
+Vol 6 covers the *implementation* concerns (how `automojo-landscaping`
+loads them, what scaffolding the framework supplies, what the user
+implements, the canonical `clusters` shape, the verification hooks).
+
+**Important framing note — there is no `automojo-topology` package.**
+Topology is a *configuration category* loaded by `automojo-configuration`
+into `TOPOLOGY_CONFIGURATION_MAP`, with consumption code distributed
+across `automojo-landscaping`'s layers (`TopologyIntegrationLayer`,
+`LandscapeConfigurationLayer.load_topology()`,
+`LandscapeOperationalLayer._create_clusters()`).  The volume's
+Topology coverage walks the framework's *minimal scaffolding* (the
+loader, the canonical `clusters` schema, the `BaseExt`-based extension
+model with the VMware vSphere `TopologyExt` as a worked example) and
+explicitly leaves the rest of the schema to the user.  *Topologies are
+left up to the user to implement.*
 
 **Estimated pages:** 400–500.
 
 **Portfolio source:** `automojo-landscaping`, `automojo-provisioning`,
 `automojo-uia`, `automojo-gitlab`, `automojo-webservice-flask`.
+*Topology* is not a package — it lives across `automojo-configuration`
+(loader) and `automojo-landscaping` (consumer).
 
 ### Chapters
 
-1. **Landscape — modelling hosts, clusters, devices** —
-   `LandscapeIntegrationLayer`, `LandscapeOperationalLayer`, the
-   layer-installation discipline.
+1. **Landscape — physical inventory and wiring** — what a Landscape
+   *is* (the resources that exist + how they're physically connected);
+   `Landscape`, `LandscapeIntegrationLayer`,
+   `LandscapeOperationalLayer`, the layer-installation discipline.
+   The `MergeMap`-based composition model (`Checkout Resources +
+   Environment Resources` as the canonical pairing).
 2. **Device discovery and friendly identifiers** — `FriendlyIdentifier`
    patterns; identity match vs hint; the equality and matching
    semantics.
-3. **Topology layers** — installation, integration, operational;
-   what each layer adds and why they're separate.
-4. **Cloud provisioning model** — `automojo-provisioning`;
+3. **Topology — logical organisation and roles, with verification** —
+   what a Topology *is* (logical grouping + role assignment, examples
+   from sound systems and clustered storage); why Topology and
+   Landscape are *different* MergeMaps; the canonical `clusters` shape
+   (`name` / `group` / `nodes` / `spares`) consumed by
+   `LandscapeOperationalLayer._create_clusters`; the verification
+   contract (`validate_topology` as both flag and override hook); the
+   hybrid scaffolding model where the framework supplies the loader
+   and the cluster shape, the user supplies everything else.
+4. **Topology as an executable assertion** — the verification overload
+   walked from the source: `LandscapeConfigurationLayer.validate_topology()`
+   stub, the user-supplied override pattern, the `validate_topology`
+   flag on `LandscapeActivationParams`.  Why a Topology fails
+   verification means the CI system mis-configured the resources, not
+   the test, and what the orchestrator should do about it.
+5. **Service-specific topology extensions** — the `BaseExt` /
+   `TopologyExt` extension model; the VMware vSphere
+   `services/vmware/vsphere/ext/topologyext.py` worked example; how a
+   user provides a custom topology fetcher for their infrastructure
+   (Active Directory topology, Kubernetes topology, IoT-mesh
+   topology) without modifying framework code.
+6. **The Pod model — landscape + topology realised** — a Pod is the
+   runtime instance produced by combining a Landscape with a
+   Topology.  How a Pod is the unit of horizontal CI parallelism
+   (Volume 2 ch.3, Volume 3 ch.27); how Pod independence is what makes
+   parallel jobs safe; why test-level parallelism within a Pod
+   remains forbidden.
+7. **Cloud provisioning model** — `automojo-provisioning`;
    vendor-neutral interface; AWS / Azure / GCP backends; the
-   checkout-vs-create story (cross-ref to Vol 3 Specifications).
-5. **Cross-platform UI automation** — Linux (AT-SPI / X11 / Wayland),
+   checkout-vs-create story (cross-ref to Vol 3 Specifications); how
+   provisioning emits Landscape + Topology files for the next stage.
+8. **Cross-platform UI automation** — Linux (AT-SPI / X11 / Wayland),
    macOS (Accessibility / scripting bridges), Windows (UIA); the
    `Mac*` / `Linux*` wrapper hierarchy; the `UIElement` /
    `ScreenElement` / `UIWindow` / `UIApplication` model.
-6. **Declarative UI mappings** — `DeclarativeApplication`,
+9. **Declarative UI mappings** — `DeclarativeApplication`,
    `ElementHint`, the per-app mapping classes
    (`Calculator`, `LibreOfficeCalc`, `MicrosoftExcel`); separation of
    "what's in the app" from "how to drive it."
-7. **GitLab integration** — anatomy of a real-world REST integration;
-   what's in the auto-generated client vs the hand-written code;
-   testing strategy.
-8. **Web-service scaffolding with Flask** — `automojo-webservice-flask`;
-   the patterns the website front-end uses.
-9. **Case study: a landscape that drives a sysman feature test across
-   four OSes** — full integration walk-through, cross-references to
-   Vol 2 / Vol 3 / Vol 4.
+10. **GitLab integration** — anatomy of a real-world REST integration;
+    what's in the auto-generated client vs the hand-written code;
+    testing strategy.
+11. **Web-service scaffolding with Flask** —
+    `automojo-webservice-flask`; the patterns the website front-end
+    uses.
+12. **Case study: a landscape + topology that drives a sysman feature
+    test across four OSes** — full integration walk-through, including
+    Landscape composition, Topology verification, Pod realisation, and
+    cross-references to Vol 2 / Vol 3 / Vol 4.
 
 ### Cross-references
 
