@@ -71,15 +71,17 @@ Bluetooth, CAN, or a custom protocol.
 
 | Chapter | Status | Lines |
 |---|---|---|
-| 1 — Measured Interoperability — the philosophy | drafting | — |
-| 2 — The Aspects pattern — the delegation contract | pending | — |
-| 3 — `automojo-interop` — agents, protocols, CLI | pending | — |
-| 4 — SSH from scratch | pending | — |
-| 5 — Networking toolkit primitives | pending | — |
-| 6 — REST client foundations | pending | — |
-| 7 — The auto-generated GitHub public-API client | pending | — |
-| 8 — Extension packages — UPnP, Tasker, Bluetooth, CAN | pending | — |
-| 9 — Building your own interop extension | pending | — |
+| 1 — Measured Interoperability — the philosophy | drafted | 403 |
+| 2 — The Aspects pattern — the delegation contract | drafted | 521 |
+| 3 — `automojo-interop` — agents, protocols, CLI | drafted | 385 |
+| 4 — SSH from scratch | drafted | 836 |
+| 5 — Networking toolkit primitives | drafted | 298 |
+| 6 — REST client foundations | drafted | 563 |
+| 7 — The auto-generated GitHub public-API client | drafted | 416 |
+| 8 — Extension packages — UPnP, Tasker, Bluetooth, CAN | drafted | 553 |
+| 9 — Building your own interop extension | drafted | 743 |
+
+**Volume 5 fully drafted: 9 chapters, 4,718 lines, ~44,000 words.**
 
 ## Drafting conventions
 

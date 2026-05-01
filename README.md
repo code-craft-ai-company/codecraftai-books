@@ -28,11 +28,21 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | **2** | [**Distributed Automation**](volumes/02-distributed-automation/) | The TestJob Inheritance Chain and Multi-Host Test Execution | **drafted** |
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
 | 4 | [Cross-Platform System Management](automojo-volumes.md#volume-4--cross-platform-system-management) | 50 Cross-OS Contracts and 5 Reference Implementations | planned |
-| 5 | [Interop and Protocols](automojo-volumes.md#volume-5--interop-and-protocols) | The Aspects Pattern, the Wire, and the Extension Model | planned |
+| **5** | [**Interop and Protocols**](volumes/05-interop-and-protocols/) | The Aspects Pattern, the Wire, and the Extension Model | **drafted** |
 | **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
 | 7 | [Building an AI Agent SDK](automojo-volumes.md#volume-7--building-an-ai-agent-sdk) | Lifecycle, Tools, Memory, and Observability for Production Agents | planned |
 | 8 | [Time-Travel Debugging in Production](automojo-volumes.md#volume-8--time-travel-debugging-in-production) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | planned |
 | App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+
+### Volume 5 — drafted
+
+Volume 5 is fully drafted in [`volumes/05-interop-and-protocols/`](volumes/05-interop-and-protocols/).
+
+| Part | Chapters | Theme |
+|---|---|---|
+| I — Philosophy and Foundation | 1, 2, 3 | Measured Interoperability; the Aspects pattern; `automojo-interop` survey |
+| II — Worked Protocols | 4, 5, 6, 7 | SSH from scratch; networking primitives; REST foundations; the auto-generated GitHub client |
+| III — Extensions | 8, 9 | UPnP / Tasker / Bluetooth / CAN; recipe for your own |
 
 ### Volume 6 — drafted
 
