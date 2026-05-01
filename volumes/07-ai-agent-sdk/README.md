@@ -57,15 +57,17 @@ for building an agent that runs reliably in production.
 
 | Chapter | Status | Lines |
 |---|---|---|
-| 1 — Why an SDK and not a framework | drafting | — |
-| 2 — Multi-provider LLM abstraction | pending | — |
-| 3 — Tool design | pending | — |
-| 4 — Memory architecture | pending | — |
-| 5 — Workflow orchestration for agents | pending | — |
-| 6 — Observability for agents | pending | — |
-| 7 — Testing AI agents | pending | — |
-| 8 — Property tests at scale | pending | — |
-| 9 — Building an agent that uses the rest of the automojo portfolio | pending | — |
+| 1 — Why an SDK and not a framework | drafted | 454 |
+| 2 — Multi-provider LLM abstraction | drafted | 480 |
+| 3 — Tool design | drafted | 602 |
+| 4 — Memory architecture | drafted | 457 |
+| 5 — Workflow orchestration for agents | drafted | 512 |
+| 6 — Observability for agents | drafted | 494 |
+| 7 — Testing AI agents | drafted | 453 |
+| 8 — Property tests at scale | drafted | 485 |
+| 9 — Building an agent that uses the rest of the automojo portfolio | drafted | 518 |
+
+**Volume 7 fully drafted: 9 chapters, 4,455 lines, ~41,000 words.**
 
 ## Drafting conventions
 

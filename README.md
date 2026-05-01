@@ -30,9 +30,20 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | **4** | [**Cross-Platform System Management**](volumes/04-cross-platform-sysman/) | 50 Cross-OS Contracts and 5 Reference Implementations | **drafted** |
 | **5** | [**Interop and Protocols**](volumes/05-interop-and-protocols/) | The Aspects Pattern, the Wire, and the Extension Model | **drafted** |
 | **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
-| 7 | [Building an AI Agent SDK](automojo-volumes.md#volume-7--building-an-ai-agent-sdk) | Lifecycle, Tools, Memory, and Observability for Production Agents | planned |
+| **7** | [**Building an AI Agent SDK**](volumes/07-ai-agent-sdk/) | Lifecycle, Tools, Memory, and Observability for Production Agents | **drafted** |
 | 8 | [Time-Travel Debugging in Production](automojo-volumes.md#volume-8--time-travel-debugging-in-production) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | planned |
 | App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+
+### Volume 7 — drafted
+
+Volume 7 is fully drafted in [`volumes/07-ai-agent-sdk/`](volumes/07-ai-agent-sdk/).
+
+| Part | Chapters | Theme |
+|---|---|---|
+| I — Foundations | 1, 2, 3 | SDK vs framework; multi-provider LLM; tool design |
+| II — State and Flow | 4, 5, 6 | Memory architecture; workflow orchestration; observability |
+| III — Discipline | 7, 8 | Mock-first testing (305 files); property tests at scale (72 files) |
+| IV — Worked Example | 9 | Agent that uses the rest of the automojo portfolio |
 
 ### Volume 4 — drafted
 
