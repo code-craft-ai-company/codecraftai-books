@@ -59,16 +59,18 @@ Ubuntu, macOS, Windows, or UEFI consistently.
 
 | Chapter | Status | Lines |
 |---|---|---|
-| 1 — Why a contract layer | drafting | — |
-| 2 — The 50 cross-OS contracts | pending | — |
-| 3 — `featurebase` and the per-OS implementation pattern | pending | — |
-| 4 — RHEL implementation | pending | — |
-| 5 — Ubuntu / Debian implementation | pending | — |
-| 6 — macOS implementation | pending | — |
-| 7 — Windows implementation | pending | — |
-| 8 — UEFI firmware implementation | pending | — |
-| 9 — Spec-driven development for system administration | pending | — |
-| 10 — Building cross-OS test parity | pending | — |
+| 1 — Why a contract layer | drafted | 381 |
+| 2 — The 50 cross-OS contracts | drafted | 587 |
+| 3 — `featurebase` and the per-OS implementation pattern | drafted | 575 |
+| 4 — RHEL implementation | drafted | 468 |
+| 5 — Ubuntu / Debian implementation | drafted | 347 |
+| 6 — macOS implementation | drafted | 406 |
+| 7 — Windows implementation | drafted | 420 |
+| 8 — UEFI firmware implementation | drafted | 361 |
+| 9 — Spec-driven development for system administration | drafted | 494 |
+| 10 — Building cross-OS test parity | drafted | 476 |
+
+**Volume 4 fully drafted: 10 chapters, 4,515 lines, ~42,000 words.**
 
 ## Drafting conventions
 

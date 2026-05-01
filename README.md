@@ -27,12 +27,22 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | **1** | [**Building a Test Framework**](volumes/01-test-framework/) | testbase, arcli, and Single-Host Test Infrastructure | **drafted** |
 | **2** | [**Distributed Automation**](volumes/02-distributed-automation/) | The TestJob Inheritance Chain and Multi-Host Test Execution | **drafted** |
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
-| 4 | [Cross-Platform System Management](automojo-volumes.md#volume-4--cross-platform-system-management) | 50 Cross-OS Contracts and 5 Reference Implementations | planned |
+| **4** | [**Cross-Platform System Management**](volumes/04-cross-platform-sysman/) | 50 Cross-OS Contracts and 5 Reference Implementations | **drafted** |
 | **5** | [**Interop and Protocols**](volumes/05-interop-and-protocols/) | The Aspects Pattern, the Wire, and the Extension Model | **drafted** |
 | **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
 | 7 | [Building an AI Agent SDK](automojo-volumes.md#volume-7--building-an-ai-agent-sdk) | Lifecycle, Tools, Memory, and Observability for Production Agents | planned |
 | 8 | [Time-Travel Debugging in Production](automojo-volumes.md#volume-8--time-travel-debugging-in-production) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | planned |
 | App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+
+### Volume 4 — drafted
+
+Volume 4 is fully drafted in [`volumes/04-cross-platform-sysman/`](volumes/04-cross-platform-sysman/).
+
+| Part | Chapters | Theme |
+|---|---|---|
+| I — The Contract Layer | 1, 2, 3 | Why contracts; the 50 contracts; `featurebase` substrate |
+| II — Five Reference Implementations | 4, 5, 6, 7, 8 | RHEL, Ubuntu, macOS, Windows, UEFI |
+| III — The Discipline | 9, 10 | 11 Implementation Conventions; cross-OS test parity |
 
 ### Volume 5 — drafted
 
