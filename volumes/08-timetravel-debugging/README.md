@@ -69,8 +69,8 @@ ingestion, queryable replay.
 | 2 — Pod instrumentation | drafted | 818 |
 | 3 — The trace-event protocol | drafted | 688 |
 | 4 — Server-side ingestion | drafted | 791 |
-| 5 — Remote debug control | pending | — |
-| 6 — Session management at scale | pending | — |
+| 5 — Remote debug control | drafted | 712 |
+| 6 — Session management at scale | drafted | 702 |
 | 7 — Case studies | pending | — |
 | 8 — Performance and storage trade-offs | pending | — |
 
