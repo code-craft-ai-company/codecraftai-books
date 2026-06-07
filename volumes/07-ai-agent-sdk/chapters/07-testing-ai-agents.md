@@ -21,7 +21,7 @@ AI-agent testing has different default constraints:
 - Real LLM calls cost money and rate-limit.
 - LLM "correctness" is often subjective.
 
-The `automojo-agent-kit`'s answer: **don't test the LLM**.
+The `codecraftai-agent-kit`'s answer: **don't test the LLM**.
 Test *the SDK's behaviour around the LLM*.  The 305 test
 files in the suite test the *agent's plumbing* — state
 machine transitions, tool dispatch, memory operations,
@@ -35,7 +35,7 @@ This chapter walks the discipline.
 Verified from the source:
 
 - **305 test files** at
-  `automojo-agent-kit/source/testroots/automojo/tests/singlehost/agentkit/`.
+  `codecraftai-agent-kit/source/testroots/ccai/tests/singlehost/agentkit/`.
 - **~78,155 LOC** of test code.
 - **212 top-level test files** (mostly `test_*.py`).
 - **72 property-based test files** (`test_*_properties.py` —
@@ -51,7 +51,7 @@ Verified from the source:
 The most recent verified test count: **1,964 / 1,964
 PASSED** (commit `a2e437a`, Apr 27 2026).
 
-## Mock-first — `automojo.testbase.mocking.Mock`
+## Mock-first — `ccai.testbase.mocking.Mock`
 
 The SDK's tests use the framework's standard mocking
 discipline (Volume 1 chapter 7).  Every external dependency
@@ -266,10 +266,10 @@ test suites that integrate with agent-kit.
 
 The integration is *one-directional*:
 
-- `automojo-sysman-*` packages may use agent-kit
+- `codecraftai-sysman-*` packages may use agent-kit
   (downstream).
-- `automojo-landscaping` may use agent-kit.
-- `automojo-interop` may use agent-kit.
+- `codecraftai-landscaping` may use agent-kit.
+- `codecraftai-interop` may use agent-kit.
 - agent-kit doesn't depend on or test against any of them.
 
 Agent-kit is a *library*; downstream packages test their
@@ -349,10 +349,10 @@ A worked test exercising several SDK pieces at once:
 ```python
 import testbase
 
-from automojo.testbase.mocking import Mock
-from automojo.agentkit.contextsummarizer import ContextSummarizer
-from automojo.agentkit.llmconversation import LLMConversation
-from automojo.agentkit.llmmessage import LLMMessage
+from ccai.testbase.mocking import Mock
+from ccai.agentkit.contextsummarizer import ContextSummarizer
+from ccai.agentkit.llmconversation import LLMConversation
+from ccai.agentkit.llmmessage import LLMMessage
 
 
 def _create_mock_llm_provider(summary_text="This is a summary."):
@@ -448,6 +448,6 @@ Chapter 8 walks the property-test layer.  Examples from
 `test_tokenusage_properties.py`,
 `test_llmconversation_properties.py`.  What property
 tests buy when LLM behaviour drifts.  The recent migration
-from `hypothesis` to `automojo.testbase.properties`
+from `hypothesis` to `ccai.testbase.properties`
 (commit `8f31798`).  How the suite balances coverage with
 wall-time budget.

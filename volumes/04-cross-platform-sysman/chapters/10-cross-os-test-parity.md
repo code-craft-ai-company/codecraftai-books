@@ -15,7 +15,7 @@ cross-OS test campaign against the framework.
 
 ## The reference numbers
 
-The `automojo-sysman-*` packages collectively ship:
+The `codecraftai-sysman-*` packages collectively ship:
 
 - **5 reference implementations** (RHEL, Ubuntu, macOS,
   Windows, UEFI).
@@ -95,9 +95,9 @@ A test that exercises *the same feature on three OSes*:
 ```python
 import pytest
 
-from automojo.sysman.linux.redhat.packagemanagement import PackageManager as RhelPM
-from automojo.sysman.linux.ubuntu.packagemanagement import UbuntuPackageManager
-from automojo.sysman.macos.packagemanagement import MacosPackageManager
+from ccai.sysman.linux.redhat.packagemanagement import PackageManager as RhelPM
+from ccai.sysman.linux.ubuntu.packagemanagement import UbuntuPackageManager
+from ccai.sysman.macos.packagemanagement import MacosPackageManager
 
 import os
 

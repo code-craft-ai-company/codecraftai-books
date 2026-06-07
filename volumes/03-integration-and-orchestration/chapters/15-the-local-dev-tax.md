@@ -212,7 +212,7 @@ The cumulative cost across a team:
 The discipline of this chapter cancels each of these costs by
 *moving the configuration into the codebase*.  Once the local-dev
 profile names every piece of state the project depends on, a
-fresh checkout is `clone + automojo profile activate local-dev`.
+fresh checkout is `clone + ccai profile activate local-dev`.
 
 ## The migration walk-through
 
@@ -445,7 +445,7 @@ apod:
           role: tls
 ```
 
-The specification is consumed by `automojo provisioning apply`,
+The specification is consumed by `ccai provisioning apply`,
 which (per chapter 4's discipline) is idempotent.  The first run
 installs Postgres, Redis, edits `/etc/hosts`, and trusts the
 cert.  Subsequent runs are no-ops if the state is already correct.
@@ -478,8 +478,8 @@ import os
 DATABASE_URL = os.environ["DATABASE_URL"]
 
 # After
-from automojo.dataprofiles.wellknown import DataProfileManagerSingleton
-from automojo.credentials.wellknown import CredentialManagerSingleton
+from ccai.dataprofiles.wellknown import DataProfileManagerSingleton
+from ccai.credentials.wellknown import CredentialManagerSingleton
 
 profile = DataProfileManagerSingleton().lookup_profile("staging-db-rw")
 cred = CredentialManagerSingleton().lookup_credential(profile.credential)
@@ -493,7 +493,7 @@ credential reference resolve from `$DATABASE_URL` if it isn't
 otherwise resolvable).  This is the same migration shim from
 chapter 7.
 
-### Step 4 — Replace `make setup` with `automojo provisioning apply`
+### Step 4 — Replace `make setup` with `ccai provisioning apply`
 
 The imperative setup script becomes a wrapper around the spec:
 
@@ -505,7 +505,7 @@ setup:
 	poetry install
 
 	# Everything else is declarative
-	AM_PROFILE=local-dev automojo provisioning apply --spec config/specs/spec-local-dev.yaml
+	AM_PROFILE=local-dev ccai provisioning apply --spec config/specs/spec-local-dev.yaml
 ```
 
 Two lines of toolchain installation; one line of declarative
@@ -521,7 +521,7 @@ The new fresh-checkout sequence is two commands:
 git clone <repo>
 cd <repo>
 make setup
-AM_PROFILE=local-dev automojo testbase test run
+AM_PROFILE=local-dev ccai testbase test run
 ```
 
 That's it.  No `.env.local`, no README scavenger hunt, no
@@ -538,7 +538,7 @@ The README's "you might also need to..." section, after migration:
 > *Fresh checkout?*
 > *— Install asdf or mise (one-time machine setup)*
 > *— Run `make setup`*
-> *— Run `automojo testbase test run --profile local-dev`*
+> *— Run `ccai testbase test run --profile local-dev`*
 
 Three lines.  None of them are tribal knowledge.  None of them
 will silently rot when the seventh dependency shifts.  Each line
@@ -596,7 +596,7 @@ The local-dev profile *replaces* the `.env.local` content.  The
 values in the profile are the same values the developer had in
 `.env.local` (or in their direnv, or in their shell history).  No
 behaviour change — only a behaviour *naming* change.  The first
-run of `AM_PROFILE=local-dev automojo testbase test run` produces
+run of `AM_PROFILE=local-dev ccai testbase test run` produces
 the same results as the previous `pytest` invocation against
 `.env.local`.
 
@@ -631,7 +631,7 @@ files; the toolchain-management uses are unaffected.
 ### Not "one tool to rule them all"
 
 The chapter has not proposed that every team adopt
-`automojo-*` packages exclusively.  The *discipline* of typed
+`codecraftai-*` packages exclusively.  The *discipline* of typed
 configuration is portable; teams that prefer different
 implementations of the same pattern (Pydantic Settings, dynaconf,
 Hydra) can apply the same discipline using their preferred

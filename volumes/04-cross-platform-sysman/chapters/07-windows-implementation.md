@@ -9,7 +9,7 @@
 > scoping, no-masking aliasing — Windows brings its own set
 > of quirks the contract layer absorbs.*
 
-`automojo-sysman-windows` ships 49 features and 45 test
+`codecraftai-sysman-windows` ships 49 features and 45 test
 files.  Like macOS, the package follows the shared-base
 pattern with `Windows`-prefixed types throughout.  Unlike
 macOS, the Windows package is *uniformly* PowerShell-driven
@@ -19,7 +19,7 @@ expression as its argv.
 ## Layout
 
 ```
-automojo-sysman-windows/source/packages/automojo/sysman/windows/
+codecraftai-sysman-windows/source/packages/ccai/sysman/windows/
 ├── __init__.py
 ├── packagemanagement.py        # winget
 ├── servicemanagement.py        # Get/Start/Stop/Set-Service
@@ -282,7 +282,7 @@ modifying state.
 # When add_service is called for service "ssh" in zone "Private":
 ps_cmd = """
 New-NetFirewallRule
-    -DisplayName 'automojo-svc-ssh'
+    -DisplayName 'codecraftai-svc-ssh'
     -Profile Private
     -LocalPort 22 -Protocol TCP
     -Action Allow
@@ -291,14 +291,14 @@ New-NetFirewallRule
 
 Rules created by the manager are prefixed:
 
-- `automojo-svc-<service>` for service-based rules.
-- `automojo-port-<port>-<protocol>` for explicit port
+- `codecraftai-svc-<service>` for service-based rules.
+- `codecraftai-port-<port>-<protocol>` for explicit port
   rules.
 
 The prefix lets the manager:
 
 - Query "is this service enabled?" by listing rules whose
-  DisplayName starts with `automojo-svc-`.
+  DisplayName starts with `codecraftai-svc-`.
 - Avoid conflicts with rules created by Group Policy or
   the user via the GUI.
 
@@ -309,7 +309,7 @@ ssh (22/tcp), http (80/tcp), https (443/tcp), smtp
 ## Convention 6 — the elevation-blocked check
 
 **File:** referenced from
-`automojo-sysman-common/specs/contracts/README.md:185–200`
+`codecraftai-sysman-common/specs/contracts/README.md:185–200`
 
 Convention 6: *the Windows `LocalCommandRunner` pre-detects
 elevation status*.  When a manager passes `elevated=True`
@@ -411,7 +411,7 @@ the manager produces it.
 ## What's next
 
 Chapter 8 walks the UEFI implementation
-(`automojo-sysman-uefi`) — 5 features intentionally minimal,
+(`codecraftai-sysman-uefi`) — 5 features intentionally minimal,
 single-tier dispatch where each manager detects the host OS
 once and routes verbs through host-specific private methods,
 the `override_host_os` config field as testability

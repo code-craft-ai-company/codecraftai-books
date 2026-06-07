@@ -30,7 +30,7 @@ the workflow easier in production.
 
 The structured-data debugging story in this chapter is the
 story of an *integration* run — a run driven by
-`IntegratedTestJob` (in `automojo-integration-runtime`).  Plain
+`IntegratedTestJob` (in `codecraftai-integration-runtime`).  Plain
 `testbase` runs standalone and records only to **stdout** (its
 default recorder is `StdoutResultRecorder`); it has no presence
 folder, no `RuntimeVariables`, and no on-disk results-directory
@@ -40,7 +40,7 @@ CI/build metadata are all the responsibility of
 `IntegratedTestJob`, which overrides three `TestJob` provider
 hooks: `_create_output_context()` returns `RuntimeOutputContext`
 (artefacts land under the activated app's well-known presence
-folder via `automojo.thisapp.paths` — activation-gated),
+folder via `ccai.thisapp.paths` — activation-gated),
 `_create_run_metadata()` returns `RuntimeRunMetadata` (build /
 pipeline / job from `RuntimeVariables`), and `_create_recorder()`
 returns `JsonResultRecorder` (JSOS streaming plus the rendered
@@ -144,7 +144,7 @@ And the failure record:
     "traceback": [
       "  File \"tests/test_quorum.py\", line 87",
       "    wait_for_quorum(cluster, timeout=60)",
-      "  File \"automojo/agentkit/cluster.py\", line 142, in wait_for_quorum",
+      "  File \"ccai/agentkit/cluster.py\", line 142, in wait_for_quorum",
       "    raise TimeoutError(...)"
     ]
   },
@@ -274,7 +274,7 @@ debugging.
 ## Reference: the six-pass landscaping audit
 
 The portfolio's history includes a six-pass audit of
-`automojo-landscaping` that fixed 15+ silent runtime bugs.
+`codecraftai-landscaping` that fixed 15+ silent runtime bugs.
 The audits are real production-grade examples of the
 audit-diary pattern at scale.  The commits:
 

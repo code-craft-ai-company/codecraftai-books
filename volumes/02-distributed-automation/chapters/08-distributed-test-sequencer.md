@@ -20,7 +20,7 @@ the design to chapter 2's determinism commitment.
 
 ## Class declaration
 
-**File:** `automojo-testplus/source/packages/automojo/testplus/distributedtestsequencer.py:33`
+**File:** `codecraftai-testplus/source/packages/ccai/testplus/distributedtestsequencer.py:33`
 
 ```python
 class DistributedTestSequencer(TestSequencer):
@@ -50,7 +50,7 @@ Two things to notice:
 1. The class extends `TestSequencer` directly.  It does not
    override the test-execution loop.  The base sequencer's
    `execute_tests()` (in
-   `automojo-testbase/source/packages/automojo/testbase/sequencing/testsequencer.py:412`)
+   `codecraftai-testbase/source/packages/ccai/testbase/sequencing/testsequencer.py:412`)
    walks tests in declaration order, one at a time, exactly as
    the single-host version does.
 2. The constructor adds one new instance variable:

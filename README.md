@@ -1,19 +1,19 @@
-# automojo-books
+# codecraftai-books
 
 Planning and drafting workspace for the book series drawn from the
-`automojo-*` software portfolio.
+`codecraftai-*` software portfolio.
 
 This repo is a sibling of the code repositories at
-`/Users/myron/repos/automojo/`.  It holds:
+`/Users/myron/repos/ccai/`.  It holds:
 
-- [`automojo-volumes.md`](automojo-volumes.md) — the foundation document
+- [`codecraftai-volumes.md`](codecraftai-volumes.md) — the foundation document
   detailing every volume, the chapter-level table of contents, audience,
   cross-references, and source-material notes.  Start here for the
   full series picture.
 
 As volumes move from planning into drafting, each forks into its own
 working directory under `volumes/<NN-volume-name>/`.  The master
-`automojo-volumes.md` stays the single source of truth for cross-volume
+`codecraftai-volumes.md` stays the single source of truth for cross-volume
 structure.
 
 ## Volume index
@@ -23,7 +23,7 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 
 | Vol | Title | Subtitle | Status |
 |----:|-------|----------|--------|
-| **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/) | The AutomationX Discipline and the Foundation Tier | **drafted** |
+| **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/) | The CodeCraftX Discipline and the Foundation Tier | **drafted** |
 | **1** | [**Building a Test Framework**](volumes/01-test-framework/) | testbase, arcli, and Single-Host Test Infrastructure | **drafted** |
 | **2** | [**Distributed Automation**](volumes/02-distributed-automation/) | The TestJob Inheritance Chain and Multi-Host Test Execution | **drafted** |
 | **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
@@ -32,7 +32,7 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
 | **7** | [**Building an AI Agent SDK**](volumes/07-ai-agent-sdk/) | Lifecycle, Tools, Memory, and Observability for Production Agents | **drafted** |
 | **8** | [**Time-Travel Debugging in Production**](volumes/08-timetravel-debugging/) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | **drafted** |
-| App. | [Operating an Automojo Subscription Platform](automojo-volumes.md#appendix-volume--operating-an-automojo-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+| App. | [Operating an Code Craft AI Subscription Platform](codecraftai-volumes.md#appendix-volume--operating-an-codecraftai-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
 
 ### Volume 8 — drafted
 
@@ -54,7 +54,7 @@ Volume 7 is fully drafted in [`volumes/07-ai-agent-sdk/`](volumes/07-ai-agent-sd
 | I — Foundations | 1, 2, 3 | SDK vs framework; multi-provider LLM; tool design |
 | II — State and Flow | 4, 5, 6 | Memory architecture; workflow orchestration; observability |
 | III — Discipline | 7, 8 | Mock-first testing (305 files); property tests at scale (72 files) |
-| IV — Worked Example | 9 | Agent that uses the rest of the automojo portfolio |
+| IV — Worked Example | 9 | Agent that uses the rest of the ccai portfolio |
 
 ### Volume 4 — drafted
 
@@ -72,7 +72,7 @@ Volume 5 is fully drafted in [`volumes/05-interop-and-protocols/`](volumes/05-in
 
 | Part | Chapters | Theme |
 |---|---|---|
-| I — Philosophy and Foundation | 1, 2, 3 | Measured Interoperability; the Aspects pattern; `automojo-interop` survey |
+| I — Philosophy and Foundation | 1, 2, 3 | Measured Interoperability; the Aspects pattern; `codecraftai-interop` survey |
 | II — Worked Protocols | 4, 5, 6, 7 | SSH from scratch; networking primitives; REST foundations; the auto-generated GitHub client |
 | III — Extensions | 8, 9 | UPnP / Tasker / Bluetooth / CAN; recipe for your own |
 
@@ -111,9 +111,9 @@ Volume 1 is fully drafted in [`volumes/01-test-framework/`](volumes/01-test-fram
 | 5 | Streaming JSOS results (JSON Separated Object Stream) |
 | 6 | The `testbase agents` machine-readable CLI (`summary`, `testresult`, `config`) |
 | 7 | Mocking and stubbing — testbase's bespoke `Mock` / `SpecViolationError` / `SideEffect` |
-| 8 | `arcli` — the declarative CLI toolkit underneath every `automojo-*` CLI |
+| 8 | `arcli` — the declarative CLI toolkit underneath every `codecraftai-*` CLI |
 | 9 | Single-host landscape contract — the boundary Volume 2 extends |
-| 10 | Case study: the `automojo-agent-kit` 3,700-test single-host suite |
+| 10 | Case study: the `codecraftai-agent-kit` 3,700-test single-host suite |
 
 ### Volume 3 — drafted
 
@@ -132,10 +132,10 @@ Drafting reading order: start at the volume directory's [`README.md`](volumes/03
 
 ## Conventions
 
-- The series narrator is the `AutomationX` Principal-SWE persona used
+- The series narrator is the `CodeCraftX` Principal-SWE persona used
   across the portfolio's `AGENTS.md` files.
 - Every claim is anchored on a concrete file:line reference into one
-  of the `automojo-*` source repositories.
+  of the `codecraftai-*` source repositories.
 - Audit transcripts captured under `volumes/<vol>/case-studies/` become
   appendix material for the relevant volume.
 - Markdown throughout for chapter content; YAML / Python / shell in

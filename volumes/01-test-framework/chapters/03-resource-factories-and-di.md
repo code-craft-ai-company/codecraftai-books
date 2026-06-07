@@ -80,7 +80,7 @@ lives in a *factory module* — typically
 decorated with one of three registrations:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/declaration/registrations.py:45–93
+# codecraftai-testbase/source/packages/ccai/testbase/declaration/registrations.py:45–93
 
 def integration_factory(scope: ResourceLifespan = ResourceLifespan.Session):
     """
@@ -109,7 +109,7 @@ The three families:
 
 The decorator does not *modify* the function; it registers the
 function with `InjectionRegistry`
-(`automojo-testbase/source/packages/automojo/testbase/injection/injectionregistry.py`).
+(`codecraftai-testbase/source/packages/ccai/testbase/injection/injectionregistry.py`).
 This is the Volume 0 chapter 2 discipline: decorators that
 register, not decorators that wrap.  When `func` is called,
 nothing about its body has been altered.  Per Volume 0 the
@@ -119,7 +119,7 @@ behaviour modification.
 ## Lifespan: when the resource is created and destroyed
 
 `ResourceLifespan` is an enum
-(`automojo-testbase/source/packages/automojo/testbase/resourcelifespan.py`)
+(`codecraftai-testbase/source/packages/ccai/testbase/resourcelifespan.py`)
 with three values:
 
 - **Session** — created once at the start of the run, destroyed
@@ -173,7 +173,7 @@ is also the way to signal `StopIteration` cleanly.
 A test asks for a resource by attaching a parameter:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/declaration/attachments.py
+# codecraftai-testbase/source/packages/ccai/testbase/declaration/attachments.py
 
 @testbase.attach.parameter(db_session, identifier="db")
 def test_some_query(db):
@@ -211,14 +211,14 @@ distinction trips people up at first:
 - **`parameter()`** — module-level call (not a decorator)
   that creates a *global* parameter from an originator.  Lives
   in
-  `automojo-testbase/source/packages/automojo/testbase/declaration/originations.py:31–92`.
+  `codecraftai-testbase/source/packages/ccai/testbase/declaration/originations.py:31–92`.
   Useful when many tests in a package will need the same
   parameter, and you don't want to repeat the `@attach`
   decoration on each.
 - **`@testbase.attach.parameter(...)`** — decorator on a single
   test (or on a `TestGroup` to apply to all tests under it).
   Lives in
-  `automojo-testbase/source/packages/automojo/testbase/declaration/attachments.py`.
+  `codecraftai-testbase/source/packages/ccai/testbase/declaration/attachments.py`.
   Useful for per-test attachments.
 
 The trap: `parameter()` is *not* a decorator.  Calling
@@ -253,7 +253,7 @@ declares no retries.  Same originator; different aspects.
 ## The dependency graph
 
 During the *Graph* phase
-(`automojo-testbase/source/packages/automojo/testbase/sequencing/testsequencer.py:106–150`),
+(`codecraftai-testbase/source/packages/ccai/testbase/sequencing/testsequencer.py:106–150`),
 the sequencer walks the discovered tests and their attached
 parameters, looks up each originator in the injection registry,
 and constructs a directed acyclic graph where:
@@ -337,7 +337,7 @@ Walking the path concretely.  Suppose a test author writes:
 ```python
 # tests/billing/test_invoice.py
 import testbase
-from automojo.billingkit.factories import db_session, billing_runtime
+from ccai.billingkit.factories import db_session, billing_runtime
 
 @testbase.attach.parameter(db_session, identifier="db")
 @testbase.attach.parameter(billing_runtime, identifier="runtime")

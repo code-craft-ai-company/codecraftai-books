@@ -12,8 +12,8 @@ of mechanisms by which flow control becomes data in the YAML and
 behaviour at runtime.
 
 The
-[`FlowEngine`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/flowengine.py)
-class shipped in `automojo-taskplus` is small — under a hundred
+[`FlowEngine`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
+class shipped in `codecraftai-taskplus` is small — under a hundred
 lines.  It implements three flow-control mechanisms:
 
 1. **The `if_expr` gate** — conditional inclusion of a node.
@@ -30,7 +30,7 @@ is the source of truth for how the workflow behaves.
 ## The engine's outer loop
 
 The shipped
-[`FlowEngine.execute`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/flowengine.py)
+[`FlowEngine.execute`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
 method is the outermost layer.  It runs once per workflow
 invocation:
 
@@ -629,7 +629,7 @@ behaviour rather than papering over it.
 ## Summary
 
 - The
-  [`FlowEngine`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/flowengine.py)
+  [`FlowEngine`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
   is a small (~100 LOC) sequential engine implementing three
   flow-control mechanisms: the `if_expr` gate, the
   `onfailure`/`onsuccess` label jump, and the recursive

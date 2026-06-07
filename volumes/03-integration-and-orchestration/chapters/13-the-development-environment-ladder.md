@@ -33,7 +33,7 @@ portfolio has solid building blocks for the profile discipline —
 `override_variable_value`, `MergeMap`, `AppVarSet`, `ContextPaths`,
 `get_variable_value`, the existing five `AM_CONFIG_*_NAMES`
 descriptors — but does not yet ship the *user-facing tooling* a
-profile system needs (no `automojo profile show` CLI, no
+profile system needs (no `ccai profile show` CLI, no
 `profile diff` command, no file-level `extends:`/`overlay:` syntax,
 no captured-profile-replay mechanism).
 
@@ -363,7 +363,7 @@ test:
   variables:
     AM_PROFILE: "integration-ci"
   script:
-    - automojo testbase test run tests/test_user_lifecycle.py
+    - ccai testbase test run tests/test_user_lifecycle.py
 ```
 
 The relevant configurations:
@@ -437,7 +437,7 @@ the engineer types
 
 ```bash
 AM_PROFILE=prod-readonly INCIDENT_TICKET=INC-12345 \
-    automojo testbase test run tests/test_user_fetch_only.py
+    ccai testbase test run tests/test_user_fetch_only.py
 ```
 
 and the same machinery loads the prod-readonly profile, fetches a
@@ -547,24 +547,24 @@ chapters build on.  Each chapter cites the building blocks it
 extends:
 
 - **`override_variable_value`**
-  ([`automojo-this-app/.../thisapplication.py`](../../../automojo-this-app/source/packages/automojo/thisapp/thisapplication.py))
+  ([`codecraftai-this-app/.../thisapplication.py`](../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py))
   — the primitive for runtime variable overrides.  Chapter 14 uses
   it to implement profile composition.
 - **`MergeMap`**
-  ([`automojo-xmodules/.../mergemap.py`](../../../automojo-xmodules/source/packages/automojo/xmodules/xcollections/mergemap.py))
+  ([`codecraftai-xmodules/.../mergemap.py`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py))
   — the primitive for layered configuration with overlay
   semantics.  Chapter 14 uses it to implement file-level profile
   composition.
 - **`AppVarSet`**
-  ([`automojo-this-app/.../appvarset.py`](../../../automojo-this-app/source/packages/automojo/thisapp/appvarset.py))
+  ([`codecraftai-this-app/.../appvarset.py`](../../../codecraftai-this-app/source/packages/ccai/thisapp/appvarset.py))
   — iterating the active descriptor set.  Chapter 14 uses it as
-  the basis for the proposed `automojo profile show` CLI command.
+  the basis for the proposed `ccai profile show` CLI command.
 - **`ContextPaths`**
-  ([`automojo-this-app/.../contextpaths.py`](../../../automojo-this-app/source/packages/automojo/thisapp/contextpaths.py))
+  ([`codecraftai-this-app/.../contextpaths.py`](../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py))
   — the well-known-path enumeration where active configurations
   live.  Chapter 14 proposes adding `ACTIVE_PROFILE` here.
 - **`AM_*_NAMES`**
-  ([`automojo-configuration/.../configurationvariables.py`](../../../automojo-configuration/source/packages/automojo/configuration/configurationvariables.py))
+  ([`codecraftai-configuration/.../configurationvariables.py`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py))
   — the existing five environment-variable selectors for the
   configuration categories.  Chapter 14 extends the family with
   the proposed `AM_PROFILE`.
@@ -583,7 +583,7 @@ of the discipline.
   mechanics: a profile is a named bundle of category selections;
   profiles compose via overlay (`base.yaml` plus `staging.yaml`);
   selection happens at process start with `--profile staging`.
-  Proposes the `ACTIVE_PROFILE` context path and the `automojo
+  Proposes the `ACTIVE_PROFILE` context path and the `ccai
   profile show` CLI.
 - **Chapter 15 — The local-dev tax and how typed configs cancel it.**
   Walks through everything that makes a fresh checkout
@@ -633,5 +633,5 @@ of the discipline.
 
 The next chapter proposes the profile mechanism itself: what a
 profile is, how profiles compose, how selection happens at process
-start, and what the `automojo profile show` CLI command would look
+start, and what the `ccai profile show` CLI command would look
 like as an addition to the portfolio.

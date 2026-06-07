@@ -7,7 +7,7 @@
 > generation budget *match* the time the suite has to run.  This
 > chapter is about that.*
 
-Property-based testing in `automojo-testbase` is conceptually a
+Property-based testing in `codecraftai-testbase` is conceptually a
 sibling of Hypothesis — the testing library most Python engineers
 know — but with two specific adaptations for automation suites:
 
@@ -30,7 +30,7 @@ behaviour differs, the chapter calls it out explicitly.
 ## The `@given` decorator
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/properties/decorators.py:23–97
+# codecraftai-testbase/source/packages/ccai/testbase/properties/decorators.py:23–97
 
 def given(*, constraints: Optional[Dict[str, Any]] = None, **strategies: Strategy) -> Callable:
     """
@@ -87,7 +87,7 @@ finding a failure.
 ## Constraint vocabulary
 
 The constraint dict supports two keys
-(`automojo-testbase/source/packages/automojo/testbase/properties/decorators.py:42–44`):
+(`codecraftai-testbase/source/packages/ccai/testbase/properties/decorators.py:42–44`):
 
 - **`max_examples`** — integer, default 100.  How many distinct
   inputs to generate before declaring the property holds.
@@ -107,7 +107,7 @@ it — except where the runtime cap overrides.
 Here is where testbase parts company with Hypothesis.
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/properties/propertyrunner.py:47–79
+# codecraftai-testbase/source/packages/ccai/testbase/properties/propertyrunner.py:47–79
 
 ENV_MAX_EXAMPLES_CAP = "TESTBASE_MAX_EXAMPLES_CAP"
 
@@ -173,7 +173,7 @@ addresses this by deriving the per-test seed deterministically
 from the job seed:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/properties/propertyrunner.py:82–97
+# codecraftai-testbase/source/packages/ccai/testbase/properties/propertyrunner.py:82–97
 
 def derive_test_seed(job_seed: bytes, test_name: str) -> int:
     """
@@ -211,7 +211,7 @@ The properties this gives:
 
 A specific question this raises: can the test author override
 the per-test seed?  No.  Per the property runner declaration
-(`automojo-testbase/source/packages/automojo/testbase/properties/decorators.py:49`)
+(`codecraftai-testbase/source/packages/ccai/testbase/properties/decorators.py:49`)
 there is no `seed` constraint key.  The `job_seed` is the only
 seed input; the framework is the only seed deriver.  This is
 deliberate: a test that gets to override its own seed cannot be
@@ -221,7 +221,7 @@ re-baselined to a known-good run by an external operator.
 
 The runner that ties the strategies, constraints, cap, and seed
 together is `PropertyRunner`
-(`automojo-testbase/source/packages/automojo/testbase/properties/propertyrunner.py:100–120`):
+(`codecraftai-testbase/source/packages/ccai/testbase/properties/propertyrunner.py:100–120`):
 
 ```python
 class PropertyRunner:
@@ -295,7 +295,7 @@ rather than asking the originator to do it.
 ## Strategy library
 
 Testbase ships its own strategy library (under
-`automojo-testbase/source/packages/automojo/testbase/strategies/`).
+`codecraftai-testbase/source/packages/ccai/testbase/strategies/`).
 The vocabulary is similar to Hypothesis:
 
 - `integers(min_value=..., max_value=...)`

@@ -26,7 +26,7 @@ outcomes and the discipline for reporting them honestly.
 ## The four outcome categories per test
 
 The base testbase outcome enum (`ResultCode` from
-`automojo-testbase/source/packages/automojo/testbase/results/model/resultcode.py`)
+`codecraftai-testbase/source/packages/ccai/testbase/results/model/resultcode.py`)
 distinguishes the per-test states.  The four that matter for
 the per-test verdict are:
 
@@ -121,11 +121,11 @@ as a clean run.
 > The presence-folder *results directory* — the well-known
 > location these files land in, the per-host logs, and the
 > rendered HTML summary — is produced by `IntegratedTestJob`
-> (`automojo-integration-runtime`), whose `_create_recorder`
+> (`codecraftai-integration-runtime`), whose `_create_recorder`
 > returns the HTML-rendering `JsonResultRecorder` and whose
 > `_create_output_context` returns `RuntimeOutputContext`
 > (results under the activated app's presence folder via
-> `automojo.thisapp.paths`).  The honest summary *shape* below
+> `ccai.thisapp.paths`).  The honest summary *shape* below
 > is the same regardless of recorder; only its persistence is
 > the integration runtime's job.
 

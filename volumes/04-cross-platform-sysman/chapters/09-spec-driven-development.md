@@ -4,7 +4,7 @@
 > implementations.  This chapter walks the **discipline** that
 > keeps them aligned: the 11 Implementation Conventions
 > documented at
-> `automojo-sysman-common/specs/contracts/README.md:75–364`.
+> `codecraftai-sysman-common/specs/contracts/README.md:75–364`.
 > The conventions are what prevent drift across 5 OSes ×
 > ~50 features without a code generator.*
 

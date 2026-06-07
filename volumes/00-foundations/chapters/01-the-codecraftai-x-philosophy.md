@@ -1,4 +1,4 @@
-# Chapter 1 — The AutomationX Philosophy
+# Chapter 1 — The CodeCraftX Philosophy
 
 > *Software for automation is software that runs unattended, in
 > environments you can't directly observe, against systems whose
@@ -12,7 +12,7 @@ Everything that follows — across this volume and the eight
 volumes after it — rests on the philosophy established here.
 The philosophy is concrete, not abstract: a small set of
 engineering principles that have specific consequences in every
-line of code the `automojo-*` portfolio ships.
+line of code the `codecraftai-*` portfolio ships.
 
 The principles are summarised in a single block of text that
 opens every repository's `AGENTS.md` file across the portfolio:
@@ -37,16 +37,16 @@ deliberately, with consequences across thousands of lines of code.
 This chapter unpacks what each line *means in code*, so that the
 rest of the series can use them as shorthand.
 
-## Who is AutomationX?
+## Who is CodeCraftX?
 
-Throughout this series, the narrator is **AutomationX** — a
-Principal Software Engineer and Architect at Automation Mojo
+Throughout this series, the narrator is **CodeCraftX** — a
+Principal Software Engineer and Architect at Code Craft AI
 LLC.  Every repository in the portfolio's `AGENTS.md` opens with
 a description of this persona:
 
-> *AutomationX is a very creative, but very disciplined software
+> *CodeCraftX is a very creative, but very disciplined software
 > engineer that values code stability, reusability and scalability
-> over quick fixes and fast delivery.  AutomationX always keeps
+> over quick fixes and fast delivery.  CodeCraftX always keeps
 > in mind the company's goal of building a comprehensive suite of
 > foundation Python packages that are well designed, cohesive, and
 > easy to use and that provide rapid but stable results.*
@@ -55,14 +55,14 @@ The persona is not a marketing voice.  It is a *constraint
 satisfier* — a fictional engineer who consistently applies the
 philosophy above and reaches the same conclusions every time.
 When two engineers on the same team would have disagreed about a
-design choice, AutomationX is the imagined third engineer who
+design choice, CodeCraftX is the imagined third engineer who
 applies the philosophy, lands the choice, and moves on.  The
 persona shows up in the portfolio's `AGENTS.md` files because
 the philosophy needs a *consistent* voice to apply it; the same
 discipline ten people apply produces ten subtly different
 codebases unless an authority figure resolves the disagreements.
 
-The series's prose is in the voice of AutomationX as well, for
+The series's prose is in the voice of CodeCraftX as well, for
 the same reason.  An automation platform built by ten teams
 applying their own preferences produces a platform that's hard to
 learn.  An automation platform built by ten teams applying *the
@@ -141,7 +141,7 @@ def add_item(item, items=[]):
 
 The `items=[]` default is a *single list shared across every
 invocation* — the canonical Python footgun.  Every codebase in
-the foundation tier checks for this; the AutomationX persona
+the foundation tier checks for this; the CodeCraftX persona
 catches it during code review every time.  The right form:
 
 ```python
@@ -183,7 +183,7 @@ trade-off the philosophy is consistent about.
 
 ### Explicit `return` statements
 
-Volume 3's chapter on the AutomationX coding-standards
+Volume 3's chapter on the CodeCraftX coding-standards
 discussion (chapter 2 of this volume) develops this in detail.
 The short version: every function ends in an explicit `return`,
 even when the function's "natural" return is `None`.
@@ -289,7 +289,7 @@ discipline (return values to local variables before returning)
 makes the change visible in code review.
 
 The portfolio's git history shows this discipline at work.  When
-`automojo-errors` renamed `NotOverloadedError` to
+`codecraftai-errors` renamed `NotOverloadedError` to
 `AbstractMethodError`, the impact across the portfolio was
 mechanical: every import was updated, every raise site was
 updated, no semantic change in any caller.  The named-import
@@ -379,7 +379,7 @@ Every later volume references it and every chapter that says
 > the organization customises and refines them to meet the needs
 > of the automation scenarios.*
 
-This is the *meta-thesis* of the `automojo-*` portfolio.  It
+This is the *meta-thesis* of the `codecraftai-*` portfolio.  It
 explains why so much of the framework's surface is "left to the
 organisation":
 
@@ -403,7 +403,7 @@ organisation":
   adds the protocols their automation actually needs.
 - Tandem validators — the framework supplies the `Validator`
   base class (in
-  `automojo-testbase/source/packages/automojo/testbase/tandem/`)
+  `codecraftai-testbase/source/packages/ccai/testbase/tandem/`)
   and the attachment mechanism; the organisation writes the
   validators that watch the system states their tests care
   about.
@@ -506,8 +506,8 @@ the code shaped this way?" — the answer is in this chapter.
 
 ## Summary
 
-- The AutomationX philosophy is **ten engineering principles**
-  that govern the `automojo-*` portfolio.  Each principle has
+- The CodeCraftX philosophy is **ten engineering principles**
+  that govern the `codecraftai-*` portfolio.  Each principle has
   concrete code-level consequences enforced through code review.
 - **Debuggability is paramount** is the most important principle.
   When two principles conflict, debuggability wins.  Every choice
@@ -533,7 +533,7 @@ the code shaped this way?" — the answer is in this chapter.
   and not a litmus test.  It is a *consistent set of opinionated
   choices*; the consistency is what produces a portfolio whose
   conventions transfer across packages.
-- The narrator of the series — **AutomationX** — is the persona
+- The narrator of the series — **CodeCraftX** — is the persona
   that consistently applies the philosophy.  The persona's voice
   carries the conventions; the conventions carry the platform.
 

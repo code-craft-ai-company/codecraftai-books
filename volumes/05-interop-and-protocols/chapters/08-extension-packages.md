@@ -9,7 +9,7 @@
 > anchors.*
 
 The shipped extension packages cover protocols
-`automojo-interop` doesn't address directly.  They
+`codecraftai-interop` doesn't address directly.  They
 demonstrate two distinct integration patterns:
 
 - **Landscape-integrated** (UPnP, Tasker) — the protocol's
@@ -28,7 +28,7 @@ any), and a representative method.
 
 ## UPnP — landscape-integrated
 
-**Package:** `automojo-interop-ext-upnp`
+**Package:** `codecraftai-interop-ext-upnp`
 
 UPnP (Universal Plug and Play) is a service-discovery
 protocol used by media devices, IoT gear, network printers,
@@ -38,7 +38,7 @@ discovery, service enumeration, and SOAP action invocation.
 ### Layout
 
 ```
-automojo-interop-ext-upnp/source/packages/automojo/
+codecraftai-interop-ext-upnp/source/packages/ccai/
 ├── interop/
 │   ├── protocols/upnp/
 │   │   ├── model/devices/             # device classification
@@ -53,16 +53,16 @@ automojo-interop-ext-upnp/source/packages/automojo/
 
 The package straddles two namespaces:
 
-- `automojo.interop.protocols.upnp` — the UPnP protocol
+- `ccai.interop.protocols.upnp` — the UPnP protocol
   stack (no landscape dependency).
-- `automojo.landscaping.coordinators.upnp` and
-  `automojo.landscaping.extensions.protocol` — the
+- `ccai.landscaping.coordinators.upnp` and
+  `ccai.landscaping.extensions.protocol` — the
   landscape integration pieces.
 
 ### `UpnpProtocolExtension`
 
 **File:**
-`automojo-interop-ext-upnp/source/packages/automojo/landscaping/extensions/protocol/upnpprotocolextension.py:24–38`
+`codecraftai-interop-ext-upnp/source/packages/ccai/landscaping/extensions/protocol/upnpprotocolextension.py:24–38`
 
 ```python
 class UpnpProtocolExtension(UpnpRootDevice, ProtocolExtension):
@@ -122,7 +122,7 @@ REST agents.
 
 ## Tasker — distributed task coordination
 
-**Package:** `automojo-interop-ext-tasker`
+**Package:** `codecraftai-interop-ext-tasker`
 
 The Tasker protocol is a custom-shaped distributed-task
 RPC.  A *tasker controller* manages a network of *tasker
@@ -135,7 +135,7 @@ per-host result tracking).
 ### Layout
 
 ```
-automojo-interop-ext-tasker/source/packages/automojo/
+codecraftai-interop-ext-tasker/source/packages/ccai/
 ├── interop/protocols/tasker/
 │   ├── taskercontroller.py
 │   ├── taskerservice.py
@@ -157,7 +157,7 @@ Three layers of the Tasker stack:
 ### `TaskerController`
 
 **File:**
-`automojo-interop-ext-tasker/source/packages/automojo/interop/protocols/tasker/taskercontroller.py:50–75`
+`codecraftai-interop-ext-tasker/source/packages/ccai/interop/protocols/tasker/taskercontroller.py:50–75`
 
 ```python
 class TaskerController:
@@ -247,7 +247,7 @@ same dual-inheritance pattern as `UpnpProtocolExtension`.
 
 ## Bluetooth — standalone
 
-**Package:** `automojo-interop-ext-bluetooth`
+**Package:** `codecraftai-interop-ext-bluetooth`
 
 Bluetooth Low Energy via the Bumble library.  Not
 landscape-integrated; the coordinator manages its own
@@ -256,7 +256,7 @@ lifecycle.
 ### Layout
 
 ```
-automojo-interop-ext-bluetooth/source/packages/automojo/interop/bluetooth/
+codecraftai-interop-ext-bluetooth/source/packages/ccai/interop/bluetooth/
 ├── bluetoothcoordinator.py
 ├── bluetoothdevice.py
 ├── bluetoothpresence.py
@@ -267,7 +267,7 @@ automojo-interop-ext-bluetooth/source/packages/automojo/interop/bluetooth/
 ### `BluetoothCoordinator`
 
 **File:**
-`automojo-interop-ext-bluetooth/source/packages/automojo/interop/bluetooth/bluetoothcoordinator.py:10–72`
+`codecraftai-interop-ext-bluetooth/source/packages/ccai/interop/bluetooth/bluetoothcoordinator.py:10–72`
 
 ```python
 class BluetoothCoordinator:
@@ -360,7 +360,7 @@ Aspects discipline.
 
 ## CAN — standalone
 
-**Package:** `automojo-interop-ext-can`
+**Package:** `codecraftai-interop-ext-can`
 
 Controller Area Network (CAN) bus messaging via the
 `python-can` library.  Like Bluetooth, standalone and
@@ -369,7 +369,7 @@ unintegrated.
 ### Layout
 
 ```
-automojo-interop-ext-can/source/packages/automojo/interop/ext/can/
+codecraftai-interop-ext-can/source/packages/ccai/interop/ext/can/
 ├── cancoordinator.py
 ├── candevice.py
 ├── canpresence.py
@@ -380,7 +380,7 @@ automojo-interop-ext-can/source/packages/automojo/interop/ext/can/
 ### `CanCoordinator`
 
 **File:**
-`automojo-interop-ext-can/source/packages/automojo/interop/ext/can/cancoordinator.py:9–49`
+`codecraftai-interop-ext-can/source/packages/ccai/interop/ext/can/cancoordinator.py:9–49`
 
 ```python
 class CanCoordinator:
@@ -478,29 +478,29 @@ Python's namespace-package discovery.
 
 ```toml
 [tool.poetry]
-name = "automojo-interop-ext-upnp"
-packages = [{include="automojo", from="source/packages"}]
+name = "codecraftai-interop-ext-upnp"
+packages = [{include="ccai", from="source/packages"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-automojo-interop = { git = "https://github.com/automationmojo/automojo-interop.git",
+codecraftai-interop = { git = "https://github.com/automationmojo/codecraftai-interop.git",
                      branch = "main" }
-automojo-landscaping = { git = "https://github.com/automationmojo/automojo-landscaping.git",
+codecraftai-landscaping = { git = "https://github.com/automationmojo/codecraftai-landscaping.git",
                          branch = "main" }
 ```
 
-The package declares itself under the `automojo` namespace
+The package declares itself under the `ccai` namespace
 package.  When installed (via poetry / pip), Python's
 implicit namespace-package mechanism makes
-`automojo/interop/protocols/upnp/` and
-`automojo/landscaping/extensions/protocol/upnpprotocolextension.py`
+`ccai/interop/protocols/upnp/` and
+`ccai/landscaping/extensions/protocol/upnpprotocolextension.py`
 discoverable as if they were part of the framework.
 
 ### Discovery at framework startup
 
 At framework startup, the landscape coordinator scans
 installed packages for submodules under
-`automojo.landscaping.extensions.protocol`.  When it finds
+`ccai.landscaping.extensions.protocol`.  When it finds
 `UpnpProtocolExtension`, it knows to dispatch UPnP-shaped
 device declarations to that extension.
 
@@ -521,7 +521,7 @@ landscape integration (since they have none).  They're just
 ordinary Python packages that test code imports directly:
 
 ```python
-from automojo.interop.bluetooth.bluetoothcoordinator import BluetoothCoordinator
+from ccai.interop.bluetooth.bluetoothcoordinator import BluetoothCoordinator
 
 bt = BluetoothCoordinator(transport_address="usb:0")
 bt.startup()

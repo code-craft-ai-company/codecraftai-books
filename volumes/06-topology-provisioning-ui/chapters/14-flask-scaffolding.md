@@ -2,13 +2,13 @@
 
 > *Where GitLab integration was the *consumer* side of REST,
 > Flask scaffolding is the *server* side.
-> `automojo-webservice-flask` provides the patterns the
+> `codecraftai-webservice-flask` provides the patterns the
 > portfolio's website front-end uses: security-aware
 > blueprints, role-based route protection, OAuth integration
 > with eight providers, and SQLAlchemy ORM mappings.*
 
 The portfolio includes a Flask scaffolding package.  It's
-not a "framework" in the `automojo-*` sense — it's a
+not a "framework" in the `codecraftai-*` sense — it's a
 *pattern library* for building Flask web services that
 follow the portfolio's conventions: security-aware routing,
 multi-provider OAuth, SQLAlchemy ORM with auditable
@@ -22,7 +22,7 @@ what's in the package can skim the chapter.
 ## What the package provides
 
 ```
-automojo-webservice-flask/source/packages/automojo/webservice/xflask/
+codecraftai-webservice-flask/source/packages/ccai/webservice/xflask/
 ├── basesecurity.py         ← RouteSecurityManager
 ├── securityblueprint.py    ← SecurityBlueprint(Blueprint)
 ├── baseauthentication.py   ← OAuth provider enum + auth-check helpers
@@ -42,7 +42,7 @@ web service uses some or all.
 ## `SecurityBlueprint` — security-aware route registration
 
 **File:**
-`automojo-webservice-flask/source/packages/automojo/webservice/xflask/securityblueprint.py:17`
+`codecraftai-webservice-flask/source/packages/ccai/webservice/xflask/securityblueprint.py:17`
 
 ```python
 class SecurityBlueprint(Blueprint):
@@ -86,7 +86,7 @@ can't forget to register it.
 ## `RouteSecurityManager` — the access-control decision point
 
 **File:**
-`automojo-webservice-flask/source/packages/automojo/webservice/xflask/basesecurity.py:24`
+`codecraftai-webservice-flask/source/packages/ccai/webservice/xflask/basesecurity.py:24`
 
 ```python
 class RouteSecurityManager:
@@ -142,7 +142,7 @@ their own taxonomy by subclassing.
 ## OAuth integration — eight providers
 
 **File:**
-`automojo-webservice-flask/source/packages/automojo/webservice/xflask/baseauthentication.py:16`
+`codecraftai-webservice-flask/source/packages/ccai/webservice/xflask/baseauthentication.py:16`
 
 ```python
 class OauthProviderNames(str, Enum):
@@ -183,7 +183,7 @@ the endpoints; the framework supports them all.
 ## SQLAlchemy ORM — `Credential` and friends
 
 **File:**
-`automojo-webservice-flask/source/packages/automojo/webservice/xflask/baseorm.py:35`
+`codecraftai-webservice-flask/source/packages/ccai/webservice/xflask/baseorm.py:35`
 
 ```python
 class Credential(WebServiceBase, SerializableMixIn):
@@ -236,12 +236,12 @@ A project subclassing these conventions for new tables gets
 the same auditing for free.  The base mixin handles the
 boilerplate.
 
-## Distinction from `automojo-credentials`
+## Distinction from `codecraftai-credentials`
 
 A vocabulary point: this chapter's `Credential` ORM model
 in the Flask web-service is *for storing the website's
 own user passwords*.  It is *not* the same thing as the
-`automojo-credentials` package (Volume 0 chapter 10, Volume
+`codecraftai-credentials` package (Volume 0 chapter 10, Volume
 2 chapter 11), which is the runtime credential manager for
 test jobs.
 
@@ -250,12 +250,12 @@ The two coexist:
 - The website stores its users' credentials in its database
   (this chapter's `Credential` model).
 - The website's *backend* might call into other services
-  using credentials managed by `automojo-credentials` (the
+  using credentials managed by `codecraftai-credentials` (the
   framework's runtime credentials).
 
 A reader confused by overlapping vocabulary should remember:
 "`Credential` ORM" is for the website's user; "`Credential`
-in `automojo-credentials`" is for the test job's
+in `codecraftai-credentials`" is for the test job's
 authentication.  Different stores, different lifecycles,
 different concerns.
 

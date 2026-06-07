@@ -62,7 +62,7 @@ that handles JSON — without writing a parser.
 Top of the agents subcommand tree:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/__init__.py:18–28
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/__init__.py:18–28
 
 @arcli.group("agents")
 def group_testbase_agents():
@@ -129,7 +129,7 @@ Two subcommands matter most:
 ### `agents testresult list`
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/testresult/list.py
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/testresult/list.py
 ```
 
 Emits one JSON object per test, in the order the tests
@@ -152,7 +152,7 @@ filter vocabulary (Chapter 2).
 ### `agents testresult failures`
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/testresult/failures.py
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/testresult/failures.py
 ```
 
 The shortcut for the most common consumer query: "what failed."
@@ -165,7 +165,7 @@ traceback.  A representative output:
   "run_id": "20260430-153012-abc123",
   "failures": [
     {
-      "test_name": "automojo.agentkit.tests.test_invoice.test_invoice_total_includes_tax",
+      "test_name": "ccai.agentkit.tests.test_invoice.test_invoice_total_includes_tax",
       "outcome": "failed",
       "exception_type": "AssertionError",
       "exception_message": "expected Decimal('108.75'), got Decimal('100.00')",
@@ -200,7 +200,7 @@ happen, given this configuration."
 ### `agents config extract`
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/config/extract.py:32–50
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/config/extract.py:32–50
 
 @arcli.option("--config-file", required=True, help=HELP_CONFIG_FILE)
 @arcli.command("extract")
@@ -311,7 +311,7 @@ agents tree:
 ### The shared JSOS parser
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/jsosparser.py
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/jsosparser.py
 ```
 
 Every `agents` subcommand that reads the JSOS stream uses this

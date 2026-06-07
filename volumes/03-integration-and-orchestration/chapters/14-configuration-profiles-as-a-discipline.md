@@ -1,7 +1,7 @@
 # Chapter 14 — Configuration Profiles as a Discipline
 
 > *A profile is a name plus a `MergeMap`.  This chapter proposes the
-> convention that turns the existing `automojo-configuration`
+> convention that turns the existing `codecraftai-configuration`
 > machinery into a user-facing profile system.*
 
 The previous chapter established the four-environment ladder and
@@ -176,7 +176,7 @@ is a *bundled* selection, so the natural extension is one more
 environment variable that names the profile to load:
 
 ```bash
-AM_PROFILE=staging-east automojo testbase test run tests/
+AM_PROFILE=staging-east ccai testbase test run tests/
 ```
 
 When `AM_PROFILE` is set at process start, the profile resolver
@@ -187,7 +187,7 @@ mechanical:
 2. Walk the `extends:` chain to assemble the final `select:` map.
 3. For each entry in the merged `select:`, set the corresponding
    `AM_CONFIG_*_NAMES` variable by calling
-   [`override_variable_value`](../../../automojo-this-app/source/packages/automojo/thisapp/thisapplication.py)
+   [`override_variable_value`](../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py)
    on the appropriate descriptor.
 4. For each entry in the merged `overlay:`, register the patch
    with the configuration loader so that it gets composed onto the
@@ -198,7 +198,7 @@ mechanical:
 
 After step 5, control hands off to the existing configuration
 loaders.  Each `resolve_*_configuration` function in
-[`configurationmaps.py`](../../../automojo-configuration/source/packages/automojo/configuration/configurationmaps.py)
+[`configurationmaps.py`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py)
 runs unchanged — it reads the `AM_CONFIG_*_NAMES` variables the
 profile resolver just set, loads the named files, and inserts the
 results into the shared application context.
@@ -211,7 +211,7 @@ replace the loaders; it *parameterises* them.
 ## The proposed `ACTIVE_PROFILE` context path
 
 The shipped
-[`ContextPaths`](../../../automojo-this-app/source/packages/automojo/thisapp/contextpaths.py)
+[`ContextPaths`](../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py)
 enumeration has slots for `JOB_ID`, `JOB_NAME`, `PIPELINE_ID`,
 `RUN_ID`, and similar process-identity fields.  It does not have
 a slot for the active profile name.  Adding one is a one-line
@@ -244,7 +244,7 @@ than leaving it as just an environment variable:
   name in a known location makes the audit trail richer without
   expanding the search surface.
 
-## The proposed `automojo profile show` CLI
+## The proposed `ccai profile show` CLI
 
 The single most-asked question once the profile system is in
 place is: *what is the resolved configuration of the active
@@ -256,7 +256,7 @@ proposes one.
 The proposed command:
 
 ```bash
-automojo profile show
+ccai profile show
 ```
 
 Output (for `AM_PROFILE=local-dev`):
@@ -329,8 +329,8 @@ class ProfileShowCommand(Command):
         # ... dump selections, overlays, variables, files
 ```
 
-The command lives in the `automojo` CLI tree alongside the existing
-`automojo testbase`, `automojo am-interop` commands.  The
+The command lives in the `ccai` CLI tree alongside the existing
+`ccai testbase`, `ccai am-interop` commands.  The
 implementation is roughly a hundred lines and reuses
 `AppVarSet.items()` plus the chapter-9 redacting filter to
 produce the variables section safely.
@@ -581,15 +581,15 @@ A second selection mechanism — the CLI flag — is convenient for
 ad-hoc runs:
 
 ```bash
-automojo testbase test run --profile staging-east tests/
+ccai testbase test run --profile staging-east tests/
 ```
 
 The `--profile` flag is sugar for `AM_PROFILE=staging-east`.
-Implementation: every `automojo` CLI command's argument-parsing
+Implementation: every `ccai` CLI command's argument-parsing
 intercepts `--profile` before any command-specific parsing,
 sets `os.environ["AM_PROFILE"]`, and then runs the rest of the
 command normally.  The shipped
-[`arcli`](../../../automojo-arcli/source/packages/automojo/arcli/)
+[`arcli`](../../../codecraftai-arcli/source/packages/ccai/arcli/)
 machinery already supports global flags of this shape; adding
 `--profile` is a small extension to the CLI tree's root.
 
@@ -601,12 +601,12 @@ prefer the flag.  Both work.
 
 ## Profile diff: the natural follow-on tool
 
-Once `automojo profile show` exists, the next-most-asked question
+Once `ccai profile show` exists, the next-most-asked question
 is: *what is the difference between two profiles?*  The proposed
-`automojo profile diff` command answers it:
+`ccai profile diff` command answers it:
 
 ```bash
-automojo profile diff staging-east staging-east-canary
+ccai profile diff staging-east staging-east-canary
 ```
 
 Output:
@@ -682,9 +682,9 @@ just needs the team to draw the line.
 - The proposed `ContextPaths.ACTIVE_PROFILE` slot holds the
   resolved profile name.  Distributed orchestrations propagate it
   to remote workers; logging frameworks pick it up automatically.
-- The proposed `automojo profile show` CLI command answers the
+- The proposed `ccai profile show` CLI command answers the
   most-asked operational question — *what is the resolved
-  configuration of this run?*  The proposed `automojo profile
+  configuration of this run?*  The proposed `ccai profile
   diff` command answers the second-most-asked question — *what
   changed between two profiles?*
 - The four-file worked example (`base`, `local-dev`,

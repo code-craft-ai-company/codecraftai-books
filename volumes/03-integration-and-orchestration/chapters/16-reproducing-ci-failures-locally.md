@@ -70,7 +70,7 @@ The proposed primitive: a CLI command that emits a snapshot of
 every resolved configuration value at a given moment in a run.
 
 ```bash
-automojo profile capture --output ci-failure-snapshot.json
+ccai profile capture --output ci-failure-snapshot.json
 ```
 
 Output (the snapshot file):
@@ -176,8 +176,8 @@ integration-test:
   variables:
     AM_PROFILE: "integration-ci"
   script:
-    - automojo testbase test run tests/ || (
-        automojo profile capture --output failure-snapshot.json
+    - ccai testbase test run tests/ || (
+        ccai profile capture --output failure-snapshot.json
         && exit 1
       )
   artifacts:
@@ -209,7 +209,7 @@ historical reasons (the `flaky-tests` dashboard, the
 ```yaml
 integration-test:
   script:
-    - automojo testbase test run-with-capture tests/ \
+    - ccai testbase test run-with-capture tests/ \
         --capture-output ./snapshots/integration-ci-${CI_JOB_ID}.json
 ```
 
@@ -224,10 +224,10 @@ For incident response, an on-call engineer can capture the active
 profile of a *running* orchestration on a remote host:
 
 ```bash
-automojo profile capture --remote ssh://runner-1.staging.east.internal --output now.json
+ccai profile capture --remote ssh://runner-1.staging.east.internal --output now.json
 ```
 
-Implementation: the remote `automojo profile capture` runs in the
+Implementation: the remote `ccai profile capture` runs in the
 target process's context (which requires the orchestration to
 expose a small introspection RPC, similar to Volume 8's
 time-travel debugging hooks).  This pattern is more complex and
@@ -239,7 +239,7 @@ completeness.
 The matching command on the developer side:
 
 ```bash
-automojo testbase test run --replay-profile failure-snapshot.json tests/
+ccai testbase test run --replay-profile failure-snapshot.json tests/
 ```
 
 The `--replay-profile` flag tells the orchestration's startup:
@@ -348,7 +348,7 @@ Falsifying example: integers=[-3, -1, -2]
 The developer pulls the branch and runs:
 
 ```bash
-automojo testbase test run --profile local-dev tests/test_property.py
+ccai testbase test run --profile local-dev tests/test_property.py
 ```
 
 The local-dev runtime profile sets `TESTBASE_MAX_EXAMPLES_CAP=5`
@@ -374,7 +374,7 @@ The developer downloads the failure snapshot from the CI job's
 artifacts and runs:
 
 ```bash
-automojo testbase test run --replay-profile failure-snapshot.json tests/test_property.py
+ccai testbase test run --replay-profile failure-snapshot.json tests/test_property.py
 ```
 
 The replay:
@@ -510,9 +510,9 @@ but not the *state of the world*.  The discipline:
 The capture and replay primitives together are roughly two
 hundred lines of Python:
 
-- `automojo profile capture`: ~70 lines (walk `AppVarSet.items()`,
+- `ccai profile capture`: ~70 lines (walk `AppVarSet.items()`,
   serialise the configuration maps, apply redaction, write JSON).
-- `automojo testbase test run --replay-profile`: ~80 lines (parse
+- `ccai testbase test run --replay-profile`: ~80 lines (parse
   the snapshot, override variables, register overlays, swap in
   local credentials, hand off to the existing test runner).
 - The CI-side capture-on-failure wrapper: ~10 lines of bash per
@@ -532,13 +532,13 @@ provides.  The new tooling is small.
   random seeds, landscape entries, credentials, data fixtures.
   Six of the eight are *configuration differences*; the
   discipline reproduces them faithfully via replay.
-- The **capture primitive** (`automojo profile capture`) emits a
+- The **capture primitive** (`ccai profile capture`) emits a
   JSON snapshot of every resolved configuration value at a moment
   in a run.  Includes resolved variables, configuration content
   per category, credential metadata with secrets redacted, and
   capture provenance (CI run, commit, vendor).
 - The **replay primitive**
-  (`automojo testbase test run --replay-profile <file>`) reads a
+  (`ccai testbase test run --replay-profile <file>`) reads a
   snapshot, applies variable overrides, registers
   configuration overlays, re-resolves redacted credentials
   against the local backend roster, and runs the orchestration

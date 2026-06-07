@@ -222,7 +222,7 @@ execution within each job.
 
 Chapter 10 walks the **provisioning** layer that produces
 Landscapes and Topologies from Specifications.  The chapter
-is honest about the current state: `automojo-provisioning` is
+is honest about the current state: `codecraftai-provisioning` is
 in scaffolding stage — the abstract `CloudProvisioner` is
 empty, the AWS / Azure / GCP backends are stub subclasses,
 the `ProvisioningEngine` parses YAML but doesn't yet

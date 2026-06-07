@@ -26,7 +26,7 @@ The server's data model has three nested concepts:
 - A **capture** is a single recording artefact — a `.bin` file
   produced by one portal activation.  In the MCP path
   (`pod/remote/mcpserver.py:373-398`), captures are the
-  per-session files in `/tmp/automojo_session_<id>/`.  On the
+  per-session files in `/tmp/ccai_session_<id>/`.  On the
   server, captures are addressable through the storage
   backend's reference; their relationship to trace sessions is
   one-to-many.
@@ -52,7 +52,7 @@ which the current implementation does not provide.
 ## 6.2 The credential lifecycle
 
 The credential store
-(`automojo-timetravel-server/source/packages/automojo/timetravelserver/persistence/credential_store.py:10`)
+(`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/persistence/credential_store.py:10`)
 is the layer that manages credentials end-to-end.  Five
 operations:
 
@@ -180,7 +180,7 @@ requirements, and overrides
 ## 6.4 The trace session manager
 
 `DebugSessionManager`
-(`automojo-timetravel-server/source/packages/automojo/timetravelserver/debugcontrol/session_manager.py:12`)
+(`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/debugcontrol/session_manager.py:12`)
 is the server-side surface for managing trace sessions.  Its
 operations:
 
@@ -296,7 +296,7 @@ deployments.
 ## 6.7 The analysis tier
 
 The analysis tier
-(`automojo-timetravel-server/source/packages/automojo/timetravelserver/tracedata/`)
+(`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/tracedata/`)
 is the suite of modules that turn a deserialised event stream
 into the structures an operator's queries return.  Six modules,
 all internally consistent, all unit-tested.
@@ -454,9 +454,9 @@ text substring), then sort, then page.  An operator query
 ## 6.8 The REST API as designed
 
 Layer S5 specs the HTTP surface that exposes everything
-above to operators and tools.  The `automojo-webworks`
+above to operators and tools.  The `codecraftai-webworks`
 blueprint pattern is in place
-(`automojo-timetravel-server/source/site/`); the routes
+(`codecraftai-timetravel-server/source/site/`); the routes
 register; OpenAPI documentation renders.  The endpoint set is:
 
 - `GET /processes` — list registered processes with pagination,

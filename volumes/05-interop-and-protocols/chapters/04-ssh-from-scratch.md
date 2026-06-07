@@ -1,15 +1,15 @@
 # Chapter 4 — SSH from Scratch
 
 > *Most projects use the paramiko-wrapping SSH agent in
-> `automojo-interop`.  But the portfolio also ships a *from-
-> scratch* SSH implementation in `automojo-protocol-ssh` —
+> `codecraftai-interop`.  But the portfolio also ships a *from-
+> scratch* SSH implementation in `codecraftai-protocol-ssh` —
 > packets up to agents, no paramiko.  This chapter walks that
 > stack as the volume's worked example of Measured
 > Interoperability applied to a substantial protocol all the
 > way down.*
 
 A reader has two reasons to care about
-`automojo-protocol-ssh`:
+`codecraftai-protocol-ssh`:
 
 1. **Pedagogical**: the package shows what a full Measured
    Interoperability protocol looks like end to end, from
@@ -44,7 +44,7 @@ Layer 1 — Packets                 (sshpacket.py)
 ```
 
 The package's file count by layer (from
-`automojo-protocol-ssh/source/packages/automojo/protocols/ssh/`):
+`codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/`):
 
 - `sshpacket.py` — 132 lines.
 - `sshtransport.py` — 685 lines.
@@ -196,7 +196,7 @@ class SshTransport(threading.Thread):
 
 `connect()` at line 78 drives the SSH handshake:
 
-1. Send the version banner (`SSH-2.0-automojo`).
+1. Send the version banner (`SSH-2.0-ccai`).
 2. Receive the server's banner.
 3. Send a `KEXINIT` proposing algorithm sets.
 4. Receive the server's `KEXINIT`.
@@ -829,7 +829,7 @@ paramiko-wrapping as the *production* default.
 
 ## What the next chapter does
 
-Chapter 5 walks `automojo-networking` — the foundation
+Chapter 5 walks `codecraftai-networking` — the foundation
 utilities for DNS resolution, ARP table queries, multicast /
 unicast / broadcast socket handling.  Where this chapter
 walked one substantial protocol in depth, chapter 5 walks the

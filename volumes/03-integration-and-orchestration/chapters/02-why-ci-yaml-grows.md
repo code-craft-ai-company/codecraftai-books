@@ -194,7 +194,7 @@ introduces them in turn.
 
 ## Why this matters even if you keep using vendor YAML
 
-A reader who finishes Volume 3 may not adopt `automojo-taskplus` — and
+A reader who finishes Volume 3 may not adopt `codecraftai-taskplus` — and
 that's fine.  The discipline does not depend on the toolkit.  The
 discipline says:
 

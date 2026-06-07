@@ -2,12 +2,12 @@
 
 > *GitHub's public REST API has hundreds of endpoints.
 > Hand-writing a client for it is infeasible.
-> `automojo-restclient-github-public` is the worked example of
+> `codecraftai-restclient-github-public` is the worked example of
 > auto-generation: 571 generated modules built on the
 > foundation from chapter 6.  This chapter walks what's worth
 > testing in such a package and what to trust by construction.*
 
-`automojo-restclient-github-public` is the largest package in
+`codecraftai-restclient-github-public` is the largest package in
 the volume by file count — roughly 571 Python modules —
 because GitHub's API is enormous.  The package is a practical
 demonstration that the foundation classes from chapter 6
@@ -19,7 +19,7 @@ recommends for any auto-generated client at this scale.
 ## What's in the package
 
 ```
-automojo-restclient-github-public/source/packages/automojo/
+codecraftai-restclient-github-public/source/packages/ccai/
 ├── github/
 │   └── rest/
 │       └── clients/
@@ -64,7 +64,7 @@ hand-written code (no banner) from generated code (banner).
 ## A representative generated method
 
 **File:**
-`source/packages/automojo/github/rest/clients/public/groups/repos.py:84–162`
+`source/packages/ccai/github/rest/clients/public/groups/repos.py:84–162`
 
 ```python
 def accept_invitation_for_authenticated_user(
@@ -183,7 +183,7 @@ method can read all of them.
 ## The entry-point client
 
 **File:**
-`source/packages/automojo/github/rest/clients/public/githubpublicrestclient.py:53–70`
+`source/packages/ccai/github/rest/clients/public/githubpublicrestclient.py:53–70`
 
 ```python
 class GithubPublicRestClient(GithubRestClientBase):
@@ -372,7 +372,7 @@ provides a machine-readable specification:
 For each, the framework's pattern is the same: hand-write a
 small shared foundation, write a generator that consumes the
 spec, regenerate when the spec changes.  The
-`automojo-restclient-github-public` package is one worked
+`codecraftai-restclient-github-public` package is one worked
 example of an OpenAPI-driven generator at scale.
 
 ## Reading order for a contributor
@@ -381,7 +381,7 @@ A reader wanting to *contribute* to the GitHub client (or
 fork it for a similar API) should read in this order:
 
 1. **`RestClientBase`** (chapter 6) — the foundation.
-2. **`RestClientGenerator`** in `automojo-restclient-base`
+2. **`RestClientGenerator`** in `codecraftai-restclient-base`
    — how generation works.
 3. **`GithubRestClientBase`** — the hand-written
    customisation.
@@ -405,12 +405,12 @@ A short chapter for a large package.  The reader should now:
   file isn't hand-edited.
 - Know the smoke-vs-comprehensive testing strategy.
 - See the connection between
-  `automojo-restclient-github-public` (this chapter) and
-  `automojo-gitlab` (Volume 6 chapter 13) — same pattern,
+  `codecraftai-restclient-github-public` (this chapter) and
+  `codecraftai-gitlab` (Volume 6 chapter 13) — same pattern,
   different APIs.
 
 The next chapter walks the four protocol extension packages
 — UPnP, Tasker, Bluetooth, CAN.  Where this chapter walked
 *one* large auto-generated package, chapter 8 walks *four*
 smaller hand-written packages, each adding a protocol the
-core `automojo-interop` doesn't ship.
+core `codecraftai-interop` doesn't ship.

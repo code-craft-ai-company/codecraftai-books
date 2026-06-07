@@ -20,7 +20,7 @@ This chapter walks:
 - What property tests catch that example-based tests
   don't.
 - The recent migration from `hypothesis` to
-  `automojo.testbase.properties` (commit `8f31798`).
+  `ccai.testbase.properties` (commit `8f31798`).
 - The `@given(constraints={"max_examples": 50})`
   discipline.
 - A worked walkthrough of `test_costtracker_properties.py`.
@@ -94,7 +94,7 @@ truncation limit.
 ## The 72 property-based test files
 
 Located at
-`source/testroots/automojo/tests/singlehost/agentkit/test_*_properties.py`.
+`source/testroots/ccai/tests/singlehost/agentkit/test_*_properties.py`.
 
 A representative sample organised by what they test:
 
@@ -146,7 +146,7 @@ and logic that has invariants.
 
 Commit `8f31798` (Mar 8 2026) moved the property tests from
 the `hypothesis` library to
-`automojo.testbase.properties` (Volume 1 chapter 4's
+`ccai.testbase.properties` (Volume 1 chapter 4's
 `@given` decorator).
 
 The migration involved:
@@ -155,7 +155,7 @@ The migration involved:
   syntax.
 - **Strategy imports changed** —
   `from hypothesis.strategies import ...` →
-  `from automojo.testbase.strategies import ...`.
+  `from ccai.testbase.strategies import ...`.
 - **Constraint syntax changed** — hypothesis's
   `@given(integers(...))` decorators replaced with
   `@given(value=_strategy, constraints={"max_examples":
@@ -187,7 +187,7 @@ post-migration shape:
 ```python
 import testbase
 from testbase.strategies import integers
-from automojo.testbase.properties import given
+from ccai.testbase.properties import given
 
 @given(
     prompt_tokens=integers(min_value=0, max_value=100_000),

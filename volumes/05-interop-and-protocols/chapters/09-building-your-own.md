@@ -75,11 +75,11 @@ new package.
 ### Step 1 — Create the package skeleton
 
 ```
-automojo-interop-ext-mything/
+codecraftai-interop-ext-mything/
 ├── pyproject.toml
 └── source/
     └── packages/
-        └── automojo/
+        └── ccai/
             ├── interop/
             │   └── protocols/
             │       └── mything/
@@ -95,29 +95,29 @@ automojo-interop-ext-mything/
 
 The directory structure mirrors the shipped extensions
 (chapter 8).  Both subtrees (`interop/...` and
-`landscaping/...`) sit under the `automojo` namespace.
+`landscaping/...`) sit under the `ccai` namespace.
 
 The `pyproject.toml`:
 
 ```toml
 [tool.poetry]
-name = "automojo-interop-ext-mything"
+name = "codecraftai-interop-ext-mything"
 version = "0.1.0"
-description = "MyThing protocol extension for the automojo framework"
-packages = [{include = "automojo", from = "source/packages"}]
+description = "MyThing protocol extension for the ccai framework"
+packages = [{include = "ccai", from = "source/packages"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-automojo-interop = { git = "https://github.com/automationmojo/automojo-interop.git",
+codecraftai-interop = { git = "https://github.com/automationmojo/codecraftai-interop.git",
                      branch = "main" }
-automojo-landscaping = { git = "https://github.com/automationmojo/automojo-landscaping.git",
+codecraftai-landscaping = { git = "https://github.com/automationmojo/codecraftai-landscaping.git",
                          branch = "main" }
 # ... your protocol's third-party dependencies ...
 ```
 
-The two `automojo-*` git dependencies are required for
+The two `codecraftai-*` git dependencies are required for
 landscape-integrated extensions.  Standalone extensions can
-drop the `automojo-landscaping` dependency.
+drop the `codecraftai-landscaping` dependency.
 
 **Why this step:** the namespace structure is what makes the
 framework discover your extension at startup (chapter 8's
@@ -130,8 +130,8 @@ In `mythingaspects.py`:
 
 ```python
 from typing import Optional, Tuple
-from automojo.interop.aspects import Aspects, AspectsCmd, ActionPattern, LoggingPattern
-from automojo.interop.aspects import (
+from ccai.interop.aspects import Aspects, AspectsCmd, ActionPattern, LoggingPattern
+from ccai.interop.aspects import (
     DEFAULT_COMPLETION_TIMEOUT, DEFAULT_COMPLETION_INTERVAL,
     DEFAULT_CONNECTION_TIMEOUT, DEFAULT_CONNECTION_INTERVAL,
     # ... etc
@@ -190,8 +190,8 @@ In `mythingagent.py`:
 
 ```python
 from typing import Optional, Tuple
-from automojo.interop.aspects import ActionPattern
-from automojo.xmodules.xlogging import getEnhancedLogger
+from ccai.interop.aspects import ActionPattern
+from ccai.xmodules.xlogging import getEnhancedLogger
 from .mythingaspects import MyThingAspects, DEFAULT_MYTHING_ASPECTS
 
 
@@ -355,7 +355,7 @@ In `landscaping/extensions/protocol/mythingprotocolextension.py`:
 ```python
 import weakref
 from typing import Optional
-from automojo.landscaping.extensions.protocol.protocolextension import ProtocolExtension
+from ccai.landscaping.extensions.protocol.protocolextension import ProtocolExtension
 
 
 class MyThingProtocolExtension(ProtocolExtension):
@@ -407,7 +407,7 @@ extension is what makes `device.mything` work in test code.
 In `landscaping/coordinators/mything/mythingcoordinator.py`:
 
 ```python
-from automojo.landscaping.coordinatorbase import CoordinatorBase
+from ccai.landscaping.coordinatorbase import CoordinatorBase
 
 
 class MyThingCoordinator(CoordinatorBase):
@@ -467,7 +467,7 @@ deviceTypes to Coordinators.  In
 `landscaping/coordinators/mything/mythingcoordinatorcoupling.py`:
 
 ```python
-from automojo.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
+from ccai.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from .mythingcoordinator import MyThingCoordinator
 
 
@@ -512,10 +512,10 @@ Three test layers:
   full agent against a mock service; verify protocol-level
   correctness.
 
-Place tests under `source/tests/automojo_tests/`:
+Place tests under `source/tests/ccai_tests/`:
 
 ```
-source/tests/automojo_tests/
+source/tests/ccai_tests/
 └── interop/
     └── protocols/
         └── mything/
@@ -534,7 +534,7 @@ bar.
 
 ### Step 11 — Documentation
 
-Add a `userguide/packages/automojo-interop-ext-mything.rst`
+Add a `userguide/packages/codecraftai-interop-ext-mything.rst`
 file in the docs repo (or alongside the package's README)
 that walks:
 
@@ -545,7 +545,7 @@ that walks:
 - Limitations and caveats.
 
 The shipped extensions' userguide pages (e.g.,
-`automojo-docs/userguide/packages/automojo-interop.rst`) are
+`codecraftai-docs/userguide/packages/codecraftai-interop.rst`) are
 the reference shape.
 
 **Why this step:** the framework's "Measured
@@ -561,7 +561,7 @@ the framework.
 
 ### Step-by-step
 
-1. **Package skeleton** — `automojo-interop-ext-mqtt/` with
+1. **Package skeleton** — `codecraftai-interop-ext-mqtt/` with
    the standard structure.
 2. **Aspects** — `MqttAspects(Aspects)` with
    `qos_level` (0/1/2), `keep_alive_interval`, the standard
@@ -585,7 +585,7 @@ the framework.
    `integration_class = "messaging/mqtt"`.
 10. **Tests** — happy path, retry on disconnect, timeout
     handling, QoS-level semantics.
-11. **Documentation** — `automojo-interop-ext-mqtt.rst` with
+11. **Documentation** — `codecraftai-interop-ext-mqtt.rst` with
     the protocol overview and API examples.
 
 A test using the new extension:
@@ -704,7 +704,7 @@ Looking back across the volume:
   principles.
 - **Chapter 2** — the Aspects pattern as the delegation
   contract.
-- **Chapter 3** — `automojo-interop` as the foundation.
+- **Chapter 3** — `codecraftai-interop` as the foundation.
 - **Chapter 4** — SSH from scratch as a worked deep-dive.
 - **Chapter 5** — networking primitives below the protocol
   layer.

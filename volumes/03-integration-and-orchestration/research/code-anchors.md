@@ -17,14 +17,14 @@ chapter 3 introduces the configuration model)*
 ## Chapter 2 — Why most CI YAML grows monstrously
 
 *(conceptual chapter; a few illustrative anchors to vendor YAML
-patterns may be cited but not from automojo source)*
+patterns may be cited but not from ccai source)*
 
 ## Chapter 3 — The contract: six typed configuration categories
 
 - The five existing categories are defined as `MergeMap` instances on
-  `CONFIGURATION_MAPS`: `automojo-configuration/source/packages/automojo/configuration/configurationmaps.py`.
+  `CONFIGURATION_MAPS`: `codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py`.
 - The variable descriptors for each category live in
-  `automojo-configuration/source/packages/automojo/configuration/configurationvariables.py`.
+  `codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py`.
 
 ## Chapter 4 — Specifications
 
@@ -41,10 +41,10 @@ patterns may be cited but not from automojo source)*
 ## Chapter 7 — Runtime files vs environment variables
 
 - `TESTBASE_MAX_EXAMPLES_CAP` documented in
-  `automojo-testbase/userguide/10-04-03-testing-frameworks-testbase.rst`
+  `codecraftai-testbase/userguide/10-04-03-testing-frameworks-testbase.rst`
   — the smallest possible example of "runtime config switches behaviour
   without code changes."
-- `automojo-this-app/source/packages/automojo/thisapp/thisapplication.py`
+- `codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py`
   `_perform_variable_resolution` — context-path propagation of typed
   configuration into the shared serializable context.
 
@@ -62,7 +62,7 @@ patterns may be cited but not from automojo source)*
 
 ## Chapter 11 — Credentials in flight
 
-- Fernet encryption: `automojo-configuration/source/packages/automojo/configuration/cryptography.py`.
+- Fernet encryption: `codecraftai-configuration/source/packages/ccai/configuration/cryptography.py`.
 
 ## Chapter 12 — Credentials across environments
 
@@ -90,24 +90,24 @@ patterns may be cited but not from automojo source)*
 
 ## Chapter 18 — The taskplus task model
 
-- `FlowNode`: `automojo-taskplus/source/packages/automojo/taskplus/model/flownode.py`.
-- `Task`: `automojo-taskplus/source/packages/automojo/taskplus/model/task.py`.
-- `TaskGroup`: `automojo-taskplus/source/packages/automojo/taskplus/model/taskgroup.py`.
+- `FlowNode`: `codecraftai-taskplus/source/packages/ccai/taskplus/model/flownode.py`.
+- `Task`: `codecraftai-taskplus/source/packages/ccai/taskplus/model/task.py`.
+- `TaskGroup`: `codecraftai-taskplus/source/packages/ccai/taskplus/model/taskgroup.py`.
 
 ## Chapter 19 — Built-in task types
 
-- `RunCommand`: `automojo-taskplus/source/packages/automojo/taskplus/tasks/runcommand.py`.
-- `ShellScript`: `automojo-taskplus/source/packages/automojo/taskplus/tasks/shellscript.py`.
-- `EmbeddedPython`: `automojo-taskplus/source/packages/automojo/taskplus/tasks/embeddedpython.py`.
-- `GitCheckout`: `automojo-taskplus/source/packages/automojo/taskplus/tasks/gitcheckout.py`
+- `RunCommand`: `codecraftai-taskplus/source/packages/ccai/taskplus/tasks/runcommand.py`.
+- `ShellScript`: `codecraftai-taskplus/source/packages/ccai/taskplus/tasks/shellscript.py`.
+- `EmbeddedPython`: `codecraftai-taskplus/source/packages/ccai/taskplus/tasks/embeddedpython.py`.
+- `GitCheckout`: `codecraftai-taskplus/source/packages/ccai/taskplus/tasks/gitcheckout.py`
   (still a stub — chapter calls this out as reader exercise).
-- `CreateEnvironment`: `automojo-taskplus/source/packages/automojo/taskplus/tasks/createenvironment.py`
+- `CreateEnvironment`: `codecraftai-taskplus/source/packages/ccai/taskplus/tasks/createenvironment.py`
   (chapter argues this is a transitional tool; runtime configs replace
   most uses of it for green-field code).
 
 ## Chapter 20 — Workflow YAML grammar
 
-- `Workflow`: `automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py`.
+- `Workflow`: `codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py`.
 - The `parse` classmethod and `_process_flow_info_items` recursion.
 - Validation paths: missing `name`, missing `flow`, conflicting
   `task`+`taskgroup`, missing `items` on a taskgroup, unknown node.
@@ -118,14 +118,14 @@ patterns may be cited but not from automojo source)*
 
 ## Chapter 22 — Flow control as data
 
-- `JumpContext`: `automojo-taskplus/source/packages/automojo/taskplus/model/flowengine.py`.
+- `JumpContext`: `codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py`.
 - `FlowEngine.execute` and `process_flowitems`.
 - `FlowEngine.evaluate_expression` for the `if_expr` gate.
 
 ## Chapter 23 — Extending the task model
 
 - The `import_by_name` / `tasktype: module@ClassName` resolution at
-  `automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py:_process_flow_info_items`.
+  `codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py:_process_flow_info_items`.
 
 ## Chapter 24 — Wiring to a real CI vendor
 
@@ -134,10 +134,10 @@ patterns may be cited but not from automojo source)*
 ## Chapter 25 — Bridges to other layers
 
 - Distributed test job invocation: `DistributedTestJob` in
-  `automojo-testplus/source/packages/automojo/testplus/`.
+  `codecraftai-testplus/source/packages/ccai/testplus/`.
 - Sysman feature execution: any of the
-  `automojo-sysman-*` packages, surfaced through `featurebase`.
-- Provisioning: `automojo-provisioning/source/packages/automojo/provisioning/`.
+  `codecraftai-sysman-*` packages, surfaced through `featurebase`.
+- Provisioning: `codecraftai-provisioning/source/packages/ccai/provisioning/`.
 
 ## Chapter 26 — Case study
 

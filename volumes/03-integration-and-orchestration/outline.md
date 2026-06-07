@@ -1,7 +1,7 @@
 # Volume 3 — Detailed Chapter Outline
 
 This document goes one level deeper than the volume entry in
-[`automojo-volumes.md`](../../automojo-volumes.md).  For each chapter
+[`codecraftai-volumes.md`](../../codecraftai-volumes.md).  For each chapter
 it lists: the opening hook, the key arguments, the code anchors, the
 worked examples, the reader exercises, the cross-references, and an
 estimated page count.
@@ -69,8 +69,8 @@ status "outlined" have detail here but no draft yet.
 - **Key arguments:**
   1. Six categories — Specifications, Landscapes, Topologies,
      Runtimes, Credentials, Data Profiles.
-  2. Five live in `automojo-configuration`; Specifications lives in
-     `automojo-provisioning`.
+  2. Five live in `codecraftai-configuration`; Specifications lives in
+     `codecraftai-provisioning`.
   3. All six share five properties: typed at rest, looked up by name,
      optionally encrypted, composed via `MergeMap`, resolved into
      application context.
@@ -79,15 +79,15 @@ status "outlined" have detail here but no draft yet.
      relationships, Runtimes/Credentials parameterise the processes,
      Data Profiles name the data.
 - **Code anchors:**
-  - `automojo-configuration/source/packages/automojo/configuration/configurationmaps.py`
+  - `codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py`
     — five `CONFIGURATION_MAPS` instances.
-  - `automojo-configuration/source/packages/automojo/configuration/configurationvariables.py`
+  - `codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py`
     — five sets of variable descriptors.
-  - `automojo-configuration/source/packages/automojo/configuration/sources/directorysource.py`
+  - `codecraftai-configuration/source/packages/ccai/configuration/sources/directorysource.py`
     — `.yaml`/`.yml`/`.json` loader fallback.
-  - `automojo-xmodules/.../xcollections/mergemap.py` — composition
+  - `codecraftai-xmodules/.../xcollections/mergemap.py` — composition
     machinery.
-  - `automojo-this-app/.../contextpaths.py` — context insertion
+  - `codecraftai-this-app/.../contextpaths.py` — context insertion
     points.
 - **Worked examples:** a YAML fragment for each of the six
   categories.
@@ -110,7 +110,7 @@ status "outlined" have detail here but no draft yet.
   1. Specifications declare resources that must exist *before* the
      orchestration runs.  They are checkout-or-create manifests.
   2. The portfolio implements specifications in
-     `automojo-provisioning`, distinct from the configuration loader.
+     `codecraftai-provisioning`, distinct from the configuration loader.
   3. Specification YAML has top-level `apod` and `environment` keys.
   4. Idempotent on re-run is the design contract: a spec is
      applied; the desired state is reached; subsequent applies are
@@ -118,7 +118,7 @@ status "outlined" have detail here but no draft yet.
   5. The orchestration consumes the *output* of specification
      application — a live landscape — without containing the recipe.
 - **Code anchors:**
-  - `automojo-provisioning/source/packages/automojo/provisioning/provisioningengine.py:55-73`
+  - `codecraftai-provisioning/source/packages/ccai/provisioning/provisioningengine.py:55-73`
     — `create_provisioning_engine(specification=...)`.
 - **Worked examples:**
   - A full `spec-runner-pool.yaml` example creating a 3-node EC2 runner pool.
@@ -149,13 +149,13 @@ status "outlined" have detail here but no draft yet.
   3. Landscapes are versioned files.  Multiple landscapes coexist
      (staging-east, staging-west, prod-readonly); the pipeline
      selects one by name.
-  4. The Landscape category lives in `automojo-configuration`'s
+  4. The Landscape category lives in `codecraftai-configuration`'s
      `LANDSCAPE_CONFIGURATION_MAP`; the in-memory model lives in
-     `automojo-landscaping` (treated in Volume 6).
+     `codecraftai-landscaping` (treated in Volume 6).
 - **Code anchors:**
-  - `automojo-automation-kit/userguide/examples/landscape.yaml`
+  - `codecraftai-automation-kit/userguide/examples/landscape.yaml`
     — the canonical example file.
-  - `automojo-configuration/source/packages/automojo/configuration/configurationmaps.py`
+  - `codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py`
     `resolve_landscape_configuration` function.
 - **Worked examples:**
   - The staging-east landscape file from the chapter 3 preview,
@@ -190,9 +190,9 @@ status "outlined" have detail here but no draft yet.
   4. Cluster membership, dependency edges, coordinator selection are
      all topology-level concerns.
 - **Code anchors:**
-  - `automojo-configuration/.../configurationvariables.py` — the
+  - `codecraftai-configuration/.../configurationvariables.py` — the
     `TOPOLOGY_*` descriptors.
-  - `automojo-configuration/.../configurationmaps.py`
+  - `codecraftai-configuration/.../configurationmaps.py`
     `resolve_topology_configuration`.
   - *(file format example to be authored as part of book)*
 - **Worked examples:**
@@ -232,11 +232,11 @@ status "outlined" have detail here but no draft yet.
      `results-configuration`, `testroot`, `version`.  Adding a new
      knob means adding a key here, not exporting a new env var.
 - **Code anchors:**
-  - `automojo-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml`
+  - `codecraftai-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml`
     — real shipped runtime profile.
-  - `automojo-testbase/userguide/10-04-03-testing-frameworks-testbase.rst`
+  - `codecraftai-testbase/userguide/10-04-03-testing-frameworks-testbase.rst`
     — the `TESTBASE_MAX_EXAMPLES_CAP` documentation.
-  - `automojo-this-app/source/packages/automojo/thisapp/thisapplication.py:222-256`
+  - `codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py:222-256`
     — `override_variable_value` (the mechanism by which a runtime
     config overrides a default).
 - **Worked examples:**
@@ -276,9 +276,9 @@ status "outlined" have detail here but no draft yet.
   4. Profiles compose with credentials: the profile says *where*; the
      credential says *who*.  The two are deliberately separate.
 - **Code anchors:**
-  - `automojo-dataprofiles/source/packages/automojo/dataprofiles/`
+  - `codecraftai-dataprofiles/source/packages/ccai/dataprofiles/`
     — the profile class hierarchy.
-  - `automojo-configuration/.../configurationvariables.py` — the
+  - `codecraftai-configuration/.../configurationvariables.py` — the
     `DATAPROFILE_*` descriptors.
 - **Worked examples:**
   - A `dataprofile-staging-db.yaml` with `SnowflakeProfile` +
@@ -299,7 +299,7 @@ status "outlined" have detail here but no draft yet.
 ## Part III — Credential Management
 
 Substantial chapters anchored on the finding that
-`automojo-credentials` is a pure vocabulary layer with no shipped
+`codecraftai-credentials` is a pure vocabulary layer with no shipped
 backends.  Part III therefore documents the vocabulary, then proposes
 the backend discipline the reader implements.
 
@@ -311,7 +311,7 @@ the backend discipline the reader implements.
   why the right answer to 'what about credential type X?' is almost
   always 'use one of the eleven and add a `categories` tag.'"*
 - **Key arguments:**
-  1. The eleven shipped credential classes in `automojo-credentials`,
+  1. The eleven shipped credential classes in `codecraftai-credentials`,
      their fields, and their typical use cases.
   2. Every credential has three universal properties: `identifier`,
      `categories`, `role`.  Why each matters.
@@ -321,7 +321,7 @@ the backend discipline the reader implements.
      separation between the credential type and the secret-resolution
      mechanism.
 - **Code anchors:**
-  - `automojo-credentials/source/packages/automojo/credentials/basecredential.py`
+  - `codecraftai-credentials/source/packages/ccai/credentials/basecredential.py`
     — `BaseCredential`.
   - All 11 concrete credential classes, with file paths from the
     research findings.
@@ -337,7 +337,7 @@ the backend discipline the reader implements.
 ### Chapter 10 — Credential Resolution
 
 - **Status:** outlined.
-- **Hook:** *(draft) "The `automojo-credentials` package gives you the
+- **Hook:** *(draft) "The `codecraftai-credentials` package gives you the
   vocabulary.  The package does not give you a way to *fetch* the
   secret value.  This chapter is about that gap and how to close it."*
 - **Key arguments:**
@@ -355,7 +355,7 @@ the backend discipline the reader implements.
   5. Host scoping (also consumer-supplied): the reader's resolver
      consults the active landscape to scope a credential to a host.
 - **Code anchors:**
-  - `automojo-credentials/source/packages/automojo/credentials/credentialmanager.py`
+  - `codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py`
     — registry pattern; consumer hands it a dict.
   - The 11 credential classes from chapter 9.
 - **Worked examples:**
@@ -379,7 +379,7 @@ the backend discipline the reader implements.
   bugs happen at the boundary between the two."*
 - **Key arguments:**
   1. Encryption at rest with Fernet (already shipped in
-     `automojo-configuration`'s `cryptography.py`).  Re-use, don't
+     `codecraftai-configuration`'s `cryptography.py`).  Re-use, don't
      re-implement.
   2. Rotation during long runs — what happens when a credential
      expires mid-pipeline.  The discipline: credentials are refreshed
@@ -389,7 +389,7 @@ the backend discipline the reader implements.
      in error messages.  The discipline: all credential classes
      override `__repr__` to elide the secret.
 - **Code anchors:**
-  - `automojo-configuration/source/packages/automojo/configuration/cryptography.py`
+  - `codecraftai-configuration/source/packages/ccai/configuration/cryptography.py`
     — Fernet helpers.
   - The 11 credential classes — chapter notes which currently elide
     secrets in `__repr__` and which don't (likely an audit finding).
@@ -411,7 +411,7 @@ the backend discipline the reader implements.
   credentials."*
 - **Key arguments:**
   1. Local-dev backend: a developer-owned encrypted file in
-     `~/.automojo/credentials/`.
+     `~/.ccai/credentials/`.
   2. CI backend: vault integration; secrets pulled at job start;
      never written to disk.
   3. Staging backend: the same vault, different scope.
@@ -468,7 +468,7 @@ blocks rather than documenting shipped tooling.
 - **Status:** outlined.
 - **Hook:** *(draft) "A profile is a name plus a `MergeMap`.  This
   chapter proposes the convention that turns the existing
-  `automojo-configuration` machinery into a user-facing profile
+  `codecraftai-configuration` machinery into a user-facing profile
   system."*
 - **Key arguments:**
   1. The mechanism exists in code (`MergeMap` composition,
@@ -484,17 +484,17 @@ blocks rather than documenting shipped tooling.
   3. Profile selection at process start: `--profile staging-east`.
   4. The book proposes a `ContextPaths.ACTIVE_PROFILE` slot to hold
      the active profile name across the application context.
-  5. A proposed `automojo profile show` CLI command that iterates
+  5. A proposed `ccai profile show` CLI command that iterates
      `AppVarSet.items()` and dumps resolved values.
 - **Code anchors:**
-  - `automojo-xmodules/.../mergemap.py` — the composition primitive.
-  - `automojo-this-app/.../thisapplication.py` `override_variable_value`.
-  - `automojo-this-app/.../contextpaths.py` — the proposed insertion
+  - `codecraftai-xmodules/.../mergemap.py` — the composition primitive.
+  - `codecraftai-this-app/.../thisapplication.py` `override_variable_value`.
+  - `codecraftai-this-app/.../contextpaths.py` — the proposed insertion
     point for `ACTIVE_PROFILE`.
 - **Worked examples:**
   - A 4-file profile set: `base.yaml`, `local.yaml`, `ci.yaml`,
     `staging.yaml` showing additive overlay.
-- **Exercises:** implement the proposed `automojo profile show`
+- **Exercises:** implement the proposed `ccai profile show`
   command on top of `AppVarSet.items()`.
 - **Cross-references:** forward to chapters 15–17.
 - **Pages:** 22–26.
@@ -536,12 +536,12 @@ blocks rather than documenting shipped tooling.
   4. `TESTBASE_MAX_EXAMPLES_CAP` as the worked-out small example —
      the smallest possible runtime knob.
 - **Code anchors:**
-  - `automojo-testbase` `propertyrunner.py` `ENV_MAX_EXAMPLES_CAP` —
+  - `codecraftai-testbase` `propertyrunner.py` `ENV_MAX_EXAMPLES_CAP` —
     the canonical small example.
 - **Worked examples:** a CI-failure reproduction walked end-to-end —
   failing job, captured profile, local replay, isolated bug.
 - **Exercises:** implement the `--replay-config` flag against
-  `automojo-this-app`'s `override_variable_value`.
+  `codecraftai-this-app`'s `override_variable_value`.
 - **Pages:** 18–22.
 
 ### Chapter 17 — Profile Promotion
@@ -575,7 +575,7 @@ audit + 115-test addition.
 
 - **Status:** outlined.
 - **Code anchors:** `FlowNode`, `Task`, `TaskGroup` in
-  `automojo-taskplus/source/packages/automojo/taskplus/model/`.
+  `codecraftai-taskplus/source/packages/ccai/taskplus/model/`.
 - **Pages:** 15–18.
 
 ### Chapter 19 — Built-in task types
@@ -598,7 +598,7 @@ audit + 115-test addition.
 - **Key argument:** the bootstrap-name → resolve-config flow.
   Orchestration injects *names* into job env (e.g.,
   `AM_LANDSCAPE_NAMES=staging-east`); job startup uses
-  `automojo-configuration` to resolve names into structured configs;
+  `codecraftai-configuration` to resolve names into structured configs;
   job code reads typed configurations, never raw env vars.
 - **Pages:** 18–22.
 

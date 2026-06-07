@@ -4,9 +4,9 @@
 > primitives every protocol implementation needs but no single
 > protocol owns.  Address resolution, interface enumeration,
 > multicast / unicast / broadcast socket creation.
-> `automojo-networking` ships these as a foundation utility.*
+> `codecraftai-networking` ships these as a foundation utility.*
 
-`automojo-networking` is the *only* package in the volume
+`codecraftai-networking` is the *only* package in the volume
 that's not itself a protocol implementation.  It's a
 foundation utility — a small library of stateless helpers
 and well-shaped socket factories that the protocol packages
@@ -21,7 +21,7 @@ checks all depend on these primitives.
 ## What's in the package
 
 ```
-automojo-networking/source/packages/automojo/networking/
+codecraftai-networking/source/packages/ccai/networking/
 ├── interfaces.py             # interface enumeration
 ├── resolution.py             # DNS / IPv4 / IPv6 / ARP
 ├── multicast.py              # multicast socket helpers
@@ -226,9 +226,9 @@ then parses the capture file.  Useful for tests that verify
 The capture is *external* (subprocess `tcpdump`); the package
 just wraps the lifecycle as a context manager.
 
-## How `automojo-networking` integrates with the rest of the stack
+## How `codecraftai-networking` integrates with the rest of the stack
 
-A point worth being explicit about: `automojo-networking` is a
+A point worth being explicit about: `codecraftai-networking` is a
 **foundation utility, not an interop extension**.
 
 The package's README states:
@@ -239,10 +239,10 @@ The package's README states:
 
 What this means concretely:
 
-- `automojo-networking` has zero hard dependency on
-  `automojo-interop`.
+- `codecraftai-networking` has zero hard dependency on
+  `codecraftai-interop`.
 - Higher-level packages (the protocol stacks, the extensions)
-  depend on `automojo-networking`, not the reverse.
+  depend on `codecraftai-networking`, not the reverse.
 - The package doesn't ship Aspects-driven agents.  Its
   helpers are *synchronous and stateless* — single-call
   functions that return immediately.
@@ -273,7 +273,7 @@ uses these primitives at the lowest layer.  Specifically:
 
 A reader writing typical interop test code (calling
 `device.ssh.run_cmd`, checking responses, etc.) probably
-never reaches into `automojo-networking` directly — the
+never reaches into `codecraftai-networking` directly — the
 protocol packages above it do that work.
 
 ## What this chapter set up
@@ -289,7 +289,7 @@ a reader should:
 - Understand why the package has no Aspects-driven agents
   (its helpers are below the layer where Aspects apply).
 
-The next chapter walks `automojo-restclient-base` — the REST
+The next chapter walks `codecraftai-restclient-base` — the REST
 foundation.  Where SSH (chapter 4) was a stream-oriented
 protocol, REST is request/response.  The chapter walks the
 `RestClientBase` class, the `AspectsRest` subclass, the

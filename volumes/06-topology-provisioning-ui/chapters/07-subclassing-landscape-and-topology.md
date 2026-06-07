@@ -68,7 +68,7 @@ The mechanism is the **factory protocol** from Volume 0
 chapter 7.  Briefly:
 
 1. The framework defines a *factory protocol* — an interface
-   (typically an `automojo.factories.protocols.<Something>FactoryProtocol`
+   (typically an `ccai.factories.protocols.<Something>FactoryProtocol`
    class) declaring the methods that produce framework
    objects.
 2. The project provides an *implementation* — a class that
@@ -77,7 +77,7 @@ chapter 7.  Briefly:
    subclasses.
 3. The project's implementation is registered through a
    *namespace package entry point* (the
-   `automojo.factories` namespace in the project's
+   `ccai.factories` namespace in the project's
    `pyproject.toml` or equivalent).
 4. At framework startup,
    `ConfiguredSuperFactorySingleton()` discovers the
@@ -87,7 +87,7 @@ For the Landscape, the relevant protocol is
 `LandscapingFactoryProtocol`:
 
 ```python
-# automojo-landscaping/source/packages/automojo/landscaping/landscapingfactoryprotocol.py
+# codecraftai-landscaping/source/packages/ccai/landscaping/landscapingfactoryprotocol.py
 # (approximate — actual class name from the singleton lookup)
 
 class LandscapingFactoryProtocol:
@@ -105,8 +105,8 @@ A project's implementation:
 ```python
 # my_project/factories.py
 
-from automojo.factories.factoryextension import FactoryExtension
-from automojo.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
+from ccai.factories.factoryextension import FactoryExtension
+from ccai.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
 
 from my_project.landscape import MyProjectLandscape
 
@@ -127,7 +127,7 @@ wins.
 The framework's `LandscapeSingleton()` function (chapter 1):
 
 ```python
-# automojo-landscaping/source/packages/automojo/landscaping/wellknown.py:28
+# codecraftai-landscaping/source/packages/ccai/landscaping/wellknown.py:28
 
 def LandscapeSingleton() -> "Landscape":
     global LANDSCAPE_SINGLETON
@@ -137,14 +137,14 @@ def LandscapeSingleton() -> "Landscape":
 
         SINGLETON_LOCK.acquire()
         try:
-            from automojo.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
+            from ccai.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
 
             if LANDSCAPE_SINGLETON is None:
                 LandscapeType = super_factory.get_override_types_by_order(
                     LandscapingFactoryProtocol.get_landscape_type)
 
                 if LandscapeType is None:
-                    from automojo.landscaping.landscape import Landscape
+                    from ccai.landscaping.landscape import Landscape
                     LandscapeType = Landscape
 
                 LANDSCAPE_SINGLETON = LandscapeType()
@@ -190,7 +190,7 @@ So the customisation cascade is:
    each device, dispatches Features through the project's
    subclass methods.
 
-The chain is uniform.  Every `automojo-*` extension point
+The chain is uniform.  Every `codecraftai-*` extension point
 goes through some version of this pattern: framework declares
 a protocol, project implements it, namespace package
 registers it, factory walks the registrations at startup.
@@ -206,7 +206,7 @@ service.
 ```python
 # my_project/landscape.py
 
-from automojo.landscaping.landscape import Landscape
+from ccai.landscaping.landscape import Landscape
 from typing import List, Tuple
 
 
@@ -243,7 +243,7 @@ class MyProjectLandscape(Landscape):
 ```python
 # my_project/devices.py
 
-from automojo.landscaping.landscapedevice import LandscapeDevice
+from ccai.landscaping.landscapedevice import LandscapeDevice
 from my_project.coolingextension import CoolingProtocolExtension
 
 
@@ -276,9 +276,9 @@ class MyProjectDevice(LandscapeDevice):
 
 from typing import Type
 
-from automojo.factories.factoryextension import FactoryExtension
-from automojo.landscaping.landscape import Landscape
-from automojo.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
+from ccai.factories.factoryextension import FactoryExtension
+from ccai.landscaping.landscape import Landscape
+from ccai.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
 
 from my_project.landscape import MyProjectLandscape
 
@@ -304,12 +304,12 @@ name = "my-project"
 [tool.setuptools.packages.find]
 namespaces = true
 
-# Namespace package: my_project lives under automojo.extensions
+# Namespace package: my_project lives under ccai.extensions
 [tool.setuptools]
 package-dir = {"" = "src"}
 ```
 
-And the project structure includes a `src/automojo/extensions/my_project/__init__.py`
+And the project structure includes a `src/ccai/extensions/my_project/__init__.py`
 that re-exports `MyProjectLandscapingFactory`.  Volume 0
 chapter 7 walked the namespace-package pattern in detail.
 

@@ -101,7 +101,7 @@ layer*: a set of cross-OS specifications that define the
 Concretely:
 
 - Every feature has a markdown contract at
-  `automojo-sysman-common/specs/contracts/<feature>/contract.md`.
+  `codecraftai-sysman-common/specs/contracts/<feature>/contract.md`.
 - The contract specifies *verb signatures* (what methods
   exist, what arguments they take, what they return).
 - The contract specifies *invariants* (what must be true
@@ -123,7 +123,7 @@ brew), but the test sees a uniform surface.
 
 The portfolio ships **50 contracts** — one per feature area.
 The full list lives at
-`automojo-sysman-common/specs/contracts/README.md:385–510`,
+`codecraftai-sysman-common/specs/contracts/README.md:385–510`,
 catalogued in three layers:
 
 - **Layer 1 (Infrastructure)** — 1 contract: `command-execution`.
@@ -149,15 +149,15 @@ sits alongside, capturing the cross-feature concerns of
 
 Five OSes are implemented to the contract:
 
-1. **`automojo-sysman-linux-redhat`** — RHEL family (RHEL,
+1. **`codecraftai-sysman-linux-redhat`** — RHEL family (RHEL,
    CentOS Stream, Fedora).  46 features.  53 test files.
-2. **`automojo-sysman-linux-ubuntu`** — Ubuntu / Debian
+2. **`codecraftai-sysman-linux-ubuntu`** — Ubuntu / Debian
    family.  40 features.  41 test files.
-3. **`automojo-sysman-macos`** — macOS (Apple Silicon and
+3. **`codecraftai-sysman-macos`** — macOS (Apple Silicon and
    Intel).  49 features.  45 test files.
-4. **`automojo-sysman-windows`** — Windows 10/11 / Server.
+4. **`codecraftai-sysman-windows`** — Windows 10/11 / Server.
    49 features.  45 test files.
-5. **`automojo-sysman-uefi`** — UEFI firmware.  Intentionally
+5. **`codecraftai-sysman-uefi`** — UEFI firmware.  Intentionally
    smaller — 5 features only.
 
 Why five?  Because these five OSes cover the bulk of
@@ -310,7 +310,7 @@ base.
 ### The 11 Implementation Conventions
 
 Documented at
-`automojo-sysman-common/specs/contracts/README.md:75–364`,
+`codecraftai-sysman-common/specs/contracts/README.md:75–364`,
 the eleven conventions cover the cross-OS patterns that
 emerged from the Phase-3 implementation work.  Things like:
 

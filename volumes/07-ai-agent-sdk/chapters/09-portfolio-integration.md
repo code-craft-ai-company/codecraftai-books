@@ -1,4 +1,4 @@
-# Chapter 9 — Building an Agent That Uses the Rest of the Automojo Portfolio
+# Chapter 9 — Building an Agent That Uses the Rest of the Code Craft AI Portfolio
 
 > *Eight chapters established the SDK.  This chapter watches
 > the SDK in motion — an agent that runs sysman features
@@ -41,8 +41,8 @@ matters, suppress what doesn't, propose actions.
 ## The agent's shape
 
 ```python
-from automojo.agentkit.agent import Agent
-from automojo.agentkit.agentconfiguration import AgentConfiguration
+from ccai.agentkit.agent import Agent
+from ccai.agentkit.agentconfiguration import AgentConfiguration
 # ... other imports ...
 
 
@@ -491,7 +491,7 @@ A reader who's read the volume can:
   of the framework uses.
 - Observe the agent's behaviour through the standard stack.
 - Integrate the agent with the rest of the
-  `automojo-*` portfolio.
+  `codecraftai-*` portfolio.
 
 ## End of Volume 7
 

@@ -12,7 +12,7 @@
 > in mind), the session lifecycle, the flow-control mechanism,
 > and the persistence backend that turns received bytes into
 > durable artefacts.  Anchored on
-> `automojo-timetravel-server`.
+> `codecraftai-timetravel-server`.
 
 ## 4.1 The shape of the receiving end
 
@@ -31,7 +31,7 @@ The server's job at ingestion is to:
    trace files in the durable area.
 
 The implementation splits across four directories under
-`automojo-timetravel-server/source/packages/automojo/timetravelserver/`:
+`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/`:
 
 - `streamreceiver/` — the listener, session, and flow-control
   layer.
@@ -48,7 +48,7 @@ the subject of ch. 6.
 ## 4.2 The base receiver
 
 `BaseStreamReceiver`
-(`automojo-timetravel-server/source/packages/automojo/timetravelserver/streamreceiver/base_receiver.py:9`)
+(`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/streamreceiver/base_receiver.py:9`)
 is the abstract socket-server.  It handles the loop that accepts
 connections, performs the handshake, and hands each accepted
 connection off to a session for receive-side draining.
@@ -758,7 +758,7 @@ deserialises bytes; the analysis path is not currently
 exercised against pod-emitted bytes.
 
 The second is the REST API tier.  The
-`automojo-webworks` blueprint pattern is in place for every
+`codecraftai-webworks` blueprint pattern is in place for every
 specced endpoint, OpenAPI docs render from the route
 declarations, and the namespaces register at startup —
 but every endpoint body returns hand-coded mock data.  The

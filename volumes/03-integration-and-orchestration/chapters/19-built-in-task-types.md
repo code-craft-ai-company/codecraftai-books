@@ -1,13 +1,13 @@
 # Chapter 19 — Built-in Task Types
 
-> *Five concrete `Task` subclasses ship in `automojo-taskplus`.
+> *Five concrete `Task` subclasses ship in `codecraftai-taskplus`.
 > Three are useful for green-field work, one is intentionally a
 > stub (a reader exercise), and one is transitional — useful for
 > migration but to be retired by green-field code.*
 
 The previous chapter introduced the abstract task model.  This
 chapter walks the five concrete `Task` subclasses shipped under
-[`automojo-taskplus/source/packages/automojo/taskplus/tasks/`](../../../automojo-taskplus/source/packages/automojo/taskplus/tasks/).
+[`codecraftai-taskplus/source/packages/ccai/taskplus/tasks/`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/).
 Each is a concrete implementation of `perform_task` — small in
 LOC, big in cumulative usefulness.  The five together let workflow
 authors build real orchestrations without writing a single line of
@@ -30,13 +30,13 @@ A workflow step that boils down to "run this one command":
 
 ```yaml
 - task: Lint
-  tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+  tasktype: ccai.taskplus.tasks.runcommand@RunCommand
   command: "ruff check ."
 ```
 
 ```yaml
 - task: Pull image
-  tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+  tasktype: ccai.taskplus.tasks.runcommand@RunCommand
   command: "docker pull registry.example.com/my-image:latest"
 ```
 
@@ -48,7 +48,7 @@ type.
 
 ```yaml
 - task: <human-readable label>
-  tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+  tasktype: ccai.taskplus.tasks.runcommand@RunCommand
   command: <shell-command-string>
   if: <optional Python expression>
   onfailure: <optional label>
@@ -56,7 +56,7 @@ type.
 ```
 
 One required field beyond the universals:
-[`command`](../../../automojo-taskplus/source/packages/automojo/taskplus/tasks/runcommand.py) —
+[`command`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/runcommand.py) —
 the shell command to execute.  The shell is the system's default
 shell; the command is invoked with `shell=True`.
 
@@ -140,7 +140,7 @@ standalone shell-script file:
 
 ```yaml
 - task: Pre-test setup
-  tasktype: automojo.taskplus.tasks.shellscript@ShellScript
+  tasktype: ccai.taskplus.tasks.shellscript@ShellScript
   script:
     - "set -euo pipefail"
     - "rm -rf .output"
@@ -156,7 +156,7 @@ sit on its own line for readability.
 
 ```yaml
 - task: <label>
-  tasktype: automojo.taskplus.tasks.shellscript@ShellScript
+  tasktype: ccai.taskplus.tasks.shellscript@ShellScript
   script:
     - <shell-line-1>
     - <shell-line-2>
@@ -164,15 +164,15 @@ sit on its own line for readability.
 ```
 
 One required field:
-[`script`](../../../automojo-taskplus/source/packages/automojo/taskplus/tasks/shellscript.py) —
+[`script`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/shellscript.py) —
 a list of strings.  Each string becomes one line of the temp
 script.  The lines are joined with `os.linesep` before writing.
 
 ### Implementation
 
 The task writes the script to a temp file (using
-[`get_temporary_file`](../../../automojo-runtime/source/packages/automojo/runtime/paths.py)
-from `automojo-runtime`), chmods it executable, runs it, captures
+[`get_temporary_file`](../../../codecraftai-runtime/source/packages/ccai/runtime/paths.py)
+from `codecraftai-runtime`), chmods it executable, runs it, captures
 output:
 
 ```python
@@ -204,7 +204,7 @@ def perform_task(self, environment, parameters, flowstate) -> int:
 
 ### Audit findings
 
-The pre-book audit pass on `automojo-taskplus` found two real
+The pre-book audit pass on `codecraftai-taskplus` found two real
 bugs in this task that have since been fixed:
 
 - **The temp-file prefix used `%d` against a string ordinal**, which
@@ -251,7 +251,7 @@ file:
 
 ```yaml
 - task: Compute build version
-  tasktype: automojo.taskplus.tasks.embeddedpython@EmbeddedPython
+  tasktype: ccai.taskplus.tasks.embeddedpython@EmbeddedPython
   script:
     - "import os"
     - "build_version = f'{os.environ[\"BRANCH\"]}-{os.environ[\"BUILD_ID\"]}'"
@@ -268,7 +268,7 @@ orchestration's interpreter rather than a fresh one.
 
 ```yaml
 - task: <label>
-  tasktype: automojo.taskplus.tasks.embeddedpython@EmbeddedPython
+  tasktype: ccai.taskplus.tasks.embeddedpython@EmbeddedPython
   script:
     - <python-line-1>
     - <python-line-2>
@@ -276,7 +276,7 @@ orchestration's interpreter rather than a fresh one.
 ```
 
 One required field:
-[`script`](../../../automojo-taskplus/source/packages/automojo/taskplus/tasks/embeddedpython.py) —
+[`script`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/embeddedpython.py) —
 a list of Python source lines.  Joined with `os.linesep` before
 `exec`.
 
@@ -389,7 +389,7 @@ environment variables based on dynamic values:
 
 ```yaml
 - task: Compute env
-  tasktype: automojo.taskplus.tasks.createenvironment@CreateEnvironment
+  tasktype: ccai.taskplus.tasks.createenvironment@CreateEnvironment
   variables:
     - name: BUILD_VERSION
       command: "git describe --tags"
@@ -508,7 +508,7 @@ Three rules of thumb beyond the table:
 ## Coverage and audit summary
 
 Every line of every task above is covered by the 115-test
-testbase suite added to `automojo-taskplus` in the pre-book audit
+testbase suite added to `codecraftai-taskplus` in the pre-book audit
 pass.  The tests cover:
 
 - Construction with required fields present.
@@ -533,7 +533,7 @@ Part V is building rests on tested code.
 
 ## Summary
 
-- `automojo-taskplus` ships five concrete `Task` subclasses:
+- `codecraftai-taskplus` ships five concrete `Task` subclasses:
   `RunCommand`, `ShellScript`, `EmbeddedPython`, `GitCheckout`,
   `CreateEnvironment`.
 - `RunCommand` runs one shell command; output is captured and

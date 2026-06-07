@@ -193,7 +193,7 @@ is the only actor; observation is delegated to validators that
 run *in tandem* with the test.  Volume 1 chapter 1 introduced
 the metaphor: a tandem bicycle has one driver and many
 observers.  Volume 2 chapter 5 walks the
-`automojo-testbase/.../tandem/validators.py` machinery.
+`codecraftai-testbase/.../tandem/validators.py` machinery.
 
 Without this commitment, distributed automation is flaky
 forever.  With it, distributed automation is *deterministic

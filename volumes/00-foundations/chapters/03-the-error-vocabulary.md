@@ -8,9 +8,9 @@
 The previous chapter established the coding standards.  This
 chapter develops one of them in depth: the exception-handling
 discipline.  The discipline rests on
-[`automojo-errors`](../../../../automojo-errors/source/packages/automojo/errors/exceptions.py)
+[`codecraftai-errors`](../../../../codecraftai-errors/source/packages/ccai/errors/exceptions.py)
 — a small package whose job is to provide the **typed exception
-vocabulary** every other automojo package uses.
+vocabulary** every other ccai package uses.
 
 The package's contents are simple in shape but consequential in
 meaning.  Eighty exception classes; most are RuntimeError
@@ -411,7 +411,7 @@ SemanticError — the caller's API misuse still surfaces.
 
 This is one of the portfolio's most consequential design
 choices.  Most third-party libraries put their custom exceptions
-in the Exception subtree; the automojo portfolio deliberately
+in the Exception subtree; the ccai portfolio deliberately
 lifts the must-bubble ones out.  It's a small choice in the
 class definition, with a large consequence at every catch site
 across every package.
@@ -419,7 +419,7 @@ across every package.
 ## The vocabulary's role across the portfolio
 
 Every other package in the foundation tier uses
-`automojo-errors` for its exception vocabulary.  Specific uses:
+`codecraftai-errors` for its exception vocabulary.  Specific uses:
 
 - **Volume 0 chapter 4 (Interfaces)** uses
   `AbstractMethodError` to signal that an abstract method's stub
@@ -441,7 +441,7 @@ exception type both packages understand.
 
 ## Summary
 
-- **`automojo-errors`** ships a small package with ~80
+- **`codecraftai-errors`** ships a small package with ~80
   exception classes organised into seven operational categories
   plus three *special* types whose semantics matter universally.
 - **`SemanticError(BaseException)`** signals API misuse.  Must

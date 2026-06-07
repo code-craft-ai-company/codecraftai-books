@@ -313,8 +313,8 @@ Three months later, an SRE wants to understand why staging
 produces ten times the trace volume of production.  They run:
 
 ```bash
-automojo profile capture --output staging-now.json
-automojo profile capture --output prod-now.json
+ccai profile capture --output staging-now.json
+ccai profile capture --output prod-now.json
 diff <(jq '.configuration_snapshots.runtime.tracing' staging-now.json) \
      <(jq '.configuration_snapshots.runtime.tracing' prod-now.json)
 ```
@@ -375,7 +375,7 @@ Why it happens: the engineer writing the new profile used
 another profile (`staging-east`) as a starting point and didn't
 prune the inherited values when they happened to match.
 
-How to detect: a `automojo profile diff <child> base` that shows
+How to detect: a `ccai profile diff <child> base` that shows
 zero differences for a particular category means the child is
 explicitly setting what it would inherit anyway.
 
@@ -493,7 +493,7 @@ the process by itself.
 This is the last chapter of Part IV.  The volume has now built
 the discipline (Parts I–III) and developed the environment-
 spanning machinery (Part IV).  The next part — Part V — is the
-implementation: `automojo-taskplus` as the workflow engine that
+implementation: `codecraftai-taskplus` as the workflow engine that
 references the configurations the discipline has produced, by
 name from a portable workflow YAML.  Where Parts II–IV asked
 *what* the configurations should be and *how* they should

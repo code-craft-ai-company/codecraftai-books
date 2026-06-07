@@ -31,7 +31,7 @@ The `DistributedTestJob` runs on the controller.  It owns:
 - The `JsonResultRecorder` (Volume 1 chapter 5) — but it does
   not *install* that recorder itself.  The JSOS-to-disk recorder
   is supplied by the `IntegratedTestJob` layer it inherits from
-  (`automojo-integration-runtime`); plain `testbase` `TestJob`
+  (`codecraftai-integration-runtime`); plain `testbase` `TestJob`
   defaults to a stdout-only recorder and writes nothing to a
   results directory.  See "The recorder in distributed mode"
   below.
@@ -210,13 +210,13 @@ need to know whether the execution was distributed or local.
 But note *which* job installs that recorder.  Plain `testbase`
 `TestJob` does **not** write JSOS-to-disk by default: its
 `_create_recorder()` returns a `StdoutResultRecorder`
-(`automojo.testbase.results.recorders.stdoutresultrecorder`,
+(`ccai.testbase.results.recorders.stdoutresultrecorder`,
 testjob.py:564), which prints the run summary to stdout and
 reuses the JSOS/JSON serialisation (so the stream and summary
 files are still written *when an output directory is in play*)
 but skips the rendered HTML summary.  The full controller-side
 recorder — JSOS streaming plus rendered HTML — is installed one
-layer up, by `IntegratedTestJob` in `automojo-integration-runtime`,
+layer up, by `IntegratedTestJob` in `codecraftai-integration-runtime`,
 whose `_create_recorder()` returns the `JsonResultRecorder`
 (integratedtestjob.py:79).  `IntegratedTestJob` is also what
 roots those files under the activated application's presence
@@ -231,7 +231,7 @@ not because `DistributedTestJob` (or `testbase`) supplies it.
 > *In-flight note — read this before assuming the inheritance.*
 > The re-parent has **not yet landed**.  In today's interop
 > source `InteropLibraryTestJob` still extends `TestJob`
-> directly (`automojo.interop.testing.testjob`, testjob.py:22),
+> directly (`ccai.interop.testing.testjob`, testjob.py:22),
 > so the live chain `DistributedTestJob → InteropLibraryTestJob →
 > TestJob` does **not** pass through `IntegratedTestJob` yet.  As
 > built, a `DistributedTestJob` therefore inherits `TestJob`'s

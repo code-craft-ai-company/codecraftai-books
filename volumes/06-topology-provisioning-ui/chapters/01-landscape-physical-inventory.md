@@ -2,7 +2,7 @@
 
 > *Volumes 1, 2, and 3 referenced "the Landscape" as input the
 > framework had loaded.  This chapter walks what's *in* a
-> Landscape file and how `automojo-landscaping` represents
+> Landscape file and how `codecraftai-landscaping` represents
 > it.  Two top-level sections: `apod` (the automation
 > participants — runners, drivers, controllers) and
 > `infrastructure` (services and devices the automation
@@ -13,7 +13,7 @@
 A Landscape is the answer to the question *what physical
 resources exist and how are they connected?*  The Landscape
 file is a YAML or JSON document; the loader is in
-`automojo-configuration`; the consumer is `automojo-landscaping`.
+`codecraftai-configuration`; the consumer is `codecraftai-landscaping`.
 Volume 3 chapter 5 walked the file's role at the orchestration
 layer; this chapter walks what's inside the file and how the
 framework's classes represent it once loaded.
@@ -28,7 +28,7 @@ mechanism, the BaseExt extension model, and the Pod model.
 ## The two top-level sections
 
 A real Landscape (the example shipped at
-`automojo-automation-kit/userguide/examples/landscape.yaml`)
+`codecraftai-automation-kit/userguide/examples/landscape.yaml`)
 has the shape:
 
 ```yaml
@@ -104,13 +104,13 @@ moves through the framework.
 
 The chain of loading is straightforward:
 
-1. `automojo-configuration`'s `resolve_landscape_configuration`
+1. `codecraftai-configuration`'s `resolve_landscape_configuration`
    reads the named Landscape files (per the
    `AM_CONFIG_LANDSCAPE_NAMES` variable from Volume 0 chapter
    9), merges them via `MergeMap` overlay, and stores the
    result in `LANDSCAPE_CONFIGURATION_MAP`.
 2. `LandscapeConfigurationLayer.load_landscape` in
-   `automojo-landscaping` reads the merged dict and stores it
+   `codecraftai-landscaping` reads the merged dict and stores it
    as `landscape_info` (Volume 2 chapter 6 walked the
    activation phase).
 3. `LandscapeIntegrationLayer.initialize_landscape` walks the
@@ -124,7 +124,7 @@ declared resources.
 
 ## The `Landscape` class
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/landscape.py:50`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/landscape.py:50`
 
 ```python
 class Landscape:
@@ -182,7 +182,7 @@ topology integration layer that holds the loaded topology.
 
 ## The `LandscapeDevice` class
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/landscapedevice.py:41`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/landscapedevice.py:41`
 
 ```python
 class LandscapeDevice(FeatureAttachedObject):
@@ -216,7 +216,7 @@ class LandscapeDevice(FeatureAttachedObject):
 Several pieces matter:
 
 - **`FeatureAttachedObject` base.**  This base class (in
-  `automojo-testbase`) provides the dispatch mechanism for
+  `codecraftai-testbase`) provides the dispatch mechanism for
   Feature handlers.  A subclass-specific Feature is a method
   that checks `self._features` and acts accordingly.
 - **Weak references.**  `_lscape_ref` and `_coord_ref` are

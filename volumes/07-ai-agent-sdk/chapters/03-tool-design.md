@@ -1,7 +1,7 @@
 # Chapter 3 — Tool Design
 
 > *Tools are how an agent affects the world beyond text.
-> The `automojo-agent-kit` ships a small, opinionated tool
+> The `codecraftai-agent-kit` ships a small, opinionated tool
 > system: declarative `INPUT_SCHEMA` and `OUTPUT_SCHEMA`,
 > `ToolExecutor` that validates inputs, runs the tool, and
 > validates outputs, two typed exceptions for the failure

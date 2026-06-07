@@ -3,7 +3,7 @@
 **Working subtitle:** *testbase, arcli, and Single-Host Test Infrastructure*
 
 This is the working directory for Volume 1.  The series-level entry
-for this volume lives in [`automojo-volumes.md`](../../automojo-volumes.md);
+for this volume lives in [`codecraftai-volumes.md`](../../codecraftai-volumes.md);
 this directory is where the volume gets drafted.
 
 ## Volume role in the series
@@ -25,10 +25,10 @@ test is no longer a single Python process.
 
 ## Source material
 
-- `automojo-testbase` — the test framework itself
-- `automojo-arcli` — the declarative CLI toolkit underneath every
-  `automojo-*` CLI
-- `automojo-agent-kit` — case study source (a 3,700+ test
+- `codecraftai-testbase` — the test framework itself
+- `codecraftai-arcli` — the declarative CLI toolkit underneath every
+  `codecraftai-*` CLI
+- `codecraftai-agent-kit` — case study source (a 3,700+ test
   single-host suite)
 
 ## Layout
@@ -67,7 +67,7 @@ Same as Volumes 0 and 3:
 - Markdown throughout.  Code samples in fenced blocks with the
   language tag.
 - Every claim is anchored on a concrete file:line reference into
-  one of the `automojo-*` source repositories.
+  one of the `codecraftai-*` source repositories.
 - Chapter files start with a one-paragraph chapter abstract, then
   section structure (`##` for sections, `###` for subsections).
 - Forward / backward cross-references link to the relevant chapter

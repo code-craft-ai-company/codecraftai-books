@@ -42,7 +42,7 @@ devices online.
 
 ## The shipped stub
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/layers/landscapeconfigurationlayer.py:536`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/layers/landscapeconfigurationlayer.py:536`
 
 ```python
 def validate_topology(self, topology_info: dict) -> Tuple[List[str], List[str]]:
@@ -353,7 +353,7 @@ Chapter 7 walks the subclassing mechanism in full — how a
 project subclasses `Landscape` and `Topology` to plug in its
 custom Feature handling, its custom Topology shapes, and its
 custom verification.  The chapter walks the
-`automojo-landscaping/wellknown.py:LandscapeSingleton`
+`codecraftai-landscaping/wellknown.py:LandscapeSingleton`
 factory-overridable singleton, the registration pattern, and
 the integration with the `TestJob` customisation cascade
 from Volume 2 chapter 4.

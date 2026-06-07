@@ -111,7 +111,7 @@ typed; the dynamic parts live in their proper engine.
 
 The taskplus engine has measurable startup latency.  Loading
 the workflow YAML, resolving configurations through
-`automojo-configuration`, instantiating credential and data-profile
+`codecraftai-configuration`, instantiating credential and data-profile
 managers, walking the recursive flow tree — all takes hundreds
 of milliseconds at minimum, often a second or two on
 configuration-heavy workflows.
@@ -285,7 +285,7 @@ A small framework for the decision:
 - The team has the capacity to maintain typed configuration
   files and the discipline that comes with them.
 - The tool ecosystem the team is already using
-  (`automojo-*`, or any portable typed-config toolkit) is
+  (`codecraftai-*`, or any portable typed-config toolkit) is
   available and stable.
 
 ### Bring in a different tool when
@@ -315,7 +315,7 @@ A team might have:
   (durable, stateful).
 - **Apache Kafka Streams** for real-time event processing
   (low-latency, event-driven).
-- **`automojo-taskplus`** for CI / integration / deployment
+- **`codecraftai-taskplus`** for CI / integration / deployment
   pipelines (typed, portable, environment-spanning).
 
 The discipline of this volume applies to the *taskplus

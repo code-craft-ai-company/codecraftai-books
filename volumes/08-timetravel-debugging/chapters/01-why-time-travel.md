@@ -7,9 +7,9 @@
 > travel debugging is the discipline of recording enough state at
 > a chosen scope, in a chosen window, that the failing execution
 > can be reconstructed and re-walked off-line.  The portfolio's
-> answer is a paired tier — `automojo-timetravel-pod` instruments
+> answer is a paired tier — `codecraftai-timetravel-pod` instruments
 > a running Python process at named "portal" scopes, and
-> `automojo-timetravel-server` ingests, persists, and queries the
+> `codecraftai-timetravel-server` ingests, persists, and queries the
 > resulting traces.  This chapter motivates the tier: the gap it
 > closes, the constraints it accepts, and the cost it asks the
 > operator to pay.
@@ -61,12 +61,12 @@ The portfolio splits the problem into two cooperating tiers.
 Their responsibilities and their boundaries are visible in the
 top-level project descriptions.
 
-`automojo-timetravel-pod`'s `AGENTS.md` opens with a stated
+`codecraftai-timetravel-pod`'s `AGENTS.md` opens with a stated
 goal:
 
-> The 'automojo-timetravel-pod' is a python package that is used
+> The 'codecraftai-timetravel-pod' is a python package that is used
 > to provide time travel debugging capabilities to applications.
-> The benefit to using the 'automojo-timetravel-pod' is that it
+> The benefit to using the 'codecraftai-timetravel-pod' is that it
 > uses a concept of 'named portals' in order to allow for the
 > dynamic activation of different scopes of time travel
 > debugging.  The developer places a portal in the form of a
@@ -82,12 +82,12 @@ hook for the duration of the `with` block, capture call /
 return / line / variable events, and write them to a configured
 backend.
 
-`automojo-timetravel-server`'s `AGENTS.md` opens with the
+`codecraftai-timetravel-server`'s `AGENTS.md` opens with the
 complement:
 
-> The 'automojo-timetravel-service' package repository is a web
+> The 'codecraftai-timetravel-service' package repository is a web
 > service that is used to provide a web interface for the
-> 'automojo-timetravel-pod' package.  It is a 'automojo-webworks'
+> 'codecraftai-timetravel-pod' package.  It is a 'codecraftai-webworks'
 > based web service that is used to provide a web interface for
 > time travel debugging.
 
@@ -103,12 +103,12 @@ author of the portfolio was unwilling to violate.
 
 **Constraint 1: instrumentation must not be free, but it must be
 free when off.**  An application that imports
-`automojo-timetravel-pod` and never activates a portal pays for
+`codecraftai-timetravel-pod` and never activates a portal pays for
 the import — a few classes, a thread-local lookup at portal
 entry, the existence of the gateway's context manager — and
 nothing else.  No `sys.settrace` is installed; no events are
 recorded; no thread is started.  The `TimeTravelPortal.__enter__`
-in `automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portal.py:60-141`
+in `codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portal.py:60-141`
 short-circuits at the very first check:
 
 ```python
@@ -140,7 +140,7 @@ instrumentation must be silent when nobody asked for it.*
 not know in advance which portal will need to be activated.  In
 production, the bug is the news; the diagnostic posture has to
 adjust.  The portal registry is a process-wide structure
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portalregistry.py:25-41`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portalregistry.py:25-41`)
 that an external client — over the JSON-lines remote-control
 protocol — can change at runtime, with no application restart:
 
@@ -164,11 +164,11 @@ visible to the next portal entry on any thread.
 
 **Constraint 3: data must outlive the process.**  A pod recording
 a trace to a TCP backend
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/backends/tcpbackend.py:85-107`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/backends/tcpbackend.py:85-107`)
 streams envelopes to the server during the run; if the process
 crashes mid-trace, the server has whatever it received up to the
 crash boundary.  A pod recording to a file
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/backends/filebackend.py:79-89`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/backends/filebackend.py:79-89`)
 flushes its buffer to disk on every chunk and rotates files at a
 configurable size.  In both cases, the trace survives the
 process that produced it — which is the whole point of *post-
@@ -250,7 +250,7 @@ The server's spec — also visible in its `AGENTS.md` under
 
 Of these layers, S0 through S4 are functionally implemented and
 have their own unit tests.  S5 is *specced and routed* — the
-`automojo-webworks` blueprints register, OpenAPI docs render,
+`codecraftai-webworks` blueprints register, OpenAPI docs render,
 endpoint signatures match the design — but the endpoint bodies
 return mock data.  No call from a Layer-5 endpoint into a Layer-1
 service has yet been wired in the source as of the snapshot the
@@ -295,7 +295,7 @@ What it does not mean:
   the configured granularity, *only* the events declared by
   `TraceConfiguration` are emitted — calls only by default, with
   lines and variable snapshots opt-in.  See
-  `automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceconfiguration.py:10-63`:
+  `codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceconfiguration.py:10-63`:
 
 ```python
 class TraceConfiguration:
@@ -384,7 +384,7 @@ material from earlier volumes:
 - **Volume 0** — foundation tier.  The error vocabulary
   (`ConfigurationError`, `SemanticError`) is what the pod uses
   when the gateway is mis-initialised
-  (`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceclock.py:39-52` —
+  (`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceclock.py:39-52` —
   raises `RuntimeError` if `timestamp()` is called before
   `start()`, *not* a silent zero).  The `ConfigurationError`
   contract is what the pod's `configure_timetravel` would raise

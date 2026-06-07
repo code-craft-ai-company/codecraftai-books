@@ -18,9 +18,9 @@ the previous chapters established:
 
 The chapter walks each package in turn, then closes Volume 0.
 
-## `automojo-credentials` — the typed credential vocabulary
+## `codecraftai-credentials` — the typed credential vocabulary
 
-[`automojo-credentials`](../../../../automojo-credentials/source/packages/automojo/credentials/)
+[`codecraftai-credentials`](../../../../codecraftai-credentials/source/packages/ccai/credentials/)
 provides the typed credential vocabulary every other package
 consumes.  Volume 3 chapter 9 covered the eleven shipped
 credential classes in extensive detail; this chapter is the
@@ -30,7 +30,7 @@ the orchestration-discipline framing.
 ### The shipped classes
 
 Eleven concrete credential classes inherit from
-[`BaseCredential`](../../../../automojo-credentials/source/packages/automojo/credentials/basecredential.py):
+[`BaseCredential`](../../../../codecraftai-credentials/source/packages/ccai/credentials/basecredential.py):
 
 | Class | Category | Used for |
 |---|---|---|
@@ -73,9 +73,9 @@ with `BaseException`-class validation at construction time
 
 ### `CredentialManager` — the registry
 
-[`CredentialManager`](../../../../automojo-credentials/source/packages/automojo/credentials/credentialmanager.py)
+[`CredentialManager`](../../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py)
 takes a parsed dict (typically from
-`automojo-configuration`'s loader) and produces an
+`codecraftai-configuration`'s loader) and produces an
 identifier-keyed dictionary of typed instances.  Its
 dispatch — chapter 19 of Volume 3 walked this in detail — is
 the category-as-discriminator pattern:
@@ -96,7 +96,7 @@ resolver layer the consumer builds on top.
 
 ### `CredentialManagerSingleton` — the per-process accessor
 
-[`wellknown.py`](../../../../automojo-credentials/source/packages/automojo/credentials/wellknown.py)
+[`wellknown.py`](../../../../codecraftai-credentials/source/packages/ccai/credentials/wellknown.py)
 provides the per-process singleton.  Consumers call
 `CredentialManagerSingleton().lookup_credential(name)` and get
 the typed credential object.
@@ -128,20 +128,20 @@ loud.
 
 The credential package is consumed directly by:
 
-- **`automojo-dataprofiles`** (next section) — every data
+- **`codecraftai-dataprofiles`** (next section) — every data
   profile carries a credential identifier.
-- **`automojo-storage-database`** (next section) — database
+- **`codecraftai-storage-database`** (next section) — database
   connections take credentials.
-- **`automojo-configuration`** — the loader's credentials
+- **`codecraftai-configuration`** — the loader's credentials
   category produces credential objects through the manager.
 
 Volume 3 Part III (chapters 9–12) is the orchestration-layer
 treatment.  This chapter is the foundation-tier baseline the
 orchestration treatment builds on.
 
-## `automojo-dataprofiles` — typed data-source profiles
+## `codecraftai-dataprofiles` — typed data-source profiles
 
-[`automojo-dataprofiles`](../../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/)
+[`codecraftai-dataprofiles`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/)
 provides the typed data-source-profile vocabulary.  Volume 3
 chapter 8 covered the five shipped profile classes; this
 chapter is the foundation-tier baseline.
@@ -149,7 +149,7 @@ chapter is the foundation-tier baseline.
 ### The shipped classes
 
 Five concrete profile classes inherit from
-[`BaseDataProfile`](../../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/basedataprofile.py):
+[`BaseDataProfile`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/basedataprofile.py):
 
 | Class | Category | Used for |
 |---|---|---|
@@ -178,7 +178,7 @@ category-specific fields live on the concrete subclasses.
 
 ### `DataProfileManager` — the registry
 
-[`DataProfileManager`](../../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/dataprofilemanager.py)
+[`DataProfileManager`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/dataprofilemanager.py)
 mirrors `CredentialManager` — same dispatch pattern, different
 domain.  Five dispatch branches; lookup-by-identifier; failure-
 loudly on missing entries.
@@ -200,16 +200,16 @@ the combination produces a connection.
 
 Volume 3 chapter 8 develops the orchestration-layer view.
 
-## `automojo-storage-database` — database connection scaffolding
+## `codecraftai-storage-database` — database connection scaffolding
 
-[`automojo-storage-database`](../../../../automojo-storage-database/source/packages/automojo/storage/database/)
+[`codecraftai-storage-database`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/)
 is the smallest and youngest of the foundation-tier packages.
 Its job: take a data profile + a credential and produce a
 SQLAlchemy `Engine` ready for queries.
 
 ### `DatabaseConnectionFactory` — the factory
 
-[`dbconnection.py`](../../../../automojo-storage-database/source/packages/automojo/storage/database/dbconnection.py)
+[`dbconnection.py`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/dbconnection.py)
 defines `DatabaseConnectionFactory`:
 
 ```python
@@ -247,7 +247,7 @@ Ubuntu, Postgres-specific extensions).
 
 ### `dbio.py` — typed CRUD helpers
 
-[`dbio.py`](../../../../automojo-storage-database/source/packages/automojo/storage/database/dbio.py)
+[`dbio.py`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/dbio.py)
 provides the operational helpers built on top of the factory:
 
 - `database_exists(conn_factory, dbname=None)` — check whether
@@ -260,12 +260,12 @@ provides the operational helpers built on top of the factory:
 
 The pattern: a small set of typed helpers around SQLAlchemy
 primitives.  No reinvention; just the typed envelope that
-turns the SQLAlchemy primitives into automojo-conventional
+turns the SQLAlchemy primitives into codecraftai-conventional
 calls.
 
 ### `mixins.py` — `SerializableMixIn`
 
-[`mixins.py`](../../../../automojo-storage-database/source/packages/automojo/storage/database/mixins.py)
+[`mixins.py`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/mixins.py)
 ships one mixin: `SerializableMixIn`, which adds `as_dict()`
 and `to_json()` to SQLAlchemy model classes:
 
@@ -293,7 +293,7 @@ construction provides the other.
 
 ### What the package is *not*
 
-`automojo-storage-database` is not a complete storage layer.
+`codecraftai-storage-database` is not a complete storage layer.
 It does not provide:
 
 - An ORM beyond SQLAlchemy's defaults.
@@ -368,16 +368,16 @@ Volume 0 has now walked the full foundation tier:
 |---|---|---|
 | (philosophy) | 1 | The ten principles |
 | (coding standards) | 2 | The rules |
-| `automojo-errors` | 3 | The exception vocabulary |
-| `automojo-interfaces` | 4 | The contract layer |
-| `automojo-waiting` | 5 | The wait-with-diagnostics primitive |
-| `automojo-this-app` | 6 | Identity + persona variables |
-| `automojo-extension` | 7 | Factory and plug-in machinery |
-| `automojo-runtime` | 8 | Runtime variables + paths + activation |
-| `automojo-configuration` | 9 | The configuration loader |
-| `automojo-credentials`, `-dataprofiles`, `-storage-database` | 10 | Typed vocabularies |
+| `codecraftai-errors` | 3 | The exception vocabulary |
+| `codecraftai-interfaces` | 4 | The contract layer |
+| `codecraftai-waiting` | 5 | The wait-with-diagnostics primitive |
+| `codecraftai-this-app` | 6 | Identity + persona variables |
+| `codecraftai-extension` | 7 | Factory and plug-in machinery |
+| `codecraftai-runtime` | 8 | Runtime variables + paths + activation |
+| `codecraftai-configuration` | 9 | The configuration loader |
+| `codecraftai-credentials`, `-dataprofiles`, `-storage-database` | 10 | Typed vocabularies |
 
-Plus the cross-cutting `automojo-xmodules` package (chapter 9
+Plus the cross-cutting `codecraftai-xmodules` package (chapter 9
 mentioned its `MergeMap`; chapter 7 touched its
 `ximport.import_by_name`).  `xmodules` is the catch-all utility
 package — `xformatting.indent_lines`, `xpython.expand_path`,
@@ -431,7 +431,7 @@ Three areas of the portfolio that aren't in the foundation tier:
 
 ### Networking primitives
 
-`automojo-networking` ships TCP/IP utility code.  It's a
+`codecraftai-networking` ships TCP/IP utility code.  It's a
 *support* package rather than a foundation package — it
 doesn't define a typed vocabulary or an architecture; it's a
 set of helpers.  Volume 5 (Interop) treats it where
@@ -442,13 +442,13 @@ appropriate.
 The detailed logging configuration — how the runtime layer
 configures Python's logging system, what handlers and
 formatters are wired up, how the log files are named — lives
-in `automojo-xmodules/xlogging`.  It's referenced through this
+in `codecraftai-xmodules/xlogging`.  It's referenced through this
 volume but not treated as its own chapter; the depth doesn't
 warrant it.
 
 ### Test framework
 
-`automojo-testbase` is foundation-tier *adjacent* — most other
+`codecraftai-testbase` is foundation-tier *adjacent* — most other
 volumes depend on it — but it's substantial enough to deserve
 its own volume (Volume 1).  Treating it in Volume 0 would
 shortchange both the testing material and the foundation
@@ -456,16 +456,16 @@ material.
 
 ## Summary — and end of Volume 0
 
-- **`automojo-credentials`** ships eleven typed credential
+- **`codecraftai-credentials`** ships eleven typed credential
   classes inheriting from `BaseCredential`, plus a
   `CredentialManager` registry and a `CredentialManagerSingleton`
   accessor.  Volume 3 chapter 9 develops the orchestration-
   layer view.
-- **`automojo-dataprofiles`** ships five typed data-source-
+- **`codecraftai-dataprofiles`** ships five typed data-source-
   profile classes inheriting from `BaseDataProfile`, plus a
   `DataProfileManager` registry and a singleton accessor.
   Volume 3 chapter 8 develops the orchestration-layer view.
-- **`automojo-storage-database`** ships the
+- **`codecraftai-storage-database`** ships the
   `DatabaseConnectionFactory` that takes a profile + credential
   and produces a SQLAlchemy `Engine`, plus a small set of
   typed CRUD helpers (`database_exists`, `database_create`,
@@ -480,7 +480,7 @@ material.
   builds on these chapters.
 - Volume 0 deliberately doesn't cover networking primitives
   (support package, not architecture), logging configuration
-  (utility code in `automojo-xmodules`), or the test framework
+  (utility code in `codecraftai-xmodules`), or the test framework
   (Volume 1's territory).
 
 A reader who finishes Volume 0 has the **discipline** of the

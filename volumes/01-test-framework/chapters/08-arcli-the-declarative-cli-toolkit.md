@@ -3,12 +3,12 @@
 > *Every package in the portfolio that ships a CLI ships
 > the same CLI: same decorator surface, same flag parsing,
 > same `--help` rendering, same error reporting.  The package
-> that makes that uniformity possible is `automojo-arcli`.
+> that makes that uniformity possible is `codecraftai-arcli`.
 > This chapter is about how it works and why each design
 > choice was the right one.*
 
-`automojo-arcli` is the declarative CLI toolkit underneath
-every `automojo-*` command-line surface: `testbase`,
+`codecraftai-arcli` is the declarative CLI toolkit underneath
+every `codecraftai-*` command-line surface: `testbase`,
 `taskplus`, `configuration`, `arcli` itself, and a dozen
 others.  Reading `arcli` is the prerequisite for reading any
 of those CLIs; once you can read `arcli`, every CLI in the
@@ -88,7 +88,7 @@ parser walks them*.
 ## The `Command` class
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/command.py:22–61
+# codecraftai-arcli/source/packages/ccai/arcli/model/command.py:22–61
 
 class Command:
     def __init__(self, name: str, callable: Callable) -> None:
@@ -125,7 +125,7 @@ time; the runtime parser calls `parse` / `execute`.
 ## `GroupingCommand`: the tree node
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/groupingcommand.py:17–52
+# codecraftai-arcli/source/packages/ccai/arcli/model/groupingcommand.py:17–52
 
 class GroupingCommand(Command):
     def __init__(self, name: str, callable: Callable) -> None:
@@ -161,7 +161,7 @@ down.
 ## `ArgField`: positional arguments
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/fields/argfield.py:16–62
+# codecraftai-arcli/source/packages/ccai/arcli/model/fields/argfield.py:16–62
 
 class ArgField:
     def __init__(self,
@@ -197,7 +197,7 @@ parser binds the parsed value to that kwarg when invoking.
 ## `OptionField`: flags
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/fields/optionfield.py:40–122
+# codecraftai-arcli/source/packages/ccai/arcli/model/fields/optionfield.py:40–122
 
 class OptionField:
     def __init__(self,
@@ -242,7 +242,7 @@ right for `Multiple` mode.
 ## The parameter type system
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/parameters/parameterbase.py:13–34
+# codecraftai-arcli/source/packages/ccai/arcli/model/parameters/parameterbase.py:13–34
 
 class ParameterBase(Generic[PT]):
     def __init__(self, alias: str, tvalue: Union[str, List[str]]) -> None:
@@ -276,7 +276,7 @@ inference.
 ### Validators as type factories
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/parameters/validators.py:14–227
+# codecraftai-arcli/source/packages/ccai/arcli/model/parameters/validators.py:14–227
 ```
 
 The validator system is *factory functions* that produce
@@ -319,7 +319,7 @@ validator's `get_value()` to branch on
 `isinstance(self._tvalue, list)`:
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/model/parameters/validators.py:22–46
+# codecraftai-arcli/source/packages/ccai/arcli/model/parameters/validators.py:22–46
 
 def get_value(self) -> Any:
     if isinstance(self._tvalue, list):
@@ -342,7 +342,7 @@ canonical-typed value.  The base type runs first (parses
 the string), then the validator runs over the parsed value.
 
 A 162-line regression suite at
-`automojo-arcli/source/tests/test_validators.py` exercises
+`codecraftai-arcli/source/tests/test_validators.py` exercises
 each validator in both modes.  The suite is the pattern an
 SDET should mirror when adding a new validator: write the
 single-value tests, write the multi-value tests, run them
@@ -367,10 +367,10 @@ The four decorators that assemble a tree:
 - **`@arcli.argument(...)`**, **`@arcli.option(...)`** —
   attach `ArgField` / `OptionField` to the wrapped command.
 
-A composite example from `automojo-testbase`:
+A composite example from `codecraftai-testbase`:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/testbase_command.py:32–64
+# codecraftai-testbase/source/packages/ccai/testbase/cli/testbase_command.py:32–64
 
 @arcli.option("-v", "--verbose",
               default=0,
@@ -393,7 +393,7 @@ root.  The `-v / --verbose` option is in `Counter` mode —
 ## Help-text generation
 
 ```python
-# automojo-arcli/source/packages/automojo/arcli/helpgenerator.py:15–72
+# codecraftai-arcli/source/packages/ccai/arcli/helpgenerator.py:15–72
 
 class HelpGenerator:
     @staticmethod
@@ -432,7 +432,7 @@ output is correct.  No second source of truth.
 The agents group from Chapter 6:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/__init__.py:18–26
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/__init__.py:18–26
 
 @arcli.group("agents")
 def group_testbase_agents():
@@ -449,7 +449,7 @@ group_testbase_agents.add_command(group_testbase_agents_config)
 A leaf command in the agents tree:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/config/extract.py:32–34
+# codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/config/extract.py:32–34
 
 @arcli.option("--config-file", required=True, help=HELP_CONFIG_FILE)
 @arcli.command("extract")
@@ -482,7 +482,7 @@ mocking doesn't do":
 - **No subprocess shelling.**  `arcli` parses; the
   command's callable does whatever it does.  The toolkit
   has no opinion about subprocess execution (which lives in
-  Volume 0's `automojo-this-app` and Volume 5's protocol
+  Volume 0's `codecraftai-this-app` and Volume 5's protocol
   layer).
 
 ## What's next

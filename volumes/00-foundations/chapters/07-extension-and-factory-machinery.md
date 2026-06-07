@@ -2,12 +2,12 @@
 
 > *Some packages need to plug new behaviour into existing extension
 > points without modifying the consumers of those extensions.
-> The factory machinery in `automojo-extension` is the formal
+> The factory machinery in `codecraftai-extension` is the formal
 > mechanism that makes this possible — declaratively, with
 > precedence ordering, with substitutability.*
 
 This chapter introduces
-[`automojo-extension`](../../../../automojo-extension/source/packages/automojo/extension/),
+[`codecraftai-extension`](../../../../codecraftai-extension/source/packages/ccai/extension/),
 the foundation-tier package whose job is to provide the
 plug-in machinery the rest of the portfolio uses.  The package
 defines three kinds of artifact:
@@ -22,7 +22,7 @@ defines three kinds of artifact:
 The pattern is *not* the GoF Factory pattern in textbook form.
 It's a *registration-based, precedence-ordered, multi-source*
 factory model that deals with the realities of an
-`automojo-*`-style portfolio: many packages, each contributing
+`codecraftai-*`-style portfolio: many packages, each contributing
 factories that override or supplement the base.
 
 ## The problem the machinery solves
@@ -42,7 +42,7 @@ This works for one extension point and grows untenable across a
 portfolio.  Every new OS adds branches; every new extension
 point duplicates the switch.
 
-The `automojo-extension` solution: each per-OS package
+The `codecraftai-extension` solution: each per-OS package
 *registers* a factory that produces its OS-specific
 implementation.  The `SuperFactory` discovers all registered
 factories at startup, sorts them by precedence, and dispatches
@@ -53,7 +53,7 @@ factory; the consumer code doesn't change.
 
 ### `FactoryProtocolBase` — the contract for protocols
 
-[`factoryprotocolbase.py`](../../../../automojo-extension/source/packages/automojo/extension/factory/factoryprotocolbase.py)
+[`factoryprotocolbase.py`](../../../../codecraftai-extension/source/packages/ccai/extension/factory/factoryprotocolbase.py)
 defines the marker base for any factory protocol declaration.  In
 its entirety:
 
@@ -131,20 +131,20 @@ default RHEL implementation ships its own factory with a higher
 
 ### `SuperFactory` — the dispatch engine
 
-[`superfactory.py`](../../../../automojo-extension/source/packages/automojo/extension/factory/superfactory.py)
+[`superfactory.py`](../../../../codecraftai-extension/source/packages/ccai/extension/factory/superfactory.py)
 is the engine.  Its job: discover all registered factory
 classes at startup, sort them by precedence, and provide
 dispatch methods for protocol-specific lookups.
 
 The discovery happens through a known package namespace:
-`automojo.factories`.  Every package that ships factory classes
+`ccai.factories`.  Every package that ships factory classes
 puts them under that namespace; the `SuperFactory` scans
 `sys.path` for the namespace, walks every package found,
 imports every module, and collects every `FactoryExtension`
 subclass:
 
 ```python
-def scan_automojo_factories_namespace() -> List[str]:
+def scan_ccai_factories_namespace() -> List[str]:
     search_paths = set([p for p in sys.path])
     rel_amr_factories = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     search_paths.add(rel_amr_factories)
@@ -152,7 +152,7 @@ def scan_automojo_factories_namespace() -> List[str]:
     modules_found = []
 
     for dir_path in search_paths:
-        check_dir = os.path.join(dir_path, "automojo", "factories")
+        check_dir = os.path.join(dir_path, "ccai", "factories")
         if os.path.exists(check_dir) and os.path.isdir(check_dir):
             check_dir_modules = scan_for_descendant_modules(check_dir)
             modules_found.extend(check_dir_modules)
@@ -162,10 +162,10 @@ def scan_automojo_factories_namespace() -> List[str]:
 
 The pattern is *namespace-package-driven*.  Python's namespace
 package mechanism lets multiple installed packages contribute
-to the same dotted namespace — `automojo-sysman-linux-redhat`
-contributes `automojo.factories.sysman.linux.redhat`,
-`automojo-sysman-linux-ubuntu` contributes
-`automojo.factories.sysman.linux.ubuntu`, and so on.  The
+to the same dotted namespace — `codecraftai-sysman-linux-redhat`
+contributes `ccai.factories.sysman.linux.redhat`,
+`codecraftai-sysman-linux-ubuntu` contributes
+`ccai.factories.sysman.linux.ubuntu`, and so on.  The
 `SuperFactory` doesn't care which package contributed which
 factory; it sees them all in the unified namespace.
 
@@ -237,12 +237,12 @@ A package that wants to contribute a factory does three things:
 ### 1. Create the namespace-package directory
 
 The package's source layout includes
-`automojo/factories/<scope>/`:
+`ccai/factories/<scope>/`:
 
 ```
-automojo-sysman-linux-redhat/
+codecraftai-sysman-linux-redhat/
 └── source/packages/
-    └── automojo/
+    └── ccai/
         └── factories/
             └── sysman/
                 └── linux/
@@ -253,7 +253,7 @@ automojo-sysman-linux-redhat/
 
 The directories are *namespace packages* (no `__init__.py` until
 the leaf, or empty `__init__.py`).  This is what lets multiple
-installed packages contribute under the same `automojo.factories.*`
+installed packages contribute under the same `ccai.factories.*`
 prefix without conflicting.
 
 ### 2. Define the factory class
@@ -261,9 +261,9 @@ prefix without conflicting.
 `networkadapterfactory.py` contains:
 
 ```python
-from automojo.extension.factory.factoryextension import FactoryExtension
-from automojo.sysman.common.networkadapterfactoryprotocol import NetworkAdapterFactoryProtocol
-from automojo.sysman.linux.redhat.networkadapter import RhelNetworkAdapter
+from ccai.extension.factory.factoryextension import FactoryExtension
+from ccai.sysman.common.networkadapterfactoryprotocol import NetworkAdapterFactoryProtocol
+from ccai.sysman.linux.redhat.networkadapter import RhelNetworkAdapter
 
 
 class RhelNetworkAdapterFactoryExtension(FactoryExtension, NetworkAdapterFactoryProtocol):
@@ -281,9 +281,9 @@ type(s).
 
 ### 3. Install the package
 
-`pip install automojo-sysman-linux-redhat`.  Python's namespace
-package mechanism merges the package's `automojo.factories.*`
-contribution into the `automojo.factories` namespace.  The
+`pip install codecraftai-sysman-linux-redhat`.  Python's namespace
+package mechanism merges the package's `ccai.factories.*`
+contribution into the `ccai.factories` namespace.  The
 `SuperFactory`'s next discovery pass finds the new factory.
 
 That's the full registration.  No central registry, no manual
@@ -361,9 +361,9 @@ instance) or to bring in an actual DI container (a separate
 tool entirely).  The chapter-2 *if-it's-hard-to-explain-try-
 another-way* principle gates the decision.
 
-## How `automojo-this-app` configures the SuperFactory
+## How `codecraftai-this-app` configures the SuperFactory
 
-The `automojo-this-app` package's `wellknown.py` exposes a
+The `codecraftai-this-app` package's `wellknown.py` exposes a
 helper:
 
 ```python
@@ -385,7 +385,7 @@ returned instance; the discovery happens once.
 The `AppPersona.AM_EXTENSIONS` field (chapter 6) carries a
 semicolon-separated list of *additional* extension modules the
 `SuperFactory` should scan beyond the default
-`automojo.factories` namespace.  This is the project-specific
+`ccai.factories` namespace.  This is the project-specific
 extension hook — a project ships its own factories under a
 different namespace and points the persona at it.
 
@@ -398,7 +398,7 @@ The factory machinery is used by:
 - **Volume 5 (Interop)** for the protocol implementation
   registry — DNS, SSH, serial, power, etc.  Each protocol
   implementation registers as a factory under
-  `automojo.factories.interop.*`.
+  `ccai.factories.interop.*`.
 - **Volume 6 (Landscape)** for the device-detail-mapper
   registry — UPnP devices, networking devices, etc.
 
@@ -417,7 +417,7 @@ patterns coexist; the choice between them is the chapter-1
 
 ## Summary
 
-- **`automojo-extension`** ships the registration-based,
+- **`codecraftai-extension`** ships the registration-based,
   precedence-ordered factory machinery that lets packages plug
   new behaviour into existing extension points without
   modifying the consumers.
@@ -427,7 +427,7 @@ patterns coexist; the choice between them is the chapter-1
   for concrete factories; declares `PRECEDENCE`),
   **`SuperFactory`** (the dispatch engine).
 - Discovery is **namespace-package-driven**.  Packages ship
-  factories under the `automojo.factories.*` namespace; the
+  factories under the `ccai.factories.*` namespace; the
   `SuperFactory` scans `sys.path` for the namespace and
   imports every contributed module.  Adding a new factory is a
   new package install; no central registry.
@@ -444,15 +444,15 @@ patterns coexist; the choice between them is the chapter-1
   at startup), *not* a DI container (no transitive dependency
   graph).
 - `ConfiguredSuperFactorySingleton()` from
-  `automojo-this-app/wellknown.py` is the per-process singleton.
+  `codecraftai-this-app/wellknown.py` is the per-process singleton.
   Discovery is lazy on first call; the
   `AppPersona.AM_EXTENSIONS` field configures additional
-  namespaces beyond `automojo.factories`.
+  namespaces beyond `ccai.factories`.
 - Used by Volume 4 (sysman per-OS dispatch), Volume 5
   (interop protocol registry), Volume 6 (device-detail
   mappers).  The pattern is universal across the portfolio.
 
 The next chapter introduces the runtime variables and well-known
-paths — the `automojo-runtime` package that builds on chapter 6's
+paths — the `codecraftai-runtime` package that builds on chapter 6's
 identity machinery to give every running process a structured
 view of its runtime environment.

@@ -7,7 +7,7 @@
 > answer is short — it follows the same pattern as credentials
 > from chapter 11, applied to a different category.*
 
-A *data profile* in the `automojo-*` portfolio is a
+A *data profile* in the `codecraftai-*` portfolio is a
 *connection profile* for a data store.  Where a credential
 answers "how do I authenticate," a data profile answers "where
 do I connect."  The two go together — most data-store calls
@@ -78,7 +78,7 @@ strings or auth material in test code.
 ## The DataProfileManager — the parallel to CredentialManager
 
 `DataProfileManager` (analogous to `CredentialManager` from
-chapter 11; in `automojo-dataprofiles`) is the job's
+chapter 11; in `codecraftai-dataprofiles`) is the job's
 data-profile lookup service.  Initialised during landscape
 activation.  Holds the resolved profiles for the duration of
 the job.

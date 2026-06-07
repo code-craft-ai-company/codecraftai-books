@@ -37,7 +37,7 @@ Both are "left to the user" extension points but they extend
 
 ## The `BaseExt` shape
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/services/vmware/vsphere/ext/baseext.py:22`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/services/vmware/vsphere/ext/baseext.py:22`
 
 ```python
 class BaseExt:
@@ -61,7 +61,7 @@ the constructor; subclasses implement the actual API helpers.
 
 ## A worked subclass — `TopologyExt`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/services/vmware/vsphere/ext/topologyext.py:23`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/services/vmware/vsphere/ext/topologyext.py:23`
 
 ```python
 class TopologyExt(BaseExt):

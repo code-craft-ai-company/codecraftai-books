@@ -9,7 +9,7 @@
 > when a portal opens, the configuration object that controls
 > recording fidelity, and the static-vs-dynamic instrumentation
 > trade-off the design forces on the operator.  All claims are
-> anchored on `automojo-timetravel-pod`.
+> anchored on `codecraftai-timetravel-pod`.
 
 ## 2.1 The two context managers
 
@@ -18,7 +18,7 @@ else — the trace hook, the recorder chain, the serialiser, the
 backend — is reached through them.
 
 `TimeTravelGateway`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/gateway.py:22`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/gateway.py:22`)
 is the application-scope context manager.  It is entered exactly
 once, near the top of the application's lifetime; it owns the
 monotonic clock that all timestamps are measured against, holds
@@ -27,7 +27,7 @@ two boundary events that bracket every recording — a
 `GatewayStartEvent` on entry, a `GatewayStopEvent` on exit.
 
 `TimeTravelPortal`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portal.py:28`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portal.py:28`)
 is the per-scope context manager.  It is entered every time
 control flows into a portal scope, regardless of whether that
 portal is currently *activated*.  The cost of entering an
@@ -47,7 +47,7 @@ activation).
 A minimal usage looks like this:
 
 ```python
-from automojo.timetravel.pod import TimeTravelGateway, TimeTravelPortal
+from ccai.timetravel.pod import TimeTravelGateway, TimeTravelPortal
 
 def main() -> None:
     with TimeTravelGateway(backend_uri="file:///var/log/mysvc/trace.bin"):
@@ -68,7 +68,7 @@ body.
 ## 2.2 The startup configuration
 
 `TimeTravelConfig`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/configuration.py:19`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/configuration.py:19`)
 collects every knob the pod exposes into a single object.  Its
 13 `__slots__` fields cover four concerns:
 
@@ -138,7 +138,7 @@ state, the backend, the control plane.
 The choice to keep the gateway out of `configure_timetravel` is
 deliberate and worth understanding.  The gateway controls the
 recording-window timestamp origin
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceclock.py`).
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceclock.py`).
 A long-running service that wants the gateway alive for the
 process lifetime enters it as a `with` block in `main()`.  A
 short-lived task that wants the gateway alive for the task's
@@ -210,7 +210,7 @@ exceptions).
 ## 2.4 The portal's decision tree
 
 `TimeTravelPortal.__enter__`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portal.py:60-141`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portal.py:60-141`)
 is the heart of the pod.  It is run on every entry into every
 portal scope; its cost dominates the application's *quiescent*
 overhead.  The decision tree it implements is, in order:
@@ -286,7 +286,7 @@ event list.  Production deployments configure a backend URI.
 ## 2.5 The portal registry
 
 `PortalRegistry`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portalregistry.py:12`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portalregistry.py:12`)
 is the structure that holds *which named portals are active
 right now*.  It is a singleton (`get_portal_registry()` at line
 133) keyed by portal name, with each value a dict of `active`,
@@ -342,7 +342,7 @@ The decision tree in §2.4 does not actually take the registry's
 lock at step 2 ("is this thread already tracing?").  Instead it
 reads thread-local state.  The
 `TracingState`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/tracingstate.py:15`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/tracingstate.py:15`)
 holds four fields per thread:
 
 - `is_tracing` — bool, true while a portal is open and the
@@ -441,7 +441,7 @@ registry.activate_portal(
 
 When a portal entry encounters this activation, it evaluates
 the expression in the *caller's frame*
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portal.py:99-112`):
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portal.py:99-112`):
 
 ```python
 expression = portal_info.get("expression")
@@ -488,7 +488,7 @@ the trade-off; the source comment is honest about the swallow
 ## 2.9 The trace configuration
 
 `TraceConfiguration`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceconfiguration.py:10-63`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceconfiguration.py:10-63`)
 is an immutable, four-boolean object that controls *what* the
 trace hook records on every Python event:
 
@@ -542,7 +542,7 @@ is the *last-resort, narrow-scope, this-bug-now* default.
 ## 2.10 The event model
 
 `TraceEvent`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceevents.py:29`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceevents.py:29`)
 is the base class of nine concrete event types
 (`traceevents.py:12-20`):
 
@@ -595,7 +595,7 @@ events are nanosecond offsets only.
 
 The actual `sys.settrace` callback lives in
 `TraceHookManager._trace_function`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/tracehookmanager.py:63-137`).
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/tracehookmanager.py:63-137`).
 It dispatches on the Python event type (the second argument
 Python passes to a trace function), constructs the appropriate
 `TraceEvent` subclass, and pushes it through the `record_callback`:
@@ -662,7 +662,7 @@ not pretend to handle errors it cannot resolve.
 
 For functions whose entire body is the portal scope,
 `@trace_portal("name")`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/decorators.py:19-46`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/decorators.py:19-46`)
 is the convenience form:
 
 ```python
@@ -694,7 +694,7 @@ async wrapper awaits the coroutine *inside* the portal scope,
 so the recording covers the entire async lifetime.
 
 Decorators in the portfolio are constrained by the project's
-coding standards.  The rule (in `automojo-*` `CLAUDE.md`):
+coding standards.  The rule (in `codecraftai-*` `CLAUDE.md`):
 *"Decorators are only allowed for adding metadata or for
 registering a function with a mapping system.  Do NOT use
 behavior-modifying decorators."*  `@trace_portal` is on the
@@ -743,7 +743,7 @@ larger.
 Third, **operator vocabulary.**  "Activate the
 `invoice.charge.attempt` portal" is a sentence the on-call
 engineer can type without consulting the source.  "Install a
-trace hook on `automojo.invoicing.service.InvoiceService.charge`
+trace hook on `ccai.invoicing.service.InvoiceService.charge`
 at line 412" is not.  The named-portal abstraction trades some
 flexibility for a vocabulary the production operator already
 shares with the developer.

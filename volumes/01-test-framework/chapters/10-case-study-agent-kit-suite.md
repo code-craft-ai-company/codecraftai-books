@@ -2,15 +2,15 @@
 
 > *Chapters 1 through 9 walked the framework one concept at a
 > time.  This chapter watches the framework run.  The subject
-> is the `automojo-agent-kit` single-host suite — 292 test
+> is the `codecraftai-agent-kit` single-host suite — 292 test
 > files, more than 3,700 test invocations, finishing under an
 > hour with `TESTBASE_MAX_EXAMPLES_CAP=10`.  Every concept from
 > the previous chapters lands in the same run.*
 
 A book chapter on test framework architecture is only as
 honest as the test suite it can point at.  This chapter
-points at one: `automojo-agent-kit`, the test root at
-`source/testroots/automojo/tests/singlehost/`, used as the
+points at one: `codecraftai-agent-kit`, the test root at
+`source/testroots/ccai/tests/singlehost/`, used as the
 reference single-host suite for the portfolio.
 
 The suite predates this book.  It was written by the same
@@ -23,7 +23,7 @@ and becomes a measurement.
 ## The shape of the suite
 
 ```
-automojo-agent-kit/source/testroots/automojo/tests/singlehost/
+codecraftai-agent-kit/source/testroots/ccai/tests/singlehost/
 ├── agentkit/
 │   ├── test_costtracker_properties.py
 │   ├── test_costtracker_observability.py
@@ -58,7 +58,7 @@ in a CI window.
 
 ## Why this suite is the right case study
 
-`automojo-agent-kit` is the agent SDK from Volume 7 — the
+`codecraftai-agent-kit` is the agent SDK from Volume 7 — the
 Python toolkit for building production AI agents on top of
 the foundation tier.  The single-host test root exercises:
 
@@ -109,12 +109,12 @@ This is the budget Chapter 4 promised.  The cap is the knob.
 A representative cost-tracker property test:
 
 ```python
-# automojo-agent-kit/source/testroots/automojo/tests/singlehost/
+# codecraftai-agent-kit/source/testroots/ccai/tests/singlehost/
 # agentkit/test_costtracker_properties.py
 
 import testbase
 from testbase.strategies import integers
-from automojo.agentkit.costtracker import CostTracker
+from ccai.agentkit.costtracker import CostTracker
 
 @testbase.given(
     input_tokens=integers(min_value=0, max_value=10**6),
@@ -168,7 +168,7 @@ model.  Instead, the test root's factory module yields a
 mock:
 
 ```python
-# automojo-agent-kit/source/packages/automojo/agentkit/factories.py
+# codecraftai-agent-kit/source/packages/ccai/agentkit/factories.py
 
 @testbase.factories.resource_factory(scope=ResourceLifespan.Test)
 def mock_anthropic_client():
@@ -309,7 +309,7 @@ case study is a demonstration of legibility at scale.
 What the engineer sees on a green run, abbreviated:
 
 ```text
-$ testbase run --testroot source/testroots/automojo/tests/singlehost/ \
+$ testbase run --testroot source/testroots/ccai/tests/singlehost/ \
               --max-examples-cap 10
 
 [2026-04-30 15:30:12] Phase: Discovery (started)

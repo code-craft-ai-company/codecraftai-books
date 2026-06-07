@@ -1,6 +1,6 @@
-# Automojo Books — Volumes and Topics
+# Code Craft AI Books — Volumes and Topics
 
-Foundation document for the planned book series drawn from the `automojo-*`
+Foundation document for the planned book series drawn from the `codecraftai-*`
 software portfolio.  The series is organised into eight numbered volumes plus
 one appendix volume, each cleanly mapped to a product line in the portfolio
 or to a cross-cutting discipline that the portfolio embodies.
@@ -26,14 +26,14 @@ questions) follows the per-volume content.
 
 ### Vision
 
-The `automojo-*` portfolio is an opinionated platform for building durable
+The `codecraftai-*` portfolio is an opinionated platform for building durable
 automation software in Python.  Every package follows a uniform skeleton, a
 shared coding standard, and a deliberate philosophy about debuggability,
 explicitness, and cross-cutting contracts.  The book series exists to make
 that philosophy reproducible — not as a marketing exercise for the platform,
 but as a teaching artefact: a senior engineer can read the series and come
 out with a discipline that works regardless of whether they continue to use
-the automojo packages themselves.
+the ccai packages themselves.
 
 ### Audience profiles
 
@@ -74,8 +74,8 @@ A reader picking by interest can use the cross-reference table:
 
 ### Voice and style conventions
 
-- **AutomationX as narrator.**  The series is written in the voice of the
-  AutomationX Principal-SWE persona that already opens every repo's
+- **CodeCraftX as narrator.**  The series is written in the voice of the
+  CodeCraftX Principal-SWE persona that already opens every repo's
   `AGENTS.md`.  This is consistent with the portfolio's style and gives the
   series a unifying first-person.
 - **Code-as-anchor.**  Every claim is anchored on a concrete file:line
@@ -96,30 +96,30 @@ A reader picking by interest can use the cross-reference table:
 
 ## Volume 0 — Foundations of Automation Engineering with Python
 
-**Subtitle:** *The AutomationX Discipline and the Foundation Tier*
+**Subtitle:** *The CodeCraftX Discipline and the Foundation Tier*
 
 **Audience:** Any Python engineer building a serious automation platform.
 This is prerequisite reading for the rest of the series.
 
-**Why it leads:** every later volume references the AutomationX persona,
+**Why it leads:** every later volume references the CodeCraftX persona,
 the error vocabulary, the Aspects pattern, the explicit-`return`
 convention, the configuration model, and the application-identity machinery.
 Without it, every later book has to re-explain.
 
 **Estimated pages:** 300–400.
 
-**Portfolio source:** `automojo-interfaces`, `automojo-errors`,
-`automojo-waiting`, `automojo-this-app` (which now owns the runtime
+**Portfolio source:** `codecraftai-interfaces`, `codecraftai-errors`,
+`codecraftai-waiting`, `codecraftai-this-app` (which now owns the runtime
 foundation — runtime variables, well-known paths, activation, and
-enumerations), `automojo-extension`, `automojo-configuration`,
-`automojo-credentials`, `automojo-dataprofiles`,
-`automojo-storage-database`, `automojo-xmodules`.  *(The old
-`automojo-runtime` package is being retired; it now holds thin
-re-export shims pointing at `automojo.thisapp`.)*
+enumerations), `codecraftai-extension`, `codecraftai-configuration`,
+`codecraftai-credentials`, `codecraftai-dataprofiles`,
+`codecraftai-storage-database`, `codecraftai-xmodules`.  *(The old
+`codecraftai-runtime` package is being retired; it now holds thin
+re-export shims pointing at `ccai.thisapp`.)*
 
 ### Chapters
 
-1. **The AutomationX philosophy** — debuggability over performance, explicit
+1. **The CodeCraftX philosophy** — debuggability over performance, explicit
    over implicit, the Aspects pattern, "errors should never pass silently."
 2. **Coding standards as a tool, not a style guide** — `CLAUDE.md` decoded,
    with the *why* behind each rule (explicit `return` for breakpoint
@@ -131,7 +131,7 @@ re-export shims pointing at `automojo.thisapp`.)*
    error-message construction pattern.
 4. **Interfaces and contracts** — `ICommandRunner`, `IFileOperator`,
    `ISystemContext`; abstract-base discipline; what belongs in
-   `automojo-interfaces` vs in tier-specific shared packages.
+   `codecraftai-interfaces` vs in tier-specific shared packages.
 5. **Waiting with rich diagnostics** — beyond `time.sleep`; timeout
    composition, attempt logging, observable retry.
 6. **Application identity and presence** — `establish_app_persona`,
@@ -140,14 +140,14 @@ re-export shims pointing at `automojo.thisapp`.)*
    `FactoryProtocolBase`, the precedence model; how to register a new
    factory; how protocol resolution iterates and selects.
 8. **Runtime variables and well-known paths** — the runtime foundation,
-   now hosted in `automojo-this-app` under `automojo.thisapp`
+   now hosted in `codecraftai-this-app` under `ccai.thisapp`
    (`runtimevariables`, `paths`, `enumerations`, `activation`);
    `RuntimeVariables` and `resolve_runtime_variables`; the
    `ActivationProfile` / `JobType` enumerations; activation
    (`activate_profile_job/console/service/command`); the well-known
    directory and presence-folder layout (`paths`).  *(The legacy
-   `automojo-runtime` import path `automojo.runtime.X` now redirects to
-   `automojo.thisapp.X`.)*
+   `codecraftai-runtime` import path `ccai.runtime.X` now redirects to
+   `ccai.thisapp.X`.)*
 9. **Configuration loading** — multi-source resolution
    (`dir://`, `http://`, `couchdb://`, `mongodb://`); the five
    configuration categories (Credentials, Landscapes, Topologies, Runtimes,
@@ -163,12 +163,12 @@ None.  Volume 0 is prerequisite for everything.
 
 ### Source-material strengths
 
-- The recent `automojo-configuration` requirements rework (17 module-scoped
+- The recent `codecraftai-configuration` requirements rework (17 module-scoped
   EARS requirements + Source Module Map) gives chapter 9 a ready-made
   reference structure.
 - The foundation-tier zero-test gaps closed in a prior session (334 tests
-  across `automojo-errors`, `automojo-interfaces`, `automojo-storage-database`,
-  `automojo-networking`) show *what good test coverage looks like* on a
+  across `codecraftai-errors`, `codecraftai-interfaces`, `codecraftai-storage-database`,
+  `codecraftai-networking`) show *what good test coverage looks like* on a
   foundation package — useful as a sidebar pattern.
 
 ---
@@ -181,16 +181,16 @@ None.  Volume 0 is prerequisite for everything.
 
 **Why it earns its own volume:** `testbase` is the flagship test framework
 of the platform (~40k LOC, 146 test files, mature) and `arcli` is the
-declarative CLI toolkit underneath every `automojo-*` CLI.  Together they
+declarative CLI toolkit underneath every `codecraftai-*` CLI.  Together they
 are the single-host substrate that distributed test execution (Vol 2)
 extends.  `testbase` is now **near-standalone**: its dependencies are
-exactly `automojo-arcli`, `automojo-errors`, `automojo-interfaces`,
-`automojo-waiting`, and `automojo-xmodules` — it no longer depends on
-`automojo-configuration`, the runtime foundation, or `automojo-this-app`.
+exactly `codecraftai-arcli`, `codecraftai-errors`, `codecraftai-interfaces`,
+`codecraftai-waiting`, and `codecraftai-xmodules` — it no longer depends on
+`codecraftai-configuration`, the runtime foundation, or `codecraftai-this-app`.
 It reads the handful of core environment knobs (`AM_DEBUG_*`,
 `AM_DIAGNOSTICS_*`, `AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
 `AM_TESTRUN_TIMEOUT`) directly from `os.environ` via a tiny,
-dependency-free `automojo.testbase.environment` module rather than through
+dependency-free `ccai.testbase.environment` module rather than through
 `RuntimeVariables`, and resolves output + run metadata through injected
 seams (`IOutputContext` / `IRunMetadata`) so that activation, the
 presence folder, and CI/build metadata can be supplied by a higher layer
@@ -198,7 +198,7 @@ presence folder, and CI/build metadata can be supplied by a higher layer
 
 **Estimated pages:** 400–500.
 
-**Portfolio source:** `automojo-testbase`, `automojo-arcli`.
+**Portfolio source:** `codecraftai-testbase`, `codecraftai-arcli`.
 
 ### Chapters
 
@@ -210,7 +210,7 @@ presence folder, and CI/build metadata can be supplied by a higher layer
    `testbase` runs **without activation** and records the run summary to
    **stdout** via `StdoutResultRecorder`; the JSOS-to-disk +
    rendered-HTML pipeline is layered on top by `IntegratedTestJob` in
-   `automojo-integration-runtime` — see Vol 2 ch. 4.  The JSOS
+   `codecraftai-integration-runtime` — see Vol 2 ch. 4.  The JSOS
    serialisation itself is reused by both recorders, so
    `testrun_results_stream.jsos` / `testrun_summary.json` are still
    written when an output directory is supplied.)*
@@ -225,20 +225,20 @@ presence folder, and CI/build metadata can be supplied by a higher layer
    the default stdout recorder and the integration JSON/HTML recorder;
    the presence-folder results-directory layout and HTML summary are the
    responsibility of `IntegratedTestJob` in
-   `automojo-integration-runtime`, not plain `testbase` — see Vol 2
+   `codecraftai-integration-runtime`, not plain `testbase` — see Vol 2
    ch. 4.)*
 6. **The `testbase agents` machine-readable CLI** — agent-driven test
    discovery, listing, and execution.
 7. **Mocking and stubbing without the framework getting in the way** —
    the testbase mocking primitives; when to mock; when not to.
 8. **`arcli` — the declarative CLI toolkit** — `Command`, `ArgField`,
-   `OptionField`, parameter types; how `automojo-*` packages register
+   `OptionField`, parameter types; how `codecraftai-*` packages register
    their command trees.
 9. **Building tests around landscape concepts (single-host edition)** —
    the contract that distributed jobs (Vol 2) will extend; what's
    landscape-aware vs landscape-agnostic on a single host.
 10. **Case study: a 3,700-test suite that runs on one host** — the
-    `automojo-agent-kit` test suite at `TESTBASE_MAX_EXAMPLES_CAP=10`;
+    `codecraftai-agent-kit` test suite at `TESTBASE_MAX_EXAMPLES_CAP=10`;
     49-minute wall time; lessons from a real fast-CI configuration.
 
 ### Cross-references
@@ -249,7 +249,7 @@ presence folder, and CI/build metadata can be supplied by a higher layer
 
 ### Source-material strengths
 
-- `automojo-testbase` itself is the most-tested package in the portfolio
+- `codecraftai-testbase` itself is the most-tested package in the portfolio
   (146 test files / 108 modules, better than 1:1).  The book can use the
   framework's own tests as worked examples.
 - `arcli` recently went through validator-and-parser hardening with
@@ -266,10 +266,10 @@ presence folder, and CI/build metadata can be supplied by a higher layer
 platform engineers building automation that crosses machine boundaries.
 
 **Why it earns its own volume:** distributed automation is the marquee
-*capability* of the testing tier — it's the union of `automojo-testplus` +
-`automojo-landscaping` + `automojo-integration-runtime` +
-`automojo-interop`'s job machinery + `automojo-protocol-ssh` +
-`automojo-credentials` + `automojo-dataprofiles`.  Eight repos collaborate.
+*capability* of the testing tier — it's the union of `codecraftai-testplus` +
+`codecraftai-landscaping` + `codecraftai-integration-runtime` +
+`codecraftai-interop`'s job machinery + `codecraftai-protocol-ssh` +
+`codecraftai-credentials` + `codecraftai-dataprofiles`.  Eight repos collaborate.
 The recent inheritance-chain refactor that collapsed `DistributedTestJob`
 from ~615 lines to 90 by introducing `InteropLibraryTestJob` as the
 landscape-aware hinge — and the follow-on extraction of integration
@@ -278,9 +278,9 @@ complete evolution-of-a-design narrative.
 
 **Estimated pages:** 400–500.
 
-**Portfolio source:** `automojo-testplus`, `automojo-integration-runtime`
-(the `IntegratedTestJob` layer), `automojo-interop` (job machinery half),
-`automojo-landscaping`.
+**Portfolio source:** `codecraftai-testplus`, `codecraftai-integration-runtime`
+(the `IntegratedTestJob` layer), `codecraftai-interop` (job machinery half),
+`codecraftai-landscaping`.
 
 ### Chapters
 
@@ -322,12 +322,12 @@ complete evolution-of-a-design narrative.
      id, `(unknown)` build/pipeline/job).
    - `DefaultTestJob` (in `testbase`, `testjob.py:613`): naming
      fallback; no overrides.
-   - `IntegratedTestJob` (in `automojo-integration-runtime`,
+   - `IntegratedTestJob` (in `codecraftai-integration-runtime`,
      `integratedtestjob.py:51`): **integration result recording.**
      Overrides exactly three provider hooks —
      `_create_output_context()` -> `RuntimeOutputContext` (results land
      under the activated app's well-known *presence folder* via
-     `automojo.thisapp.paths`; activation-gated — raises `SemanticError`
+     `ccai.thisapp.paths`; activation-gated — raises `SemanticError`
      unless the process was activated as a job),
      `_create_run_metadata()` -> `RuntimeRunMetadata` (build / pipeline /
      job from `RuntimeVariables`), and `_create_recorder()` ->
@@ -359,11 +359,11 @@ complete evolution-of-a-design narrative.
    subclass (integration runs activate first via
    `integrated_test_entrypoint`, then delegate to the standalone
    `generic_test_entrypoint`).  Real scaffolding examples live at
-   `automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
+   `codecraftai-testbase/source/tests/ccai_tests/testbase/integration/test_custom_job_type_integration.py`
    (`CustomTestJob`, `FailingCustomTestJob`).
 
    *Note on parallel hierarchies:* `OrchestrationJob` (in
-   `automojo-landscaping`, `orchestrationjob.py:34`) is **not** a
+   `codecraftai-landscaping`, `orchestrationjob.py:34`) is **not** a
    `TestJob` subclass — it inherits from `ContextUser`.  Orchestration
    jobs and test jobs are separate hierarchies; Vol 3 covers
    orchestration's job model.
@@ -374,7 +374,7 @@ complete evolution-of-a-design narrative.
    N+1 outcomes.  When to add a validator (steady-state checks during
    a test) vs. when to put the check in the test body.  Reference
    implementation:
-   `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
+   `codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py`.
 6. **Landscape activation** — what each `fire_*` event does at landscape
    level (device wake, credential pre-fetch, topology realisation, etc.).
 7. **The CI → job hand-off as a verified contract** — Landscape says
@@ -420,11 +420,11 @@ complete evolution-of-a-design narrative.
 
 ### Source-material strengths
 
-- The `automojo-testplus` `5ae46f5` inheritance-chain refactor (615 → 90
-  lines) plus the `automojo-interop` `c785e9b` introduction of
+- The `codecraftai-testplus` `5ae46f5` inheritance-chain refactor (615 → 90
+  lines) plus the `codecraftai-interop` `c785e9b` introduction of
   `InteropLibraryTestJob` are recent and well-documented.  Chapter 2
   writes itself.  The follow-on extraction of integration result
-  recording into `automojo-integration-runtime`'s `IntegratedTestJob`
+  recording into `codecraftai-integration-runtime`'s `IntegratedTestJob`
   (presence-folder output context + RuntimeVariables metadata +
   JSOS/HTML recorder, leaving plain `testbase` to record to stdout
   without activation) continues the same evolution-of-a-design arc — and
@@ -458,9 +458,9 @@ across a codebase.
 
 **Estimated pages:** 500–600.  The largest non-AI volume.
 
-**Portfolio source:** `automojo-taskplus`, `automojo-configuration`,
-`automojo-credentials`, plus parts of `automojo-this-app`,
-`automojo-landscaping`, `automojo-provisioning`.
+**Portfolio source:** `codecraftai-taskplus`, `codecraftai-configuration`,
+`codecraftai-credentials`, plus parts of `codecraftai-this-app`,
+`codecraftai-landscaping`, `codecraftai-provisioning`.
 
 ### Part I — *The Discipline*
 
@@ -506,7 +506,7 @@ list of files and merges them; later names override earlier ones.
    together* as data.  Why Topology is *separate* from Landscape (a
    Landscape hosts many Topologies; a Topology applies to many
    Landscapes; they live in separate `MergeMap`s in
-   `automojo-configuration` for a reason).  Examples: "Players A, B, C
+   `codecraftai-configuration` for a reason).  Examples: "Players A, B, C
    form a Home Sound System"; "Nodes A, B, C are cluster members;
    Node D is a spare."  Topology composition (combine cluster
    topology + gateway topology).  The verification contract: the test
@@ -556,7 +556,7 @@ list of files and merges them; later names override earlier ones.
     credential; host-scoped vs role-scoped lookup; the resolution order.
 11. **Credentials in flight** — rotation during long runs (matters for
     hour-plus integration suites); encryption at rest (Fernet from
-    `automojo-configuration`'s cryptography module); the audit trail.
+    `codecraftai-configuration`'s cryptography module); the audit trail.
 12. **Credentials across environments** — same credential *vocabulary*
     across local-dev / CI / staging / prod, different *backends*; how a
     credential reference resolves differently per profile without product
@@ -610,7 +610,7 @@ and "works locally but doesn't scale to CI."
       experiment-overrides`" — names per category, composable lists.
     - The orchestration injects those *names* into the job's environment
       (one variable per category, just enough to bootstrap).
-    - The job's startup uses `automojo-configuration` to resolve each
+    - The job's startup uses `codecraftai-configuration` to resolve each
       name list into the actual structured config via `MergeMap`
       overlay (every category, same pattern).
     - **The job verifies the realised configuration before the first
@@ -660,38 +660,38 @@ and "works locally but doesn't scale to CI."
 
 ### Source-material strengths
 
-- `automojo-taskplus` is now the most-thoroughly-audited orchestration
+- `codecraftai-taskplus` is now the most-thoroughly-audited orchestration
   package in the tier (115 tests, 17 source bugs fixed across two
   passes).  The FlowEngine internals can use real test cases as worked
   examples in chapter 18.
-- The recent `automojo-configuration/specs/requirements.md` rework
+- The recent `codecraftai-configuration/specs/requirements.md` rework
   formalises the five configuration categories with module-scoped EARS
   requirements — chapters 4–8 anchor on it directly.
-- The `automojo-this-app` `override_variable_value` work that updates
+- The `codecraftai-this-app` `override_variable_value` work that updates
   live persona-variable instance fields is the runtime-config-vs-env-var
   migration story in microcosm — perfect mid-Part IV worked example.
 - The `TESTBASE_MAX_EXAMPLES_CAP` pattern documented in
-  `automojo-testbase/userguide/10-04-03-testing-frameworks-testbase.rst`
+  `codecraftai-testbase/userguide/10-04-03-testing-frameworks-testbase.rst`
   is the smallest possible working example of "runtime config switches
   behaviour without code changes" — opens chapter 16.
 - The empty CLI command bodies at `taskplus/cli/cmdtree/testing/jobs.py`
   lines 49 and 62 are still open — perfect chapter-end exercise material.
-- The `automojo-taskplus/source/packages/automojo/taskplus/execution.py`
+- The `codecraftai-taskplus/source/packages/ccai/taskplus/execution.py`
   module is confirmed dead code with a signature mismatch against modern
   `Task.execute` — gift for a "what to keep, what to delete" chapter.
 
 ### Open questions to resolve before drafting
 
 1. Does "Specifications" refer to a sixth managed type within
-   `automojo-configuration` (alongside Credentials / Landscapes /
+   `codecraftai-configuration` (alongside Credentials / Landscapes /
    Topologies / Runtimes / Data Profiles), or is it a separate concept
-   that lives in `automojo-provisioning` or in the per-repo `specs/`
+   that lives in `codecraftai-provisioning` or in the per-repo `specs/`
    directory pattern?
 2. What credential-resolution backends are shipped in
-   `automojo-credentials` today (vault integrations, AWS Secrets Manager,
+   `codecraftai-credentials` today (vault integrations, AWS Secrets Manager,
    1Password, etc.) versus reader-supplied?
 3. Are there established profile-introspection commands in the portfolio
-   (e.g., `automojo profile show`, programmatic `current_profile()`
+   (e.g., `ccai profile show`, programmatic `current_profile()`
    accessor) that chapters 14–17 should anchor on?
 
 ---
@@ -705,16 +705,16 @@ actually works.
 
 **Why it earns its own volume:** the sysman tier is the most disciplined
 product line in the portfolio.  50 cross-OS contracts in
-`automojo-sysman-common/specs/contracts/` plus five reference
+`codecraftai-sysman-common/specs/contracts/` plus five reference
 implementations (RHEL, Ubuntu, macOS, Windows, UEFI) totalling
 3,656 / 3,656 testbase tests passing.  The "do it this way" book in the
 series.
 
 **Estimated pages:** 400–500.
 
-**Portfolio source:** `automojo-sysman-common`,
-`automojo-sysman-linux-redhat`, `automojo-sysman-linux-ubuntu`,
-`automojo-sysman-macos`, `automojo-sysman-windows`, `automojo-sysman-uefi`.
+**Portfolio source:** `codecraftai-sysman-common`,
+`codecraftai-sysman-linux-redhat`, `codecraftai-sysman-linux-ubuntu`,
+`codecraftai-sysman-macos`, `codecraftai-sysman-windows`, `codecraftai-sysman-uefi`.
 
 ### Chapters
 
@@ -753,7 +753,7 @@ series.
 
 - The sysman tier is fully green and stable.  Every chapter has a
   reference implementation already shipped.
-- The 50 contracts at `automojo-sysman-common/specs/contracts/` are the
+- The 50 contracts at `codecraftai-sysman-common/specs/contracts/` are the
   cleanest spec set in the portfolio.
 
 ---
@@ -764,17 +764,17 @@ series.
 
 **Audience:** integration engineers, protocol implementors.
 
-**Why it earns its own volume:** `automojo-interop` provides the
+**Why it earns its own volume:** `codecraftai-interop` provides the
 foundational pattern (Aspects) used across the portfolio for behaviour
 parameterisation, plus protocol implementations that the rest of the
-portfolio depends on.  `automojo-protocol-ssh` is substantial code
+portfolio depends on.  `codecraftai-protocol-ssh` is substantial code
 (transport, session, SFTP, tunnels, keys/auth) with its own audience.
 
 **Estimated pages:** 400–500.
 
-**Portfolio source:** `automojo-interop` (protocol half),
-`automojo-protocol-ssh`, `automojo-networking`, `automojo-restclient-base`,
-`automojo-restclient-github-public`, `automojo-interop-ext-{upnp, tasker,
+**Portfolio source:** `codecraftai-interop` (protocol half),
+`codecraftai-protocol-ssh`, `codecraftai-networking`, `codecraftai-restclient-base`,
+`codecraftai-restclient-github-public`, `codecraftai-interop-ext-{upnp, tasker,
 bluetooth, can}`.
 
 ### Chapters
@@ -784,14 +784,14 @@ bluetooth, can}`.
    `@retry` decorator.
 2. **Read-only vs state-modifying APIs** — when Aspects is required vs
    optional; the design heuristic.
-3. **`automojo-interop`** — agent bases, protocol implementations
+3. **`codecraftai-interop`** — agent bases, protocol implementations
    (DNS / mDNS, SSH, serial, power), the `am-interop` CLI.
 4. **SSH from scratch** — transport, session, SFTP, tunnels,
-   key/password auth (`automojo-protocol-ssh`).
+   key/password auth (`codecraftai-protocol-ssh`).
 5. **Networking toolkit primitives.**
-6. **REST client foundations** — `automojo-restclient-base`.
+6. **REST client foundations** — `codecraftai-restclient-base`.
 7. **The auto-generated GitHub public-API client** —
-   `automojo-restclient-github-public`; what's worth testing in a
+   `codecraftai-restclient-github-public`; what's worth testing in a
    568-module generated package; smoke-vs-comprehensive testing
    strategy.
 8. **Extension packages** — UPnP / Tasker / Bluetooth / CAN; the
@@ -821,14 +821,14 @@ and UI automation (how to drive applications inside it).  The volume
 is bound by the same "environment as data" thesis that runs through
 Vol 3 — but where Vol 3 covers the *category-level* concerns (what's
 in a Landscape file, what's in a Topology file, how they compose),
-Vol 6 covers the *implementation* concerns (how `automojo-landscaping`
+Vol 6 covers the *implementation* concerns (how `codecraftai-landscaping`
 loads them, what scaffolding the framework supplies, what the user
 implements, the canonical `clusters` shape, the verification hooks).
 
-**Important framing note — there is no `automojo-topology` package.**
-Topology is a *configuration category* loaded by `automojo-configuration`
+**Important framing note — there is no `codecraftai-topology` package.**
+Topology is a *configuration category* loaded by `codecraftai-configuration`
 into `TOPOLOGY_CONFIGURATION_MAP`, with consumption code distributed
-across `automojo-landscaping`'s layers (`TopologyIntegrationLayer`,
+across `codecraftai-landscaping`'s layers (`TopologyIntegrationLayer`,
 `LandscapeConfigurationLayer.load_topology()`,
 `LandscapeOperationalLayer._create_clusters()`).  The volume's
 Topology coverage walks the framework's *minimal scaffolding* (the
@@ -839,10 +839,10 @@ left up to the user to implement.*
 
 **Estimated pages:** 400–500.
 
-**Portfolio source:** `automojo-landscaping`, `automojo-provisioning`,
-`automojo-uia`, `automojo-gitlab`, `automojo-webservice-flask`.
-*Topology* is not a package — it lives across `automojo-configuration`
-(loader) and `automojo-landscaping` (consumer).
+**Portfolio source:** `codecraftai-landscaping`, `codecraftai-provisioning`,
+`codecraftai-uia`, `codecraftai-gitlab`, `codecraftai-webservice-flask`.
+*Topology* is not a package — it lives across `codecraftai-configuration`
+(loader) and `codecraftai-landscaping` (consumer).
 
 ### Chapters
 
@@ -922,7 +922,7 @@ left up to the user to implement.*
    (Volume 2 ch.3, Volume 3 ch.27); how Pod independence is what makes
    parallel jobs safe; why test-level parallelism within a Pod
    remains forbidden.
-10. **Cloud provisioning model** — `automojo-provisioning`;
+10. **Cloud provisioning model** — `codecraftai-provisioning`;
     vendor-neutral interface; AWS / Azure / GCP backends; the
     checkout-vs-create story (cross-ref to Vol 3 Specifications); how
     provisioning emits Landscape + Topology files for the next stage.
@@ -938,7 +938,7 @@ left up to the user to implement.*
     what's in the auto-generated client vs the hand-written code;
     testing strategy.
 14. **Web-service scaffolding with Flask** —
-    `automojo-webservice-flask`; the patterns the website front-end
+    `codecraftai-webservice-flask`; the patterns the website front-end
     uses.
 15. **Case study: a landscape + topology that drives a sysman feature
     test across four OSes** — full integration walk-through, including
@@ -956,9 +956,9 @@ left up to the user to implement.*
 
 ### Source-material strengths
 
-- The `automojo-landscaping` six-pass audit (19 bugs, +101 tests across
+- The `codecraftai-landscaping` six-pass audit (19 bugs, +101 tests across
   11 test files) is the largest audit-diary appendix in the portfolio.
-- The recent `automojo-uia` audit (20 bugs, 31-file docstring fix, two
+- The recent `codecraftai-uia` audit (20 bugs, 31-file docstring fix, two
   passes) is similar — both make the chapters concrete.
 - The `MacApplication` class and the `DeclarativeApplication` model
   are well-shaped for chapter 6's worked examples.
@@ -972,7 +972,7 @@ Production Agents*
 
 **Audience:** developers building production AI agents.
 
-**Why it earns its own volume:** `automojo-agent-kit` is the largest
+**Why it earns its own volume:** `codecraftai-agent-kit` is the largest
 codebase in the portfolio (~46k LOC, 217 modules, 292 testbase test
 files, 3,744 tests at fast-CI cap).  The book leans heavily on the
 patterns established in Vols 1, 3, and 5, and applies them to the
@@ -980,7 +980,7 @@ specific problem of long-running, tool-using, observable agents.
 
 **Estimated pages:** 500–700.  The fattest volume.
 
-**Portfolio source:** `automojo-agent-kit`.
+**Portfolio source:** `codecraftai-agent-kit`.
 
 ### Chapters
 
@@ -1002,7 +1002,7 @@ specific problem of long-running, tool-using, observable agents.
 8. **Property tests at scale** — running 415+ property tests over
    hours; full-sweep ~21,000 individual checks; what these tests
    actually catch.
-9. **Building an agent that uses the rest of the automojo portfolio** —
+9. **Building an agent that uses the rest of the ccai portfolio** —
    an agent that runs sysman features against a landscape, observed
    through time-travel debugging.
 
@@ -1029,15 +1029,15 @@ Replay-Driven Debugging Workflow*
 **Audience:** senior engineers, platform / infrastructure teams running
 long-lived Python services.
 
-**Why it earns its own volume:** `automojo-timetravel-pod` and
-`automojo-timetravel-server` are the marquee product of the portfolio.
+**Why it earns its own volume:** `codecraftai-timetravel-pod` and
+`codecraftai-timetravel-server` are the marquee product of the portfolio.
 Could be the gateway book in marketing order ("here's the thing that
 makes the rest worth it") even though it reads last in technical order.
 
 **Estimated pages:** 300–400.
 
-**Portfolio source:** `automojo-timetravel-pod`,
-`automojo-timetravel-server`.
+**Portfolio source:** `codecraftai-timetravel-pod`,
+`codecraftai-timetravel-server`.
 
 **Drafting status:** fully drafted, 8 chapters, 5,399 lines, ~52,000
 words, in
@@ -1052,7 +1052,7 @@ words, in
    density vs cost; the static-vs-dynamic instrumentation choice.
 3. **The trace-event protocol** — wire format; ordering guarantees;
    loss semantics under partition.
-4. **Server-side ingestion** — `automojo-timetravel-server`; storage
+4. **Server-side ingestion** — `codecraftai-timetravel-server`; storage
    model; query model.
 5. **Remote debug control** — protocol; session lifecycle; security
    model.
@@ -1071,7 +1071,7 @@ words, in
 
 ---
 
-## Appendix Volume — Operating an Automojo Subscription Platform
+## Appendix Volume — Operating an Code Craft AI Subscription Platform
 
 **Subtitle:** *From Git-SHA Pinning to a Published-Package Ecosystem*
 
@@ -1115,37 +1115,37 @@ Currently more aspirational than written-up, but the design is locked.
 ### Series glossary (seed terms)
 
 - **Aspects** — the behaviour-parameter object pattern from
-  `automojo-interop`.  See Vol 5 ch. 1.
-- **AutomationX** — the Principal-SWE persona that narrates the series
+  `codecraftai-interop`.  See Vol 5 ch. 1.
+- **CodeCraftX** — the Principal-SWE persona that narrates the series
   and opens every repo's `AGENTS.md`.
 - **ContextPaths** — the well-known path enumeration in
-  `automojo-this-app` used to insert configuration into the application
+  `codecraftai-this-app` used to insert configuration into the application
   context.
 - **DeclarativeApplication** — the UI-mapping factory/proxy class in
-  `automojo-uia`.  Returns a concrete `UIApplication` when valid.
+  `codecraftai-uia`.  Returns a concrete `UIApplication` when valid.
 - **Device** — a landscape entity representing a host, instrument, or
   service.
 - **FactoryProtocolBase / SuperFactory** — the precedence-ordered
-  factory machinery from `automojo-extension`.
+  factory machinery from `codecraftai-extension`.
 - **FlowEngine / FlowNode / Task / TaskGroup** — the taskplus task
   model.  See Vol 3 ch. 18.
 - **IntegratedTestJob** — the integration result-recording layer in
-  `automojo-integration-runtime`, between `TestJob` and
+  `codecraftai-integration-runtime`, between `TestJob` and
   `InteropLibraryTestJob`.  Overrides three provider hooks to add the
   presence-folder output context, RuntimeVariables-derived metadata,
   and the JSOS/HTML recorder that plain `testbase` deliberately omits.
   Activation-gated.  See Vol 2 ch. 4.
 - **InteropLibraryTestJob** — the landscape-aware hinge class in
-  `automojo-interop` that breaks the would-be circular dependency
+  `codecraftai-interop` that breaks the would-be circular dependency
   between `testbase` and `landscaping`.  Parent of `DistributedTestJob`;
   intended child of `IntegratedTestJob` (re-parent in flight).
   See Vol 2 ch. 4.
 - **Landscape** — the model of hosts / devices / services under
   automation.  See Vol 6 ch. 1.
-- **MergeMap** — the automojo-configuration map type used for layered
+- **MergeMap** — the codecraftai-configuration map type used for layered
   configuration with priority-ordered insertion.
 - **Persona** — the application-identity model from
-  `automojo-this-app`.  Established by `establish_app_persona`.
+  `codecraftai-this-app`.  Established by `establish_app_persona`.
 - **SemanticError** — the exception type that **must always bubble**;
   inherits from `BaseException`, not `Exception`, specifically so
   generic catches don't silence it.  See Vol 0 ch. 3.
@@ -1178,10 +1178,10 @@ in motion" view that's hard to fake.
 
 | Audit | Volume | Source |
 |---|---|---|
-| `automojo-landscaping` six-pass audit | Vol 6 | 19 bugs across 14 files; +101 tests across 11 files |
-| `automojo-taskplus` audit + tests | Vol 3 | 17 bugs across 8 modules; +115 tests across 13 files |
-| `automojo-uia` audit | Vol 6 | 20 bugs (Crit/High/Med); 31-file docstring fix |
-| `automojo-testplus` two-pass audit | Vol 2 | 14 bugs across 9 files; led to the inheritance-chain refactor |
+| `codecraftai-landscaping` six-pass audit | Vol 6 | 19 bugs across 14 files; +101 tests across 11 files |
+| `codecraftai-taskplus` audit + tests | Vol 3 | 17 bugs across 8 modules; +115 tests across 13 files |
+| `codecraftai-uia` audit | Vol 6 | 20 bugs (Crit/High/Med); 31-file docstring fix |
+| `codecraftai-testplus` two-pass audit | Vol 2 | 14 bugs across 9 files; led to the inheritance-chain refactor |
 | Foundation-tier zero-test gap closure | Vol 0 / Vol 1 | 334 tests added across `errors`, `interfaces`, `storage-database`, `networking` |
 
 ---
@@ -1218,7 +1218,7 @@ the missing pieces are:
   concrete file:line references; the drafting process should preserve
   those references rather than paraphrase them.
 - **Use the recent inheritance-chain work as the model chapter.**  The
-  `automojo-testplus` `5ae46f5` + `automojo-interop` `c785e9b` pair
+  `codecraftai-testplus` `5ae46f5` + `codecraftai-interop` `c785e9b` pair
   shows what a clean evolution-of-a-design narrative looks like; aim
   for that quality in every volume's flagship chapter.
 
@@ -1229,25 +1229,25 @@ sections, plus series-level questions:
 
 - **Vol 3:**
   - Is "Specifications" a sixth managed type within
-    `automojo-configuration` or a separate concept living in
-    `automojo-provisioning` / per-repo `specs/`?
+    `codecraftai-configuration` or a separate concept living in
+    `codecraftai-provisioning` / per-repo `specs/`?
   - What credential-resolution backends are shipped vs reader-supplied
-    in `automojo-credentials`?
+    in `codecraftai-credentials`?
   - Are there profile-introspection commands or programmatic
     accessors for chapters 14–17 to anchor on?
 - **Vol 5:**
-  - Testing strategy decision for `automojo-restclient-github-public`
+  - Testing strategy decision for `codecraftai-restclient-github-public`
     (568 modules, 0 tests) — smoke-only? hand-test the framework?
 - **Vol 7:**
   - How much of the book is "build an agent SDK" (recipe) vs "use
-    `automojo-agent-kit`" (reference)?
+    `codecraftai-agent-kit`" (reference)?
 - **Series-level:**
   - Publishing model — single publisher, per-volume or boxed set,
     print + ebook + open-source companion?
-  - Voice — first-person AutomationX persona throughout, or
+  - Voice — first-person CodeCraftX persona throughout, or
     third-person for objectivity in case studies?
   - Code samples — do they live inline in the book, or in a separate
-    `automojo-books-examples/` repo with chapter-tagged branches?
+    `codecraftai-books-examples/` repo with chapter-tagged branches?
 
 ---
 

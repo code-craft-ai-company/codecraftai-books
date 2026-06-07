@@ -46,7 +46,7 @@ parameters, flowstate, and resolved configurations.**
 ## Channel 1 — Environment exports
 
 The first and narrowest channel.  The
-[`Workflow`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py)
+[`Workflow`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
 class's `environment:` field becomes a set of `os.environ`
 exports applied before the flow runs:
 
@@ -70,7 +70,7 @@ shell, a child Python process invoked through `EmbeddedPython`,
 a containerised job started by a custom task), the subprocess
 inherits the parent's `os.environ` — so the subprocess sees the
 same six entries.  At its own startup the subprocess uses
-[`automojo-configuration`](../../../automojo-configuration/source/packages/automojo/configuration/configurationmaps.py)
+[`codecraftai-configuration`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py)
 to resolve each `AM_*_NAMES` value into the corresponding loaded
 configuration.
 
@@ -156,7 +156,7 @@ subprocess's command line:
 
 ```yaml
 - task: Tag deployment
-  tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+  tasktype: ccai.taskplus.tasks.runcommand@RunCommand
   command: "kubectl set image deployment/api api=registry/api:${BUILD_ID}"
 ```
 
@@ -306,7 +306,7 @@ could leak through the audit boundary.  The
 
 Tasks routinely produce files — build artifacts, test reports,
 captured profiles, logs.  The convention in
-[`automojo-taskplus`](../../../automojo-taskplus/) is that every
+[`codecraftai-taskplus`](../../../codecraftai-taskplus/) is that every
 task that produces files writes them under the configured
 output directory (the runtime configuration's `paths.output`
 field).  The output directory is per-orchestration-run; tasks
@@ -376,7 +376,7 @@ for name, value in workflow.environment.items():
 
 The orchestration's runtime calls `establish_configuration_settings()`
 and `resolve_configuration_variables()` from
-`automojo-configuration`.  These functions:
+`codecraftai-configuration`.  These functions:
 
 - Read the `AM_*_NAMES` env vars set in step 1.
 - Locate the named configuration files on disk.
@@ -469,7 +469,7 @@ The subprocess *does* inherit:
 
 ### Step 4 — Subprocess loads configurations
 
-The subprocess starts an `automojo-configuration`-aware
+The subprocess starts an `codecraftai-configuration`-aware
 application.  At its own startup the subprocess reads the
 `AM_*_NAMES` env vars (the same ones the parent had), loads the
 named configuration files, and produces its own typed
@@ -503,7 +503,7 @@ selector contract is identical for both.
 
 - **Plain `testbase` `TestJob`.**  The near-standalone job from
   Volume 1.  It runs *without activation*: no presence folder, no
-  `RuntimeVariables`, no dependency on `automojo-this-app`.  Its
+  `RuntimeVariables`, no dependency on `codecraftai-this-app`.  Its
   default recorder is `StdoutResultRecorder` — it prints the run
   summary to stdout and (when an output directory is supplied)
   reuses the JSOS/JSON serialisation so `testrun_results_stream.jsos`
@@ -512,9 +512,9 @@ selector contract is identical for both.
   the right shape for a unit-style job invoked by a `RunCommand`
   that simply needs a pass/fail and a stdout transcript.  It is
   launched through testbase's standalone
-  [`generic_test_entrypoint`](../../../automojo-testbase/source/packages/automojo/testbase/entrypoints.py).
+  [`generic_test_entrypoint`](../../../codecraftai-testbase/source/packages/ccai/testbase/entrypoints.py).
 - **`IntegratedTestJob`.**  The integration-tier job from
-  [`automojo-integration-runtime`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py).
+  [`codecraftai-integration-runtime`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integratedtestjob.py).
   It *extends* `TestJob` and overrides exactly three provider
   hooks: `_create_output_context()` returns a
   `RuntimeOutputContext` (results land under the activated app's
@@ -526,7 +526,7 @@ selector contract is identical for both.
   `_create_recorder()` returns a `JsonResultRecorder` (JSOS
   streaming *plus* the rendered HTML summary).  It is launched
   through
-  [`integrated_test_entrypoint`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/entrypoints.py),
+  [`integrated_test_entrypoint`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/entrypoints.py),
   which first performs this-app activation (establish app persona,
   `resolve_runtime_variables`, `activate_profile_job(JobType.TestRun)`)
   and *then* delegates to the same standalone
@@ -541,10 +541,10 @@ unchanged: both jobs read the same inherited `AM_*_NAMES` values
 and resolve the same configurations independently.
 
 `IntegratedTestJob` does not have to be named explicitly.  When
-`automojo-integration-runtime` is installed, its
+`codecraftai-integration-runtime` is installed, its
 `IntegrationRuntimeDefaultTypeFactory`
-([`integrationruntimedefaulttypefactory.py`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/integrationruntimedefaulttypefactory.py))
-registers through `automojo-extension`'s factory protocol so the
+([`integrationruntimedefaulttypefactory.py`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integrationruntimedefaulttypefactory.py))
+registers through `codecraftai-extension`'s factory protocol so the
 super-factory search path resolves `DefaultIntegratedTestJob` as
 the integration-tier default job type — sitting above testbase's
 `DefaultTestJob` and below testplus's distributed default.  An
@@ -627,7 +627,7 @@ Volume 2 develops the distributed-orchestration story in detail.
 This chapter notes that the four channels generalise cleanly:
 
 - **Channel 1** generalises to the
-  [`InteropLibraryTestJob`](../../../automojo-interop/source/packages/automojo/interop/testing/testjob.py)
+  [`InteropLibraryTestJob`](../../../codecraftai-interop/source/packages/ccai/interop/testing/testjob.py)
   hooks: when the coordinator activates a remote worker, the
   hook propagates the `AM_*_NAMES` env vars to the worker's
   process.  Same names, same configurations on both sides.
@@ -693,7 +693,7 @@ otherwise.
 - The discipline of channel 1: **only configuration selectors
   and process identity travel through environment exports**.
   Configuration *content* travels through resolved configurations
-  the subprocess loads independently using `automojo-configuration`
+  the subprocess loads independently using `codecraftai-configuration`
   and the inherited `AM_*_NAMES` selectors.
 - The discipline of channel 2: parameters are flow-scope,
   read-only by convention, and carry typed YAML data (not
@@ -728,6 +728,6 @@ The next chapter turns to flow control: how `if_expr`,
 `onfailure`, and `onsuccess` become the engine's actual
 sequencing decisions.  The `JumpContext` and the
 `evaluate_expression` machinery from
-[`flowengine.py`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/flowengine.py)
+[`flowengine.py`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
 get walked end-to-end with the same code-anchored fidelity that
 chapters 18–20 used.
