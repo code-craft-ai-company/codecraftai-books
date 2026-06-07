@@ -102,8 +102,9 @@ hooks (Chapter 2):
 
 On a single-host run using `TestJob` directly, the last three
 are *no-op stubs*
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:435–443`).
-Volume 2's `InteropLibraryTestJob`
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:399–409`)
+— they only log a `debug` line and `return`.  Volume 2's
+`InteropLibraryTestJob`
 (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`)
 overrides each of them to drive landscape activation:
 
@@ -117,6 +118,30 @@ overrides each of them to drive landscape activation:
 The hooks are the *contract*.  A single-host test never
 notices they exist; a distributed test relies on them; both
 use the same `TestJob` lifecycle.
+
+> **A new class sits in the chain — but not on these hooks.**
+> Between `TestJob` and `InteropLibraryTestJob` there is now an
+> intermediate base class, `IntegratedTestJob`
+> (`automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py`),
+> introduced by the integration-runtime package.  It is worth
+> naming here so the chain is not surprising in Volume 2, but it
+> is important to be precise about *what it adds*:
+> `IntegratedTestJob` is about **result recording**, not
+> landscape behaviour.  It overrides exactly three *provider*
+> hooks — `_create_output_context()`, `_create_run_metadata()`,
+> and `_create_recorder()` — to route results into the activated
+> app's presence folder, stamp them with CI/build metadata from
+> `RuntimeVariables`, and render the HTML summary.  It does **not**
+> touch the five `fire_*` landscape hooks; those stay as no-op
+> stubs all the way down to `InteropLibraryTestJob`, which is
+> still where landscape activation is wired.  (See Chapter 5 for
+> the recorder/output-context seams and Volume 2 for the full
+> inheritance cascade.)  At the time of writing, the interop
+> tier's re-parent onto `IntegratedTestJob` is still in flight:
+> `InteropLibraryTestJob` currently extends `TestJob` directly
+> (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`),
+> so a distributed run does not yet inherit the integration
+> result-recording behaviour through this chain.
 
 ## What lives at the boundary
 

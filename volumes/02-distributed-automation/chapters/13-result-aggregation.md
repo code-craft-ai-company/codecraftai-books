@@ -28,8 +28,16 @@ This chapter walks why.
 
 The `DistributedTestJob` runs on the controller.  It owns:
 
-- The `JsonResultRecorder` (Volume 1 chapter 5).
-- The `testresults_stream.jsos` file the recorder writes to.
+- The `JsonResultRecorder` (Volume 1 chapter 5) — but it does
+  not *install* that recorder itself.  The JSOS-to-disk recorder
+  is supplied by the `IntegratedTestJob` layer it inherits from
+  (`automojo-integration-runtime`); plain `testbase` `TestJob`
+  defaults to a stdout-only recorder and writes nothing to a
+  results directory.  See "The recorder in distributed mode"
+  below.
+- The `testrun_results_stream.jsos` file the recorder writes to
+  (rooted under the activated application's presence folder by
+  `IntegratedTestJob`'s output context).
 - All the test-shaped events: `test_started`, `test_finished`,
   `validator_started`, `validator_finished`, `phase_started`,
   `phase_finished`, `diagnostic_capture`, `coupling_event`.
@@ -199,17 +207,55 @@ involve cross-host calls doesn't change the recorder's job.
 The recorder is downstream of the test execution; it doesn't
 need to know whether the execution was distributed or local.
 
-The recorder's outputs (the three files from Volume 1 chapter
-5):
+But note *which* job installs that recorder.  Plain `testbase`
+`TestJob` does **not** write JSOS-to-disk by default: its
+`_create_recorder()` returns a `StdoutResultRecorder`
+(`automojo.testbase.results.recorders.stdoutresultrecorder`,
+testjob.py:564), which prints the run summary to stdout and
+reuses the JSOS/JSON serialisation (so the stream and summary
+files are still written *when an output directory is in play*)
+but skips the rendered HTML summary.  The full controller-side
+recorder — JSOS streaming plus rendered HTML — is installed one
+layer up, by `IntegratedTestJob` in `automojo-integration-runtime`,
+whose `_create_recorder()` returns the `JsonResultRecorder`
+(integratedtestjob.py:79).  `IntegratedTestJob` is also what
+roots those files under the activated application's presence
+folder (via its `RuntimeOutputContext`) and stamps them with
+CI/build metadata (via its `RuntimeRunMetadata`).  In the
+*design* chain `IntegratedTestJob` sits between `TestJob` and
+`InteropLibraryTestJob`, so `DistributedTestJob` picks up the
+full JSOS-to-disk + HTML recorder, the presence-folder output
+context, and the `RuntimeVariables` metadata **by inheritance** —
+not because `DistributedTestJob` (or `testbase`) supplies it.
 
-- `testsummary.json` — high-level summary.  Distributed runs
-  add the `host_log_status` field shown above.
-- `testresults_stream.jsos` — the streaming record.
+> *In-flight note — read this before assuming the inheritance.*
+> The re-parent has **not yet landed**.  In today's interop
+> source `InteropLibraryTestJob` still extends `TestJob`
+> directly (`automojo.interop.testing.testjob`, testjob.py:22),
+> so the live chain `DistributedTestJob → InteropLibraryTestJob →
+> TestJob` does **not** pass through `IntegratedTestJob` yet.  As
+> built, a `DistributedTestJob` therefore inherits `TestJob`'s
+> `StdoutResultRecorder` + standalone seams — it does *not* yet
+> produce the presence-folder JSOS/HTML aggregation this chapter
+> describes.  That aggregation is produced by running an
+> `IntegratedTestJob` directly, and — once the Phase-5 re-parent
+> of `InteropLibraryTestJob` onto `IntegratedTestJob` lands — by
+> any `DistributedTestJob`.  The rest of this chapter describes
+> the `IntegratedTestJob`-supplied recorder's output: the target
+> state for distributed runs.
+
+The recorder's outputs (the files from Volume 1 chapter
+5, written by the `IntegratedTestJob`-supplied recorder):
+
+- `testrun_summary.json` — high-level summary.  Distributed
+  runs add the `host_log_status` field shown above.
+- `testrun_results_stream.jsos` — the streaming record.
   Distributed-test records carry richer host metadata
   (per-call references to host logs, per-validator host
   identity).
-- `testresults.json` — consolidated.  Adds host log path
-  references.
+- the rendered HTML summary — the human-readable view
+  `IntegratedTestJob`'s recorder adds on top of the JSOS
+  stream (the stdout-only `testbase` default skips it).
 
 A consumer parsing the stream uses the same JSOS parser
 (Volume 1 chapter 6's `agents` CLI) for both single-host and

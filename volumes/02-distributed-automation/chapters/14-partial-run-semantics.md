@@ -26,8 +26,9 @@ outcomes and the discipline for reporting them honestly.
 ## The four outcome categories per test
 
 The base testbase outcome enum (`ResultCode` from
-`automojo-testbase/source/packages/automojo/testbase/results/model/`)
-distinguishes four states:
+`automojo-testbase/source/packages/automojo/testbase/results/model/resultcode.py`)
+distinguishes the per-test states.  The four that matter for
+the per-test verdict are:
 
 | Outcome | Meaning |
 |---|---|
@@ -108,7 +109,28 @@ A partial run is honest when the report acknowledges what was
 prevent the reader from accidentally treating a partial run
 as a clean run.
 
-A representative partial-run summary:
+> **Who writes these files.** The outcome *model* — the
+> Passed/Failed/Errored/Skipped categories and the
+> not-attempted/partial-run honesty — lives in testbase's
+> results model (`ResultCode` and the recorder serialisation).
+> But the on-disk summary and per-host log layout shown below
+> is an *integration-runtime* artefact.  A plain `testbase`
+> run uses `StdoutResultRecorder`, which prints the run summary
+> to stdout and (when an output directory is in play) writes
+> the JSOS stream and JSON summary, but skips HTML rendering.
+> The presence-folder *results directory* — the well-known
+> location these files land in, the per-host logs, and the
+> rendered HTML summary — is produced by `IntegratedTestJob`
+> (`automojo-integration-runtime`), whose `_create_recorder`
+> returns the HTML-rendering `JsonResultRecorder` and whose
+> `_create_output_context` returns `RuntimeOutputContext`
+> (results under the activated app's presence folder via
+> `automojo.thisapp.paths`).  The honest summary *shape* below
+> is the same regardless of recorder; only its persistence is
+> the integration runtime's job.
+
+A representative partial-run summary (the JSON summary written
+by `IntegratedTestJob`'s recorder):
 
 ```json
 {
@@ -229,7 +251,16 @@ project's to make per use case.
 ## What partial-run failures look like in the JSOS stream
 
 Volume 1 chapter 5's JSOS stream from the recorder carries
-the phase events with their outcomes:
+the phase events with their outcomes.  The JSOS serialisation
+is shared: both testbase's default `StdoutResultRecorder` and
+integration-runtime's `JsonResultRecorder` emit the same
+record shape (so the `testbase agents` machine CLI reads
+either one).  What differs is *where* the stream lands — a
+plain testbase run echoes its summary to stdout and writes
+the stream only when an output directory is configured, while
+`IntegratedTestJob` persists it to the activated app's
+presence-folder results directory alongside the rendered HTML
+summary:
 
 ```
 {kind: phase_started, name: configuration, ...}
@@ -283,7 +314,9 @@ Want the failure list and the not-attempted list.  The agents
 CLI's `testresult failures` and (project-supplied)
 `testresult notattempted` are the surfaces.  The host log
 references in the JSOS records lead to the per-host logs in
-the results directory.
+the results directory — which, for an integration run, is the
+presence-folder directory `IntegratedTestJob` resolves through
+`RuntimeOutputContext`.
 
 ### Replay tools
 

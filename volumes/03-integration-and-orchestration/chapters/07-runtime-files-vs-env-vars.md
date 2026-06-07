@@ -410,16 +410,41 @@ remain are stable: their *values* will change between runs and
 profiles, but their *names* will never change again.
 
 The application code that read `LOG_LEVEL` from the environment now
-reads it from the resolved runtime configuration:
+reads it from the resolved runtime configuration.  The resolution
+machinery — `RuntimeVariables`, `RuntimeVariablesDesc`, and
+`resolve_runtime_variables` — is owned by `automojo.thisapp` (it moved
+there from the now-retired `automojo-runtime` package, whose modules
+are thin re-export shims during the migration).  The resolved values
+are exposed through the `RuntimeVariables` accessor set, which reads
+from the application context that the runtime profile was merged into:
 
 ```python
 # Before
 log_level = os.environ.get("LOG_LEVEL", "INFO")
 
 # After
-runtime = ThisApplicationSingleton().get_runtime_configuration()
-log_level = runtime["logging"]["levels"]["console"]
+from automojo.thisapp.runtimevariables import RuntimeVariables
+log_level = RuntimeVariables.AM_LOG_LEVEL_CONSOLE
 ```
+
+> *Two ownership levels, one variable surface.*  This rich resolution
+> — runtime profile YAML merged into the application context, the
+> `RuntimeVariables` accessor set, and the activation that lights up
+> the well-known presence folder — belongs to the **integration**
+> layer.  `automojo-integration-runtime` performs it during its
+> [`initialize`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/initialize.py)
+> step (`resolve_runtime_variables` + `activate_profile_job`) and only
+> `IntegratedTestJob` consumes it.  The standalone `testbase`
+> test-execution core (the `TestJob` / `TestSequencer` / recorder path)
+> does *not* import `automojo.thisapp`; it reads only its handful
+> of core execution knobs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`,
+> `AM_RUN_ID`, `AM_TESTRUN_TIMEOUT`, the `AM_DEBUG_*`/`AM_DIAGNOSTICS_*`
+> family) straight from `os.environ` through the tiny dependency-free
+> [`automojo.testbase.environment`](../../../automojo-testbase/source/packages/automojo/testbase/environment.py)
+> module.  The integration layer sets those same environment variables,
+> so the fixed-interface variable *names* are identical whether a job
+> runs standalone or under the runtime — only the resolution machinery
+> behind them differs.
 
 The Dockerfile, the compose file, and the Kubernetes manifest are
 all unaffected.  They knew how to pass `AM_RUNTIME_NAMES` and
@@ -442,17 +467,31 @@ then remove the environment-variable form.
 Use
 [`override_variable_value`](../../../automojo-this-app/source/packages/automojo/thisapp/thisapplication.py)
 on `ThisApplicationSingleton()` to wire each environment variable to
-its corresponding runtime configuration field as a fallback:
+its corresponding runtime configuration field as a fallback.  Both the
+singleton and the variable descriptors live in `automojo.thisapp` —
+`ThisApplicationSingleton` in
+[`automojo.thisapp.wellknown`](../../../automojo-this-app/source/packages/automojo/thisapp/wellknown.py)
+and the `RuntimeVariablesDesc` descriptor set in
+[`automojo.thisapp.runtimevariables`](../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
+(formerly `automojo.runtime.runtimevariables`):
 
 ```python
+from automojo.thisapp.wellknown import ThisApplicationSingleton
+from automojo.thisapp.runtimevariables import (
+    RuntimeVariables,
+    RuntimeVariablesDesc,
+    resolve_runtime_variables,
+)
+
+
 def _bootstrap_runtime_overrides() -> None:
-    # Phase 1: read the runtime profile
-    runtime = ThisApplicationSingleton().get_runtime_configuration()
+    # Phase 1: resolve the runtime profile into the application context
+    resolve_runtime_variables()
 
     # Phase 2: legacy environment variables override profile values
     if "LOG_LEVEL" in os.environ:
         ThisApplicationSingleton().override_variable_value(
-            RuntimeVariablesDesc.AM_LOG_LEVEL,
+            RuntimeVariablesDesc.AM_LOG_LEVEL_CONSOLE,
             os.environ["LOG_LEVEL"],
         )
 

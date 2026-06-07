@@ -1,6 +1,6 @@
 # Chapter 4 — The `TestJob` Inheritance Chain — The Customisation Cascade
 
-> *Three classes, each adding one responsibility, plus two
+> *Four classes, each adding one responsibility, plus three
 > naming-only fallbacks.  The chain is the framework's
 > customisation entry point — the meta-thesis from Volume 0
 > chapter 1 (skeleton + patterns) made concrete.  This chapter
@@ -17,36 +17,73 @@ where:
 - The user's customisations (custom `Landscape`, custom
   `Topology`, custom `Validator`s) plug in.
 
-The chain is small.  Five classes, two of them naming-only.
-The non-trivial work happens at three layers, and each layer
+The chain is small.  Seven classes, three of them naming-only.
+The non-trivial work happens at four layers, and each layer
 adds exactly one responsibility.
 
-## The five classes
+## The seven classes
+
+*The diagram below is the **intended** chain. One edge —
+`IntegratedTestJob → InteropLibraryTestJob` — has **not yet landed**
+(see "In-flight migration" immediately after): in today's source
+`InteropLibraryTestJob` extends `TestJob` directly, so as built it
+and `IntegratedTestJob` are **siblings**, both extending `TestJob`.*
 
 ```
-TestJob (testbase)                    ← single-host base
+TestJob (testbase)                       ← single-host base + stdout recorder + standalone seams
    │
-   ├── DefaultTestJob (testbase)      ← naming fallback
+   ├── DefaultTestJob (testbase)         ← naming fallback
    │
-   └── InteropLibraryTestJob (interop)  ← landscape activation
+   └── IntegratedTestJob (integration-runtime)   ← integration result recording
           │
-          └── DistributedTestJob (testplus)   ← distributed sequencer
+          ├── DefaultIntegratedTestJob (integration-runtime)  ← naming fallback
+          │
+          └── InteropLibraryTestJob (interop)    ← landscape activation
                  │
-                 └── DefaultDistributedTestJob (testplus)  ← naming fallback
+                 └── DistributedTestJob (testplus)   ← distributed sequencer
+                        │
+                        └── DefaultDistributedTestJob (testplus)  ← naming fallback
 ```
 
-The non-trivial-work layers are `TestJob`,
+The non-trivial-work layers are `TestJob`, `IntegratedTestJob`,
 `InteropLibraryTestJob`, and `DistributedTestJob`.  The other
-two are naming-only fallbacks for entry points that need a
+three are naming-only fallbacks for entry points that need a
 default `job_type=`.
 
-## Layer 1 — `TestJob` (the single-host base)
+> **In-flight migration.** `IntegratedTestJob` is newly built
+> and `TestJob` already exposes the three provider hooks it
+> overrides.  But the *re-parenting* of interop's
+> `InteropLibraryTestJob` onto `IntegratedTestJob` has not yet
+> landed: in the interop source today,
+> `InteropLibraryTestJob` still extends `TestJob` directly
+> (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`
+> reads `class InteropLibraryTestJob(TestJob)`).  The diagram
+> above is the *intended* chain; the section on
+> `InteropLibraryTestJob` notes where the source currently
+> diverges.  This is the same kind of partially-landed refactor
+> the c785e9b narrative below describes — reported honestly
+> rather than overclaimed.
 
-**File:** `automojo-testbase/source/packages/automojo/testbase/testjob.py:50`
+## Layer 1 — `TestJob` (the near-standalone single-host base)
+
+**File:** `automojo-testbase/source/packages/automojo/testbase/testjob.py:45`
 
 `TestJob` is the foundation.  Volume 1 chapter 2 walked it in
 detail; this chapter recaps what's relevant for distributed
 extension.
+
+`testbase` is now *near-standalone* — it no longer depends on
+`automojo-configuration`, `automojo-runtime`, or
+`automojo-this-app`.  A plain `TestJob` runs **without
+activation**: no presence folder, no `RuntimeVariables`, no
+this-app.  It reads the handful of core env knobs it needs
+(AM_DEBUG_*, AM_DIAGNOSTICS_*, AM_TESTROOT, AM_OUTPUT_DIRECTORY,
+AM_RUN_ID, AM_TESTRUN_TIMEOUT) directly from `os.environ` via the
+tiny, dependency-free `automojo.testbase.environment` module, and
+records its run summary to **stdout**.  Everything heavier —
+the presence-folder results layout, JSOS-to-disk, the HTML
+summary, CI/build metadata — is the responsibility of
+`IntegratedTestJob` in the next layer.
 
 The class establishes:
 
@@ -54,17 +91,31 @@ The class establishes:
   metafilters, job_seed, and the test module.
 - `__enter__` / `__exit__` driving `begin()` / `finalize()`.
 - The five `fire_*` lifecycle hooks — *all stubs on single-host*:
-  - `fire_attach_to_environment(tseq)` — line 415.
-  - `fire_attach_to_framework(tseq)` — line 425.
-  - `fire_activate_configuration()` — line 435.
-  - `fire_activate_integration()` — line 439.
-  - `fire_activate_operations()` — line 443.
-- The two template methods that customisation plugs into:
-  - `_create_sequencer()` — returns a `TestSequencer` (the
-    base) by default; subclasses override to return a
+  - `fire_attach_to_environment(tseq)` — line 379.
+  - `fire_attach_to_framework(tseq)` — line 389.
+  - `fire_activate_configuration()` — line 399.
+  - `fire_activate_integration()` — line 403.
+  - `fire_activate_operations()` — line 407.
+- The provider/template methods that customisation plugs into:
+  - `_create_sequencer()` (line 575) — returns a `TestSequencer`
+    (the base) by default; subclasses override to return a
     `DistributedTestSequencer` or other variant.
-  - `_create_recorder(...)` — returns a `JsonResultRecorder` by
-    default.
+  - `_create_recorder(...)` (line 564) — returns a
+    `StdoutResultRecorder` by default.  It prints the run
+    summary to stdout and reuses the JSOS/JSON serialisation (so
+    `testrun_results_stream.jsos` / `testrun_summary.json` are
+    still written when an output dir is used, and still consumed
+    by the `testbase agents` CLI), but it **skips the HTML
+    rendering**.  Subclasses that want disk-backed JSOS plus a
+    rendered HTML summary override this to return a
+    `JsonResultRecorder`.
+  - `_create_output_context()` (line 583) — returns a
+    `SimpleOutputContext` (an `IOutputContext`) by default,
+    rooting artefacts under AM_OUTPUT_DIRECTORY or `<cwd>/.output`.
+  - `_create_run_metadata()` (line 595) — returns a
+    `StandaloneRunMetadata` (an `IRunMetadata`) by default:
+    auto-generated UUID `run_id`, `"(unknown)"` build / pipeline
+    / job, title from the job's name.
 
 The five `fire_*` hooks are **the contract**.  They run at
 specific phase boundaries during a test run (Volume 1 chapter 2
@@ -73,10 +124,14 @@ distributed, the subclasses below give them bodies.
 
 The hooks are *lifecycle hooks*, not template methods.  They
 run *during* the lifecycle; they do not return values that the
-framework consumes.  The template methods (`_create_sequencer`,
-`_create_recorder`, and the abstract `_get_landscape` introduced
-in the next layer) are the *value-returning* customisation
-points.
+framework consumes.  The provider methods (`_create_sequencer`,
+`_create_recorder`, `_create_output_context`,
+`_create_run_metadata`, and the abstract `_get_landscape`
+introduced two layers down) are the *value-returning*
+customisation points.  `_create_run_metadata()` /
+`_create_output_context()` are invoked once in the constructor
+`__init__` (lines 95–96) so the run's identity and artefact roots
+are fixed before `begin()` or any test executes.
 
 ### What `TestJob` does NOT have
 
@@ -90,14 +145,95 @@ dependency arrow runs `landscaping → interop → testbase`, not
 the other way.  Volume 0 chapter 4 walks the protocol-based
 discipline that makes this possible.
 
-The next layer, `InteropLibraryTestJob`, is the layer that
-*introduces* the landscape concept — but does so as an abstract
-hook the user (or a downstream package) implements, not as a
-direct import.  The result: `testbase` stays landscape-free and
-the chain remains importable on a host that doesn't have
-landscaping installed.
+The landscape concept enters two layers down, in
+`InteropLibraryTestJob` — but does so as an abstract hook the
+user (or a downstream package) implements, not as a direct
+import.  The result: `testbase` stays landscape-free and the
+chain remains importable on a host that doesn't have landscaping
+installed.
 
-## Layer 2 — `InteropLibraryTestJob` (the landscape-aware hinge)
+## Layer 2 — `IntegratedTestJob` (integration result recording)
+
+**File:** `automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py:51`
+
+`IntegratedTestJob` is the layer that *re-supplies the
+heavyweight reporting* the near-standalone `TestJob`
+deliberately leaves out.  It lives in the **new**
+`automojo-integration-runtime` package (deps: `testbase` +
+`this-app` + `extension`) and adds exactly one responsibility:
+**integration result recording**.  It does so by overriding the
+*three* provider hooks `TestJob` exposes — and nothing else.
+
+> **Single responsibility.** `IntegratedTestJob` does **not**
+> override the five `fire_*` landscape hooks.  Those were *not*
+> moved here; they stay in `InteropLibraryTestJob` (Layer 3).
+> `IntegratedTestJob`'s only job is to swap the standalone
+> stdout/`.output` result plumbing for activation-backed
+> presence-folder plumbing.
+
+### The three provider overrides
+
+```python
+def _create_output_context(self) -> IOutputContext:
+    inst = RuntimeOutputContext()
+    return inst
+
+def _create_run_metadata(self) -> IRunMetadata:
+    run_title = "Test Run"
+    if self.name is not None and len(self.name) > 0:
+        run_title = self.name
+    inst = RuntimeRunMetadata(title=run_title)
+    return inst
+
+def _create_recorder(self, runid, start, render_info, build_info,
+                     pipeline_info, job_info) -> ResultRecorder:
+    inst = JsonResultRecorder(runid=runid, start=start, render_info=render_info,
+                              apod=self._apod, build_info=build_info,
+                              pipeline_info=pipeline_info, job_info=job_info)
+    return inst
+```
+
+Each override replaces a standalone default with its
+integration counterpart:
+
+- `_create_output_context()` → `RuntimeOutputContext`
+  (`automojo-integration-runtime/source/packages/automojo/integrationruntime/runtimeoutputcontext.py`)
+  — delegates to `automojo.thisapp.paths` so results, diagnostics,
+  and per-testcase by-products land under the activated app's
+  **well-known presence folder**.  It is **activation-gated**:
+  it raises `SemanticError` unless the process was activated as a
+  job (this-app activation sets `AM_JOB_TYPE` / `AM_PRESENCE_DIR` /
+  `AM_RESULT_PATH_FOR_TESTS`).  This replaces `TestJob`'s
+  `SimpleOutputContext`, which roots under `<cwd>/.output`.
+- `_create_run_metadata()` → `RuntimeRunMetadata`
+  (`automojo-integration-runtime/source/packages/automojo/integrationruntime/runtimerunmetadata.py`)
+  — sources build / pipeline / job metadata from the resolved
+  `RuntimeVariables` (the real CI/runtime context) instead of the
+  `"(unknown)"` placeholders `StandaloneRunMetadata` supplies.
+- `_create_recorder()` → `JsonResultRecorder` — JSOS streaming to
+  disk **plus** the rendered HTML summary, in place of
+  `TestJob`'s `StdoutResultRecorder`.
+
+### Activation is a precondition, not a hook
+
+`IntegratedTestJob` *assumes* the process was already activated
+as a test-run job before `begin()` resolves the presence-folder
+paths.  The activation itself — `establish_app_persona` +
+`resolve_runtime_variables` + `activate_profile_job(JobType.TestRun)`
+— lives in `automojo.integrationruntime.initialize`, and
+integration runs reach the job through
+`automojo.integrationruntime.entrypoints.integrated_test_entrypoint`,
+which activates and then delegates to testbase's standalone
+`generic_test_entrypoint`.  This keeps activation out of the
+class hierarchy: `IntegratedTestJob` consumes the activated
+context (via `RuntimeOutputContext` / `RuntimeRunMetadata`); it
+does not perform activation.
+
+`DefaultIntegratedTestJob` (line 91) is the naming-only fallback
+for this layer — same role as `DefaultTestJob` and
+`DefaultDistributedTestJob`.
+
+## Layer 3 — `InteropLibraryTestJob` (the landscape-aware hinge)
 
 **File:** `automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`
 
@@ -108,9 +244,25 @@ on `automojo-landscaping` — by introducing an abstract
 template method `_get_landscape()` that subclasses must
 override.
 
+> **In-flight: the parent is moving.** In the intended chain,
+> `InteropLibraryTestJob` extends `IntegratedTestJob` (Layer 2)
+> so a distributed run inherits both integration result
+> recording *and* landscape activation.  That re-parenting has
+> **not yet landed**.  In the interop source today the class
+> still extends `TestJob` directly — see the declaration below.
+> Until the migration completes, an interop/testplus run does
+> **not** automatically pick up `IntegratedTestJob`'s
+> presence-folder recording from the class hierarchy; it gets
+> the standalone stdout plumbing from `TestJob` unless the
+> entry point arranges otherwise.  This is reported as-built,
+> not as-intended.
+
 ### The class declaration
 
 ```python
+# automojo-interop/source/packages/automojo/interop/testing/testjob.py:22
+# As built today — still extends TestJob.  Intended parent: IntegratedTestJob.
+
 class InteropLibraryTestJob(TestJob):
     """
         Interop-tier test-job base class.
@@ -256,7 +408,20 @@ intermediate layer that:
 
 Result: `DistributedTestJob` collapsed from ~615 lines to ~90.
 
-## Layer 3 — `DistributedTestJob` (the distributed plug-in)
+The `IntegratedTestJob` layer (Layer 2) is the *next* step of
+the same factoring discipline: rather than baking
+presence-folder recording, `RuntimeVariables` metadata, and HTML
+rendering into `TestJob` (which would re-couple the foundation
+tier to `this-app` and `RuntimeVariables`), that behaviour was
+lifted into a separate `automojo-integration-runtime` package
+and slotted in *between* `TestJob` and `InteropLibraryTestJob`.
+As noted above, the final wiring — re-parenting
+`InteropLibraryTestJob` onto `IntegratedTestJob` — is the
+in-flight step; until it lands, interop's class still extends
+`TestJob`, the same way `DistributedTestJob` once extended
+`TestJob` before c785e9b.
+
+## Layer 4 — `DistributedTestJob` (the distributed plug-in)
 
 **File:** `automojo-testplus/source/packages/automojo/testplus/distributedtestjob.py:24`
 
@@ -344,10 +509,11 @@ fix is a one-line change in one file.  Before the c785e9b
 refactor, the same bug — if it existed — could have been in
 the duplicated copy and gone uncaught.
 
-## Layers 4 and 5 — the naming-only fallbacks
+## Layers 5, 6, and 7 — the naming-only fallbacks
 
-`DefaultTestJob` (in testbase, line 621) and
-`DefaultDistributedTestJob` (in testplus, lines 84–90) are
+`DefaultTestJob` (in testbase, line 613),
+`DefaultIntegratedTestJob` (in integration-runtime, line 91),
+and `DefaultDistributedTestJob` (in testplus, lines 84–90) are
 trivial:
 
 ```python
@@ -361,10 +527,11 @@ class DefaultDistributedTestJob(DistributedTestJob):
 ```
 
 They exist so that the entry points
-(`generic_test_entrypoint`, `distributed_test_entrypoint`) have
-a reasonable default `job_type=` value.  A user with no custom
-job-type subclass uses the default; a user with a custom
-subclass passes `job_type=YourCustomJob`.
+(`generic_test_entrypoint`, `integrated_test_entrypoint`,
+`distributed_test_entrypoint`) have a reasonable default
+`job_type=` value.  A user with no custom job-type subclass uses
+the default; a user with a custom subclass passes
+`job_type=YourCustomJob`.
 
 ## The customisation cascade
 
@@ -376,7 +543,12 @@ testing.
 A project building a custom distributed test scenario:
 
 1. **Pick the right starting layer.**
-   - Single-host customisation → subclass `TestJob`.
+   - Single-host, no-activation customisation (stdout recorder,
+     `.output` artefacts) → subclass `TestJob`.
+   - Single-host customisation that needs activation-backed
+     presence-folder recording, `RuntimeVariables` metadata, and
+     an HTML summary → subclass `IntegratedTestJob` (and run via
+     `integrated_test_entrypoint` so activation happens first).
    - Landscape-aware single-pod customisation that doesn't need
      a custom sequencer → subclass `InteropLibraryTestJob` and
      implement `_get_landscape()`.
@@ -384,12 +556,17 @@ A project building a custom distributed test scenario:
      `DistributedTestJob` (and override `_create_sequencer()`
      if you need a custom sequencer).
 
-2. **Override the template methods you need.**
+2. **Override the provider methods you need.**
    - `_get_landscape()` to return your `Landscape` subclass
      (typically via `LandscapeSingleton()` after registering
      your subclass through the factory).
    - `_create_sequencer()` for a custom sequencer.
-   - `_create_recorder()` for a custom recorder.
+   - `_create_recorder()` for a custom recorder (stdout vs. JSOS
+     + HTML is itself decided here — `TestJob` defaults to
+     `StdoutResultRecorder`, `IntegratedTestJob` to
+     `JsonResultRecorder`).
+   - `_create_output_context()` / `_create_run_metadata()` for a
+     custom artefact root or run-identity source.
    - The five `fire_*` hooks if you need extra activation
      behaviour beyond what landscape activation provides
      (rare — usually the layered base classes suffice).
@@ -400,9 +577,12 @@ A project building a custom distributed test scenario:
    ```
 
 The entry point is `automojo-testplus/source/packages/automojo/testplus/entrypoints.py:38`
-for distributed jobs and
-`automojo-testbase/source/packages/automojo/testbase/entrypoints.py:237`
-for single-host.  Real scaffolding examples live in
+for distributed jobs,
+`automojo-integration-runtime/source/packages/automojo/integrationruntime/entrypoints.py`
+(`integrated_test_entrypoint`) for activated integration jobs,
+and `automojo-testbase/source/packages/automojo/testbase/entrypoints.py:135`
+(`generic_test_entrypoint`) for standalone single-host.  Real
+scaffolding examples live in
 `automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
 (`CustomTestJob`, `FailingCustomTestJob`).
 

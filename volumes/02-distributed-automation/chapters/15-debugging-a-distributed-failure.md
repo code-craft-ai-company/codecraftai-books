@@ -28,7 +28,28 @@ the workflow easier in production.
 
 ## The structured data the framework provides
 
-A failed run leaves a results directory shaped roughly:
+The structured-data debugging story in this chapter is the
+story of an *integration* run — a run driven by
+`IntegratedTestJob` (in `automojo-integration-runtime`).  Plain
+`testbase` runs standalone and records only to **stdout** (its
+default recorder is `StdoutResultRecorder`); it has no presence
+folder, no `RuntimeVariables`, and no on-disk results-directory
+layout to debug from.  The presence-folder results directory,
+the JSOS-to-disk stream, the rendered HTML summary, and the
+CI/build metadata are all the responsibility of
+`IntegratedTestJob`, which overrides three `TestJob` provider
+hooks: `_create_output_context()` returns `RuntimeOutputContext`
+(artefacts land under the activated app's well-known presence
+folder via `automojo.thisapp.paths` — activation-gated),
+`_create_run_metadata()` returns `RuntimeRunMetadata` (build /
+pipeline / job from `RuntimeVariables`), and `_create_recorder()`
+returns `JsonResultRecorder` (JSOS streaming plus the rendered
+HTML summary).  The audit-diary and evidence discipline below
+therefore applies to `IntegratedTestJob` runs — that's where the
+files exist to reason about.
+
+An integration run that failed leaves a results directory shaped
+roughly:
 
 ```
 results/20260501-153012-abc123/
@@ -45,7 +66,7 @@ results/20260501-153012-abc123/
 │   │   └── ...
 │   └── casey-12/                   # may be partial — host went down
 │       └── pre_only.log
-├── diagnostic-captures/
+├── diagnostics/
 │   ├── pre_testrun/
 │   │   ├── package-versions.json
 │   │   ├── environment.json
@@ -54,7 +75,7 @@ results/20260501-153012-abc123/
 │   │       └── ...
 │   └── post_testrun/
 │       └── ...
-└── per-test/
+└── tc-by-products/
     ├── test_replication_in_majority/
     │   ├── stdout.log
     │   ├── stderr.log

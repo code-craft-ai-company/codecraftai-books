@@ -123,8 +123,8 @@ In `automojo-testbase`, these are five `fire_*` hooks on `TestJob`:
 `fire_attach_to_framework`, `fire_attach_to_environment`,
 `fire_activate_configuration`, `fire_activate_integration`,
 `fire_activate_operations` (file:
-`automojo-testbase/source/packages/automojo/testbase/testjob.py:415–443`).
-On a single-host run the last three are no-op stubs — they exist
+`automojo-testbase/source/packages/automojo/testbase/testjob.py:379–408`).
+On a single-host run all five are no-op stubs — they exist
 because Volume 2's `InteropLibraryTestJob` (in `automojo-interop`,
 `source/packages/automojo/interop/testing/testjob.py:22`) overrides
 them to drive landscape activation.  The hooks are *the* place
@@ -311,6 +311,102 @@ horizontal scale provisions more Pods, not more parallel tests
 within a Pod.  Volume 3 covers the orchestration side; Volume
 2 covers the distributed test side; the two volumes meet at
 the Pod boundary.
+
+## Where `unittest` still lives in the portfolio
+
+There is a second, quieter reason this chapter is not a polemic
+against the standard library: testbase does not try to replace
+`unittest` everywhere.  It replaces it *almost* everywhere — and
+the handful of packages it deliberately leaves on `unittest` are
+the ones that make this honesty possible.
+
+Earlier in the portfolio's life, the set of packages that had to
+stay on plain `unittest` was large, because testbase dragged in a
+chain of dependencies — configuration, the runtime foundation,
+this-app — that many low-level packages could not import without a
+cycle.  That chain is being severed.  testbase is becoming
+**near-standalone**: its intended dependencies are exactly
+`automojo-arcli`, `automojo-errors`, `automojo-interfaces`,
+`automojo-waiting`, and `automojo-xmodules` — no configuration tier,
+no runtime foundation, no this-app.  The *core* runner already lives
+on that floor: `TestJob` reads its handful of environment knobs
+directly via the dependency-free `automojo.testbase.environment`
+module, and it resolves output and run metadata through injected
+seams (`IOutputContext` / `IRunMetadata`) rather than importing the
+runtime.  The presence-folder results layout, the
+JSOS-to-disk-with-HTML summary, and the CI/build metadata that used
+to be testbase's business are now the job of `IntegratedTestJob` in
+`automojo-integration-runtime`; plain testbase records to stdout and
+runs without activation.  Chapter 2 and Volume 2 walk that seam.
+
+This is partly in-flight.  The runner core is off the old chain, but
+testbase's *CLI and bootstrap* (`automojo.testbase.initialize`, the
+`cli/` command tree, the result server) still import
+`automojo.runtime.*` and `automojo.thisapp.*`, and `pyproject.toml`
+still lists configuration, runtime, and this-app among its
+dependencies.  Finishing that decoupling — and trimming the
+dependency list to the five-package floor — is the remaining step;
+the architecture below describes the floor the package is converging
+on.
+
+The practical consequence is that testbase can now be used to test
+**almost every other package in the portfolio** — the device
+abstractions, the interop layer, the orchestration tiers, the REST
+clients.  A package no longer has to choose `unittest` just because
+it sits below the framework's old dependency chain.
+
+What remains on `unittest` is a small, **permanent** exclusion set:
+
+- `automojo-errors`
+- `automojo-interfaces`
+- `automojo-waiting`
+- `automojo-xmodules`
+- `automojo-arcli`
+- `automojo-extension`
+
+The rationale is a single rule with one product decision attached.
+The first five are testbase's *own* dependencies — a framework
+cannot test the packages it is built on without a bootstrap cycle,
+so those stay on `unittest` by necessity.  (testbase depends on
+`arcli` for its own CLI, which is why `arcli` is on this list even
+though it is otherwise a general-purpose toolkit.)  The sixth,
+`automojo-extension`, is the product decision: it underpins the
+namespace-package extensibility model that `IntegratedTestJob`
+registers through (the same model Volume 0 chapter 7 introduced),
+and keeping it on `unittest` avoids a circularity between the
+extension machinery and the framework that consumes it.
+
+Everything outside that set has shifted — or can shift — to
+testbase.  The split is not "framework versus standard library as a
+matter of taste"; it is a precise dependency-floor boundary, and the
+list above is the floor.
+
+That shift is no longer hypothetical.  Across the portfolio's
+unittest-bearing packages — the `configuration` and `this-app`
+foundation tiers, the `credentials` and `networking` device layers,
+the `integration-runtime` reporting package, the `timetravel-pod`
+tracer, the `storage-database` and `dataprofiles` libraries, and the
+`sysman-common` tier — the tests have been converted to testbase at
+the source level.  Each package's tests now live as plain `def test_*`
+functions under `source/testroots/automojo/tests/…` (discovered by the
+runner via `--includes`) where they had been `unittest.TestCase`
+methods under `source/tests/`.  The conversion is one-to-one: every
+original test method becomes exactly one test function; `setUp` /
+`tearDown` state is replicated per test through module-level helper
+functions (testbase tests have no class lifecycle); `unittest.mock` is
+retained as-is; duplicate method names across sibling `TestCase`
+classes are disambiguated rather than collided; and
+`IsolatedAsyncioTestCase` tests are wrapped with `asyncio.run`.  The
+migration keeps both suites in parallel for safety — the legacy
+`unittest` files remain authoritative, and the merge gate keeps
+running them, until each converted suite is verified green under the
+testbase runner and the package's CI is cut over to `testbase testing
+run`.  (Two of the converted tiers, `this-app` and `configuration`,
+are a special case: testbase still declares them among its own
+dependencies, so they cannot take a testbase test-dependency — and
+thus cannot run under the testbase runner — until testbase finishes
+shedding that chain.  Their test *sources* are converted; their
+cutover waits on the decoupling described above.)
 
 ## What this volume builds
 

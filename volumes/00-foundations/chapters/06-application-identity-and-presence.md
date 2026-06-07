@@ -14,10 +14,24 @@ calls into `ThisApplication` to resolve configuration variables,
 locate well-known directories, and emit identity metadata into
 logs and traces.
 
-The package is small but consequential.  Eight Python files; one
-singleton; one classmethod (`establish_app_persona`) that
+The package began small but has grown consequential.  At its core
+is one singleton; one function (`establish_app_persona`) that
 *every* application calls early in startup; one global
-context that carries identity values across the process.
+context that carries identity values across the process.  As of the
+runtime-foundation consolidation it *also* owns the machinery that
+used to live in the former `automojo-runtime` package: the
+`RuntimeVariables` descriptor set, the well-known-paths helpers, the
+profile/job enumerations, and the activation sequence.  The old
+`automojo-runtime` is being retired — it now holds only thin
+re-export shims, and import paths shift from `automojo.runtime.X`
+to `automojo.thisapp.X`.
+
+This consolidation is what lets `automojo-testbase` sit *above* the
+identity-and-presence tier without depending on it: testbase reads
+the handful of core environment knobs it needs directly, and the
+richer runtime machinery described later in this chapter is what an
+*integrated* run (Volume 1) layers back on top via
+`automojo-integration-runtime`.
 
 ## The two-phase pattern
 
@@ -281,10 +295,12 @@ descriptor individually.
 
 The volume's other variable sets follow the same pattern.
 `ConfigVariablesDesc` (in `automojo-configuration`) declares the
-configuration-related descriptors.  `RuntimeVariablesDesc` (in
-`automojo-runtime`) declares the runtime-related descriptors.
-Each subsystem owns its own variable set; the sets compose at
-the `ThisApplication` level.
+configuration-related descriptors.  `RuntimeVariablesDesc` —
+formerly in `automojo-runtime`, now in
+[`automojo.thisapp.runtimevariables`](../../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
+— declares the runtime-related descriptors and itself subclasses
+`PersonaVariablesDesc`.  Each subsystem owns its own variable set;
+the sets compose at the `ThisApplication` level.
 
 ### `AppVarAccessor` — typed read-through
 
@@ -441,6 +457,150 @@ that need to *find* the active landscape names read the context
 path; subsystems that need to *override* call
 `override_variable_value` and trust the propagation.
 
+## The absorbed runtime foundation
+
+Everything above describes the *persona* machinery — the half of
+`automojo-this-app` that was always here.  The other half arrived
+with the runtime-foundation consolidation: the modules that used to
+constitute the standalone `automojo-runtime` package now live under
+`automojo.thisapp`, and the application-identity-and-presence tier is
+their home.  They build directly on the descriptor model this
+chapter just introduced.
+
+> **As-built note.**  The old `automojo-runtime` package still
+> exists, but only as a set of thin re-export shims so that
+> in-flight callers importing `automojo.runtime.X` keep working
+> while they migrate to `automojo.thisapp.X`.  New code imports from
+> `automojo.thisapp` directly.
+
+### `RuntimeVariablesDesc` / `RuntimeVariables` — the runtime descriptor set
+
+[`runtimevariables.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
+declares `RuntimeVariablesDesc`, which *subclasses*
+`PersonaVariablesDesc` — so a single descriptor set carries both the
+persona fields and the runtime fields.  It is a large set: build
+metadata (`AM_BUILD_RELEASE`, `AM_BUILD_BRANCH`, `AM_BUILD_NAME`,
+`AM_BUILD_URL`), pipeline identity (`AM_PIPELINE_ID`,
+`AM_PIPELINE_NAME`, `AM_PIPELINE_INSTANCE`), job identity
+(`AM_JOB_ID`, `AM_JOB_NAME`, `AM_JOB_TYPE`, `AM_JOB_SEED`, …),
+diagnostics knobs, logging levels, the output directory, the
+test-result path templates, and more.  Each descriptor follows the
+same `AppVarDesc` contract — `default`, `converter`, `context_path`
+— so every runtime value resolves and publishes through the exact
+pipeline the persona variables use.
+
+The companion accessor class `RuntimeVariables` (subclass of
+`PersonaVariables`) exposes the typed read-through views.  Call-site
+code reads `RuntimeVariables.AM_JOB_TYPE` and gets the resolved,
+typed value; resolution code passes
+`RuntimeVariablesDesc.AM_JOB_TYPE` to `get_variable_value` /
+`override_variable_value`.
+
+A small free function, `resolve_runtime_variables()`, performs the
+one-time resolution of the whole runtime set: it coerces the
+start-time and shared-output-directory values, then calls
+`this_app.resolve_variable_set(RuntimeVariablesDesc)` so every
+descriptor with a `context_path` publishes into the shared context.
+It guards against double resolution with a module-level
+`RUNTIME_VARIABLES_RESOLVED` flag.
+
+### Well-known paths
+
+[`paths.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/paths.py)
+turns the resolved runtime variables into concrete on-disk
+locations.  The shipped helpers include:
+
+- `get_presence_directory()` — the application's home base, derived
+  from `RuntimeVariables.AM_PRESENCE_DIR`.
+- `get_path_for_output()` — the timestamped directory where results
+  and artifacts are deposited.
+- `get_path_for_testresults()` — the testresults directory.
+- `get_path_for_testcase_by_products(test_id)` — a per-test-case
+  by-products folder under the testresults directory.
+- `get_path_for_diagnostics(label)` and `get_path_for_artifacts(label)`
+  — labelled subfolders of the output directory.
+- `get_summary_html_template_source()`,
+  `get_summary_static_resource_dest_dir()`,
+  `get_summary_static_resource_src_dir()` — the HTML-summary template
+  and static-resource locations.
+
+Several of these are *activation-gated*: helpers like
+`get_path_for_diagnostics`, `get_path_for_testresults`, and
+`get_path_for_testcase_by_products` raise `SemanticError` when
+`RuntimeVariables.AM_JOB_TYPE == JobType.Unknown` — i.e. when the
+process was *not* activated as a job.  This is the same
+errors-never-silent discipline applied to the directory layout: a
+plain, non-activated process is told plainly that the presence-folder
+results tree does not exist for it.
+
+> **Consequence for testbase.**  Plain `automojo-testbase` runs
+> *without* activation — it records to stdout, has no presence
+> folder, and never touches `RuntimeVariables` or this-app.  The
+> presence-folder results layout, JSOS-to-disk streaming, HTML
+> summary, and CI/build metadata are all the responsibility of
+> `IntegratedTestJob` in `automojo-integration-runtime`, which
+> activates the process as a job and *then* delegates to these
+> path helpers.
+
+### Profile and job enumerations
+
+[`enumerations.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/enumerations.py)
+defines two string enums that govern *how* a process is activated:
+
+```python
+class ActivationProfile(str, Enum):
+    Command = "command"
+    Console = "console"
+    Job = "job"
+    Service = "service"
+
+class JobType(str, Enum):
+    Unknown = "Unknown"
+    Build = "Build"
+    Infrastructure = "Infrastructure"
+    Orchestration = "Orchestration"
+    TestRun = "TestRun"
+```
+
+`ActivationProfile` selects the *shape* of the process — a one-shot
+command, an interactive console, a long-running service, or a job
+that collects by-products into an output folder.  `JobType`
+sub-classifies a job and drives which results subtree the activation
+sequence builds (`Build`, `Infrastructure`, `Orchestration`,
+`TestRun`).
+
+### The activation sequence
+
+[`activation.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/activation.py)
+ties the enumerations, the runtime variables, and the well-known
+paths together.  It exposes one function per profile —
+`activate_profile_command()`, `activate_profile_console()`,
+`activate_profile_service(...)`, and `activate_profile_job(job_type)`
+— each of which:
+
+1. **Guards against double activation** — if
+   `RuntimeVariables.AM_ACTIVATION_PROFILE` is already set, it
+   refuses (a `SemanticError` for most profiles), because a process
+   has exactly one persona-shape.
+2. **Records the profile** — overrides
+   `RuntimeVariablesDesc.AM_ACTIVATION_PROFILE` with the chosen
+   `ActivationProfile`.
+3. **Runs the common activation** — `_activate_profile_common`
+   resolves the start-time-stamped output directory appropriate to
+   the `JobType`, assigns a job id if one was not supplied, and
+   overrides `AM_OUTPUT_DIRECTORY` accordingly.
+4. **Activates logging** — wires up file, console, or rotating
+   service logging through the `automojo.xmodules.xlogging` helpers.
+
+`activate_profile_job(JobType.TestRun)` is the entry point an
+integrated test run uses.  In `automojo-integration-runtime`, the
+activation init (`establish_app_persona` →
+`resolve_runtime_variables` → `activate_profile_job(JobType.TestRun)`)
+is what populates the presence-folder output context and the
+`RuntimeVariables`-sourced run metadata that `IntegratedTestJob`
+records against.  This chapter's tier supplies the mechanism; that
+package supplies the policy of *when* to invoke it.
+
 ## Cross-references
 
 The identity machinery is used by every higher tier:
@@ -450,8 +610,11 @@ The identity machinery is used by every higher tier:
   every configuration variable; `ConfigVariablesDesc` extends
   `PersonaVariablesDesc`.
 - **Volume 0 chapter 8 (Runtime variables and well-known
-  paths)** uses the same machinery for runtime-related variables
-  (`AM_RUN_ID`, `AM_INTERACTIVE_CONSOLE`, etc.).
+  paths)** goes deeper on the runtime-related variables
+  (`AM_RUN_ID`, `AM_INTERACTIVE_CONSOLE`, etc.) and the
+  activation sequence — all of which, per the consolidation, now
+  live in `automojo.thisapp` alongside the persona machinery rather
+  than in a separate `automojo-runtime` package.
 - **Volume 3 chapter 14 (Configuration profiles as a
   discipline)** proposes the `ContextPaths.ACTIVE_PROFILE`
   addition.  The chapter is using the same machinery this
@@ -540,6 +703,16 @@ without that machinery.
 - **Variable descriptors with `context_path`** automatically
   publish their resolved values to the context, making the
   resolution pipeline observable end-to-end.
+- The tier now also **owns the absorbed runtime foundation** (moved
+  here from the retired `automojo-runtime`):
+  `RuntimeVariablesDesc` / `RuntimeVariables` and
+  `resolve_runtime_variables` (runtime descriptor set), the
+  well-known-paths helpers in `paths.py` (several activation-gated
+  via `JobType.Unknown`), the `ActivationProfile` / `JobType`
+  enumerations, and the `activate_profile_*` sequence in
+  `activation.py`.  Plain testbase runs *without* this layer;
+  `automojo-integration-runtime` layers it back on for integrated
+  runs.
 - The machinery is *not* a generic dependency-injection
   container, *not* multi-application, *not* persistent across
   restarts.  Each scoping choice is deliberate.

@@ -10,17 +10,27 @@
 called **JSOS** — *JSON Separated Object Stream*.  The format
 is straightforward: each event is a self-contained JSON object,
 prefixed by an ASCII record-separator character (Unicode code
-point U+001E).  A consumer reads the file by scanning for the
-separator, capturing the JSON between separators, and parsing.
+point U+001E) and a newline.  A consumer reads the file by
+scanning for the separator, capturing the JSON between
+separators, and parsing.
 
 The format exists because the alternative — buffering events
 until the run ends and writing one consolidated JSON document —
 loses everything when a run crashes.  Streaming means a partial
 run is still a useful run.
 
-This chapter walks the format, the recorder that produces it,
-the three result files testbase emits, and the consumer patterns
-that read the stream.
+This chapter walks the format, the recorders that produce it,
+the result files testbase emits, and the consumer patterns
+that read the stream.  A note up front on division of labour:
+plain `automojo-testbase` defaults to a *stdout* recorder and
+runs standalone — it writes the JSOS/JSON artefacts only when a
+run is given an output directory, and it never renders the HTML
+summary.  The full HTML-rendering recorder and the
+presence-folder results-directory layout are the responsibility
+of `IntegratedTestJob` in `automojo-integration-runtime`.  The
+*format* is identical in both cases; this chapter is about the
+format and the standalone recorder, and flags where the
+integration tier takes over.
 
 ## What "streaming" means in this context
 
@@ -36,8 +46,8 @@ A streaming results file is one where:
 JSOS satisfies all three.  Each record is a complete JSON
 object; appending one record does not invalidate any previously
 written records; a `tail` consumer can see a record as soon as
-the recorder writes it (with Python's default buffering — and
-the recorder flushes after each event for runs that need it).
+the recorder writes it (the recorder flushes after each event —
+see the recorder lifecycle below).
 
 Compared to alternatives:
 
@@ -67,10 +77,14 @@ import block:
 from automojo.xmodules.jsos import CHAR_RECORD_SEPERATOR
 ```
 
-`CHAR_RECORD_SEPERATOR` is the byte `\x1e`.  Every JSOS file is
-a sequence of `(separator, json_object)` pairs.  The first byte
-of the file is a separator; from there each separator marks the
-start of the next record.
+`CHAR_RECORD_SEPERATOR` is the two-byte sequence `"\x1E\n"` —
+the ASCII record-separator character followed by a newline.
+(The newline is a readability convenience: it keeps the raw file
+greppable line-by-line in a pager.  The structural delimiter is
+the `\x1E`; the newline is not load-bearing.)  Every JSOS file
+is a sequence of `(separator, json_object)` pairs.  The first
+bytes of the file are a separator; from there each separator
+marks the start of the next record.
 
 A reader does not need testbase to parse the file.  Any program
 that can split on `\x1e` and parse JSON can consume the stream:
@@ -102,11 +116,16 @@ conforming consumer.
 
 ## The three result files
 
-`JsonResultRecorder`
-(`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90–183`)
-produces three files in the run's results directory:
+When a run is given an output directory, the recorder produces
+three files in the run's results directory.  The filenames are
+chosen by `TestJob.begin()`
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:148–150`)
+and the serialisation is performed by `JsonResultRecorder`
+(`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90`),
+the JSOS/JSON serialisation core both the standalone and
+integration recorders inherit from:
 
-### `testsummary.json`
+### `testrun_summary.json`
 
 Written at finalize.  The high-level summary of the run:
 
@@ -133,7 +152,7 @@ This is the artefact a CI dashboard polls for status.  It does
 not include per-test detail; for that, the consumer reads the
 stream or the consolidated file.
 
-### `testresults_stream.jsos`
+### `testrun_results_stream.jsos`
 
 Written *as tests finish*.  Each record is one of a small set
 of event kinds:
@@ -186,7 +205,7 @@ A representative `test_finished` for a failure:
 The stream is the rich source of truth.  Anything you can ask
 about a test run can be answered by parsing the stream.
 
-### `testresults.json`
+### `testrun_results.json`
 
 Written at finalize.  The consolidated final document.  Same
 information as the stream, reorganised into a tree by package
@@ -200,63 +219,135 @@ locally for live monitoring.
 
 ## The recorder lifecycle
 
-The recorder is constructed during `TestJob.begin()` (Chapter
-2):
+`TestJob.begin()` (Chapter 2) resolves the results directory and
+the artefact filenames
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:148–150`);
+the recorder itself is constructed later, in `TestJob.execute()`,
+through the `_create_recorder(...)` provider hook
+(`.../testbase/testjob.py:564`) and entered as a context manager
+(`.../testbase/testjob.py:256–257`):
 
 ```python
-# Sketch of the construction flow.
+# .../testbase/testjob.py — recorder construction in execute()
 
-def begin(self) -> None:
-    """
-        Set up the run's results directory and recorder.
-    """
-    self._results_dir = self._compute_results_dir()
-    self._recorder = JsonResultRecorder(
-        results_dir=self._results_dir,
-        run_id=self._run_id,
-    )
-    self._recorder.open()
-    return
+with self._create_recorder(runid=runid, start=start, render_info=render_info,
+                           build_info=build_info, pipeline_info=pipeline_info,
+                           job_info=job_info) as recorder:
+    ...
+    tseq.execute_tests(runid, recorder)
 ```
 
-The recorder's `open()` method:
+> **The default recorder is `StdoutResultRecorder`, not
+> `JsonResultRecorder`.**  Plain `testbase` runs standalone — no
+> `automojo-this-app`, no `RuntimeVariables`, no HTML summary
+> template — so `TestJob._create_recorder()` returns a
+> `StdoutResultRecorder`
+> (`.../testbase/results/recorders/stdoutresultrecorder.py:36`).
+> That recorder *subclasses* `JsonResultRecorder` to reuse the
+> JSOS-stream and JSON-summary serialisation, but it makes
+> `initialize_report()` a no-op (skipping the HTML template and
+> static-resource publication) and, on `finalize()`, prints the
+> human-readable run summary to stdout.  The integration tier
+> overrides this hook to use the full `JsonResultRecorder`
+> instead — see "Where the integration tier takes over" below.
 
-1. Creates the results directory if it does not exist.
-2. Opens `testresults_stream.jsos` in append mode.
-3. Writes the first record-separator byte.
-4. Writes a `phase_started` record for the run.
+Recorder setup, on context entry, does the following:
 
-Every test event the sequencer emits is then forwarded to the
-recorder's `record_event(event)` method, which:
+1. Initialises the output environment (for the stdout recorder,
+   report initialisation is a no-op; the JSOS/JSON files are still
+   written when an output directory is configured).
+2. Opens `testrun_results_stream.jsos` for writing.
+3. Writes the run-level preview / initial summary.
 
-1. Serialises the event to JSON.
-2. Writes the record-separator byte.
+Every test result the sequencer produces is then forwarded to
+the recorder, which (`.../jsonresultrecorder.py:268–341`):
+
+1. Serialises the `ResultNode` to JSON via `to_json(...)`.
+2. Writes the record-separator sequence (`\x1E\n`).
 3. Writes the JSON.
-4. Calls `flush()` on the underlying file handle.
+4. Calls `flush()` on the underlying stream handle.
+5. Updates the pass/fail/error/skip counters under a lock.
 
 The flush is what makes the stream tail-able.  Without it
 Python's I/O buffering would batch writes and a tail consumer
 would see records in lumps.  The flush has a measurable cost on
-fast suites — the recorder lets the test author opt out for
-unit-suite timings via a constructor argument — but on
-automation suites the per-test cost is dwarfed by the test
-itself, and the flush is worth its weight.
+fast suites — but on automation suites the per-test cost is
+dwarfed by the test itself, and the flush is worth its weight.
 
-At `TestJob.finalize()`:
+On context exit / `finalize()`:
 
-1. `record_event` writes a `phase_finished` record for the run.
-2. The recorder builds the consolidated JSON tree from its
-   in-memory event log.
-3. Writes `testresults.json`.
-4. Builds the summary aggregates.
-5. Writes `testsummary.json`.
-6. Closes the stream file.
+1. The recorder finalises counts and result determination.
+2. It builds the consolidated JSON tree from its in-memory
+   result log and writes `testrun_results.json`.
+3. It builds the summary aggregates and writes
+   `testrun_summary.json`.
+4. The `StdoutResultRecorder` additionally prints the summary to
+   stdout (exactly once — `finalize` guards against the
+   double-invocation that the context manager's `__exit__` would
+   otherwise cause).
 
-If the run crashes between `open()` and `finalize()`, the
-stream file is partial but valid: every record between the
-opening separator and the last full record is parseable.  A
-consumer reading the partial stream can compute its own summary
-from what's there.
+If the run crashes between setup and `finalize()`, the stream
+file is partial but valid: every record between the opening
+separator and the last full record is parseable.  A consumer
+reading the partial stream can compute its own summary from
+what's there.
+
+## Where the integration tier takes over
+
+Everything above is the *standalone* recorder.  Three things
+that this chapter used to attribute to `testbase` are now the
+responsibility of `IntegratedTestJob` in
+`automojo-integration-runtime`
+(`automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py:51`).
+`IntegratedTestJob` extends `TestJob` and overrides exactly
+three provider hooks:
+
+1. **The full HTML-rendering recorder.**
+   `IntegratedTestJob._create_recorder()`
+   (`.../integratedtestjob.py:79`) returns a `JsonResultRecorder`
+   in place of the `StdoutResultRecorder` — the JSOS stream plus
+   the consolidated/summary JSON *and* the rendered HTML summary
+   (the template copy and static-resource publication that
+   `StdoutResultRecorder.initialize_report()` no-ops out).
+
+2. **The presence-folder results-directory layout.**
+   `IntegratedTestJob._create_output_context()` returns a
+   `RuntimeOutputContext`
+   (`.../integrationruntime/runtimeoutputcontext.py:40`), which
+   delegates to `automojo.thisapp.paths` so that results,
+   diagnostics, and per-testcase by-products land under the
+   activated application's well-known *presence folder*.  Those
+   path helpers are activation-gated — they raise `SemanticError`
+   unless the process was activated as a job — which is exactly
+   why plain `testbase` (which never activates) cannot use them
+   and roots its artefacts under `AM_OUTPUT_DIRECTORY` or
+   `<cwd>/.output` via the standalone `SimpleOutputContext`
+   instead.
+
+3. **Real CI/build metadata.**
+   `IntegratedTestJob._create_run_metadata()` returns a
+   `RuntimeRunMetadata`
+   (`.../integrationruntime/runtimerunmetadata.py`) sourced from
+   the resolved `RuntimeVariables`, where the standalone
+   `StandaloneRunMetadata` supplies an auto-generated run id and
+   `(unknown)` placeholders for build/pipeline/job.  This is the
+   metadata that populates the `build`, `pipeline`, and `job`
+   blocks of `testrun_summary.json`.
+
+> The intended inheritance chain is `TestJob` ->
+> `IntegratedTestJob` -> `InteropLibraryTestJob` ->
+> `DistributedTestJob`.  As of this writing `IntegratedTestJob`
+> is built and wired, but the interop tier has not yet been
+> re-parented onto it — in the interop source,
+> `InteropLibraryTestJob` still extends `TestJob` directly.  The
+> JSOS format is unaffected either way; the only thing in flight
+> is *which class supplies the recorder/context/metadata*.
+
+The point for this chapter: the **format** is identical across
+both tiers.  Whether your records come from a standalone stdout
+run or an activated integration run, a `\x1E\n`-delimited stream
+of JSON objects is what lands on disk, and the same `testbase
+agents` consumers read it.
 
 ## Streaming to external services
 
@@ -298,7 +389,7 @@ Three consumer shapes show up across the portfolio:
 A developer running a long suite watches the stream:
 
 ```bash
-tail -F results/testresults_stream.jsos | testbase agents testresult list --stream
+tail -F results/testrun_results_stream.jsos | testbase agents testresult list --stream
 ```
 
 The agents CLI's `testresult list --stream` command (Chapter 6)
@@ -355,11 +446,13 @@ different layer of the stack — the principles are the same.
 Some things deliberately do not become JSOS records:
 
 - **Per-test stdout / stderr.**  These are written to a
-  per-test directory under the results directory
-  (`results/<run_id>/<test_name>/stdout.log` and `stderr.log`).
-  The stream record carries a *reference* to the directory but
-  not the contents — log volume can be large, and dragging it
-  into the stream would balloon record sizes.
+  per-testcase *by-products* directory resolved through the
+  output context (`get_testcase_byproducts_dir(test_id)` —
+  rooted under `.output` for standalone runs, or under the
+  presence folder for integration runs).  The stream record
+  carries a *reference* to the directory but not the contents —
+  log volume can be large, and dragging it into the stream would
+  balloon record sizes.
 - **Per-test screenshots / artefacts.**  Same — a reference,
   not the bytes.
 - **Coverage data.**  Coverage is written as a separate file by

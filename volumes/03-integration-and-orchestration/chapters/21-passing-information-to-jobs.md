@@ -495,6 +495,63 @@ provides the *names*; the configuration machinery provides the
 *content*.  This is the chapter-13 four-environment ladder
 applied at the orchestration-to-job seam.
 
+### Which test job the orchestration spawns
+
+When the subprocess the orchestration spawns is a *test job*,
+there are now two shapes it can take — and the `AM_*_NAMES`
+selector contract is identical for both.
+
+- **Plain `testbase` `TestJob`.**  The near-standalone job from
+  Volume 1.  It runs *without activation*: no presence folder, no
+  `RuntimeVariables`, no dependency on `automojo-this-app`.  Its
+  default recorder is `StdoutResultRecorder` — it prints the run
+  summary to stdout and (when an output directory is supplied)
+  reuses the JSOS/JSON serialisation so `testrun_results_stream.jsos`
+  and `testrun_summary.json` are still written for the `testbase
+  agents` CLI to consume, but it *skips* the HTML render.  This is
+  the right shape for a unit-style job invoked by a `RunCommand`
+  that simply needs a pass/fail and a stdout transcript.  It is
+  launched through testbase's standalone
+  [`generic_test_entrypoint`](../../../automojo-testbase/source/packages/automojo/testbase/entrypoints.py).
+- **`IntegratedTestJob`.**  The integration-tier job from
+  [`automojo-integration-runtime`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py).
+  It *extends* `TestJob` and overrides exactly three provider
+  hooks: `_create_output_context()` returns a
+  `RuntimeOutputContext` (results land under the activated app's
+  well-known presence folder — activation-gated; it raises
+  `SemanticError` unless the process was activated as a job),
+  `_create_run_metadata()` returns a `RuntimeRunMetadata`
+  (build / pipeline / job sourced from `RuntimeVariables` instead
+  of the standalone `(unknown)` placeholders), and
+  `_create_recorder()` returns a `JsonResultRecorder` (JSOS
+  streaming *plus* the rendered HTML summary).  It is launched
+  through
+  [`integrated_test_entrypoint`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/entrypoints.py),
+  which first performs this-app activation (establish app persona,
+  `resolve_runtime_variables`, `activate_profile_job(JobType.TestRun)`)
+  and *then* delegates to the same standalone
+  `generic_test_entrypoint`.
+
+The two jobs differ only in *result recording and run
+metadata* — the presence-folder results-directory layout,
+JSOS-to-disk-plus-HTML, and CI/build metadata are the
+responsibility of `IntegratedTestJob`, not of plain `testbase`.
+The configuration-selector seam this chapter is about is
+unchanged: both jobs read the same inherited `AM_*_NAMES` values
+and resolve the same configurations independently.
+
+`IntegratedTestJob` does not have to be named explicitly.  When
+`automojo-integration-runtime` is installed, its
+`IntegrationRuntimeDefaultTypeFactory`
+([`integrationruntimedefaulttypefactory.py`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/integrationruntimedefaulttypefactory.py))
+registers through `automojo-extension`'s factory protocol so the
+super-factory search path resolves `DefaultIntegratedTestJob` as
+the integration-tier default job type — sitting above testbase's
+`DefaultTestJob` and below testplus's distributed default.  An
+orchestration that activates the integration runtime therefore
+gets the integration recording behaviour by default, without the
+workflow author hand-wiring the job class.
+
 ## What the job sees vs what the orchestration knew
 
 A subprocess job does not have access to the orchestration's

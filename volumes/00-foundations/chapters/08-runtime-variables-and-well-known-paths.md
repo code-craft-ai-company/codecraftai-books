@@ -6,32 +6,47 @@
 > is selected.*
 
 The previous chapter introduced the extension and factory
-machinery.  This chapter introduces
-[`automojo-runtime`](../../../../automojo-runtime/source/packages/automojo/runtime/),
-the package that provides the *runtime* variable set and the
-*well-known path* helpers every higher tier uses.  The package
-sits one tier above `automojo-this-app` (which it imports for
-the variable-descriptor model) and one tier below
-`automojo-configuration` (which extends the runtime variable
-set with configuration-specific descriptors).
+machinery.  This chapter introduces the *runtime* variable set
+and the *well-known path* helpers every higher tier uses.  These
+modules now live inside
+[`automojo-this-app`](../../../../automojo-this-app/source/packages/automojo/thisapp/),
+under the `automojo.thisapp` namespace alongside the chapter-6
+persona machinery.  (Historically they were a separate
+`automojo-runtime` package; that package is being retired and now
+holds thin re-export shims that forward `automojo.runtime.X` to
+`automojo.thisapp.X`.  Update any `automojo.runtime.*` imports to
+`automojo.thisapp.*`.)
 
-The package's contents are organised into five modules:
+> **As-built note.**  The runtime variable set, the path helpers,
+> the activation profiles, and the enumerations were all folded
+> into `automojo-this-app` so that the variable-descriptor model
+> and the operational variables ship from one tier.  This also let
+> `automojo-testbase` become near-standalone: testbase does *not*
+> import `RuntimeVariables` or these path helpers at all.  See the
+> sidebar later in this chapter, "What testbase actually uses".
+
+The runtime-related contents of `automojo.thisapp` are organised
+into these modules:
 
 - **`runtimevariables.py`** — `RuntimeVariablesDesc` and
   `RuntimeVariables` extending the chapter-6 persona variable
-  set.
+  set, plus `DefaultValue`, the factory defaults, and
+  `resolve_runtime_variables`.
 - **`paths.py`** — well-known directory helpers (cache,
-  diagnostics, results, test-results, temp).
+  presence, output, results, diagnostics, test-results,
+  by-products, temp, summary-template).
 - **`activation.py`** — activation-profile commands that
   configure logging and behaviour for the running process.
-- **`enumerations.py`** — `JobType`, `ActivationProfile`, and
-  related enums.
-- **`optionoverrides.py`** — programmatic override helpers for
-  runtime variables.
+- **`enumerations.py`** — `JobType` and `ActivationProfile`.
+
+The programmatic override helpers (`optionoverrides.py`) have not
+yet been moved into `automojo.thisapp`; they currently still live
+in `automojo-runtime` (see the section on option overrides
+below).
 
 ## The runtime variable set
 
-[`runtimevariables.py`](../../../../automojo-runtime/source/packages/automojo/runtime/runtimevariables.py)
+[`runtimevariables.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
 extends `PersonaVariablesDesc` (chapter 6) with the variables
 every running process needs for *operational* concerns —
 distinct from chapter-6's *identity* concerns.
@@ -70,7 +85,7 @@ class RuntimeVariablesDesc(PersonaVariablesDesc):
     AM_JOB_TYPE = AppVarDesc(default=DefaultValue.NotSet,
                               context_path=ContextPaths.JOB_TYPE)
 
-    AM_INTERACTIVE_CONSOLE = AppVarDesc(default=False, converter=parse_bool)
+    AM_INTERACTIVE_CONSOLE = AppVarDesc(default=False)
 
     AM_DEBUG_BREAKPOINTS = AppVarDesc(default=None,
                                        context_path=ContextPaths.DEBUG_BREAKPOINTS)
@@ -85,7 +100,7 @@ The descriptors fall into five thematic groups:
 ### Activation and pod identity
 
 - **`AM_ACTIVATION_PROFILE`** — names the activation profile the
-  process is running under (Console, Service, Test, Worker —
+  process is running under (Command, Console, Job, Service —
   the `ActivationProfile` enum from `enumerations.py`).
 - **`AM_AUTOMATION_POD`** — the apod identifier (Volume 3
   chapter 5's apod from the landscape).
@@ -173,34 +188,50 @@ the call sites are uniform.
 
 ## Activation profiles
 
-[`enumerations.py`](../../../../automojo-runtime/source/packages/automojo/runtime/enumerations.py)
+[`enumerations.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/enumerations.py)
 defines the `ActivationProfile` enum with four values:
 
 - **`Command`** — the process is running as a CLI command.
-  Logs go to console + file; user-interactive.
+  Logs go to a standard file plus the console; user-interactive.
+- **`Console`** — the process is an interactive console.  Logs
+  go to a file (away from the screen) so log output does not
+  disrupt user interaction; the output directory is a temp
+  directory.
+- **`Job`** — the process runs as a job that collects its
+  by-products (logs, results) under an output folder.  A job
+  carries a `JobType` (see below) — Build, Infrastructure,
+  Orchestration, or TestRun.
 - **`Service`** — the process is a long-running service.  Logs
-  go to syslog or service-aware log handler; non-interactive.
-- **`TestRun`** — the process is a test runner.  Logs go to
-  per-run output directories with structured file names.
-- **`Worker`** — the process is a distributed-test worker
-  (Volume 2 territory).  Logs go to a per-worker file.
+  go to a rotating file handler; non-interactive.
 
-[`activation.py`](../../../../automojo-runtime/source/packages/automojo/runtime/activation.py)
-provides four `activate_profile_*` functions, one per profile.
-Each function:
+The companion `JobType` enum names the kinds of job: `Unknown`
+(the default until activation sets it), `Build`,
+`Infrastructure`, `Orchestration`, and `TestRun`.  As the path
+section below shows, the test-reporting path helpers are
+*activation-gated* on `AM_JOB_TYPE` being something other than
+`Unknown`.
 
-1. **Guards** against duplicate activation — calls
-   `RuntimeVariables.AM_ACTIVATION_PROFILE` and raises
-   `SemanticError` if already set.  A process may activate
-   exactly one profile.
+[`activation.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/activation.py)
+provides four `activate_profile_*` functions — one per profile:
+`activate_profile_command`, `activate_profile_console`,
+`activate_profile_service`, and `activate_profile_job(job_type)`
+(the job activation takes the `JobType` to run under).  Each
+function:
+
+1. **Guards** against duplicate activation — reads
+   `RuntimeVariables.AM_ACTIVATION_PROFILE` and raises if already
+   set.  A process may activate exactly one profile.
 2. **Sets the active profile** through `override_variable_value`.
-3. **Configures logging** appropriate to the profile (file path,
+3. **Runs common setup** (`_activate_profile_common`) that
+   resolves the output directory appropriate to the job type.
+4. **Configures logging** appropriate to the profile (file path,
    format, level, handler type).
-4. **Returns** with the process ready to run.
+5. **Returns** with the process ready to run.
 
 ```python
 def activate_profile_command():
 
+    # Guard against attemps to activate more than one, activation profile.
     if RuntimeVariables.AM_ACTIVATION_PROFILE is not None:
         errmsg = "An attempt was made to activate multiple environment activation profiles. profile={}".format(
             RuntimeVariables.AM_ACTIVATION_PROFILE
@@ -209,10 +240,7 @@ def activate_profile_command():
 
     this_app = ThisApplicationSingleton()
 
-    this_app.override_variable_value(
-        RuntimeVariablesDesc.AM_ACTIVATION_PROFILE,
-        ActivationProfile.Command,
-    )
+    this_app.override_variable_value(RuntimeVariablesDesc.AM_ACTIVATION_PROFILE, ActivationProfile.Command)
 
     _activate_profile_common(this_app)
 
@@ -221,22 +249,27 @@ def activate_profile_command():
 
     logging_location = LoggingLocation(log_directory, log_basename)
 
-    activate_standard_file_logging(logging_location)
-    activate_interactive_console_logging()
+    console_level = RuntimeVariables.AM_LOG_LEVEL_CONSOLE
+    file_level = RuntimeVariables.AM_LOG_LEVEL_FILE
+
+    activate_standard_file_logging(logging_location, console_level, file_level)
 
     return
 ```
 
 The pattern is consistent across the four activation functions —
 guard against duplicate activation; set the profile; common
-setup; profile-specific logging.
+setup; profile-specific logging.  (One honest wrinkle:
+`activate_profile_job` currently raises a plain `RuntimeError`
+rather than `SemanticError` on the duplicate-activation guard,
+where the other three raise `SemanticError`.)
 
 The application's startup code calls *one* of the activate
 functions:
 
 ```python
 from automojo.thisapp.persona import establish_app_persona
-from automojo.runtime.activation import activate_profile_command
+from automojo.thisapp.activation import activate_profile_command
 
 establish_app_persona(
     name="my-tool",
@@ -254,7 +287,7 @@ to process initialization.
 
 ## Well-known paths
 
-[`paths.py`](../../../../automojo-runtime/source/packages/automojo/runtime/paths.py)
+[`paths.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/paths.py)
 provides helpers for the directories every running process needs.
 Each helper returns an *absolute path*, creating the directory
 if it doesn't exist.
@@ -276,41 +309,71 @@ caches it, and returns.  Subsequent calls return the cached
 value.  The pattern keeps path resolution fast without exposing
 the caching mechanism to callers.
 
-The shipped helpers:
+The always-available helpers — these resolve from the persona /
+output variables and do not require a job activation:
 
-- **`get_temporary_file(prefix, suffix)`** — wraps
-  `tempfile.NamedTemporaryFile` with conventional naming.  Used
-  by Volume 3's `ShellScript` task (chapter 19) to create the
-  per-task temp script.
-- **`get_cache_directory()`** — returns the per-process cache
-  directory (typically `<presence_dir>/cache/`).  Used for
-  intermediate artifacts that persist across runs.
-- **`get_diagnostics_directory()`** — returns the per-run
-  diagnostics directory.  Used by the chapter-5 final-attempt
-  pattern when a wait fails and dumps state.
-- **`get_results_directory()`** — returns the per-run results
-  directory.
-- **`get_testresults_directory()`** — returns the per-test-run
-  results directory (a subdirectory of results).
-- **`get_testcase_byproducts_directory(testcase_id)`** —
-  per-test-case scratch space.
+- **`get_presence_directory()`** — returns the application's
+  well-known presence directory (`AM_PRESENCE_DIR`).
+- **`get_directory_for_cached_files()`** — returns the
+  per-application cache directory (`<presence_dir>/cache`).  Used
+  for intermediate artifacts that persist across runs.
+- **`get_path_for_output()`** — returns the output directory
+  (`AM_OUTPUT_DIRECTORY`) where results and artifacts are
+  deposited.
+- **`get_path_for_shared_store()`** — returns the configured
+  shared-store directory (raises `ConfigurationError` if
+  `AM_SHARED_STORE_DIRECTORY` is unset).
+- **`get_temporary_directory()` / `get_temporary_file(suffix, prefix)`** —
+  a `temp/` directory under the output directory, and a temp
+  file within it via `tempfile.mkstemp`.  Used by Volume 3's
+  `ShellScript` task (chapter 19) to create the per-task temp
+  script.
 - **`collect_python_modules(search_dir, max_depth)`** — utility
   for module discovery; used by the chapter-7 factory machinery
   for namespace scanning.
+
+The *activation-gated* helpers — these raise `SemanticError`
+unless the process was activated as a job (i.e. `AM_JOB_TYPE` is
+something other than `JobType.Unknown`).  They resolve paths that
+only make sense inside a results-collecting job:
+
+- **`get_path_for_artifacts(label)`** — `<output>/artifacts/<label>`.
+- **`get_path_for_diagnostics(label)`** —
+  `<output>/diagnostics/<label>`.  Used by the chapter-5
+  final-attempt pattern when a wait fails and dumps state.
+- **`get_path_for_testresults()`** — the test-results directory
+  (`AM_RESULT_PATH_FOR_TESTS`, falling back to the output
+  directory).
+- **`get_path_for_testcase_by_products(test_id)`** — per-test-case
+  scratch space under `<testresults>/tc-by-products/<test_id>`.
+- **`get_summary_html_template_source()`**,
+  **`get_summary_static_resource_src_dir()`**,
+  **`get_summary_static_resource_dest_dir()`** — locate the HTML
+  summary template and its static resources.
+
+> **These activation-gated helpers are consumed by
+> integration-runtime, not testbase.**  Their only caller is
+> `RuntimeOutputContext` in
+> [`automojo-integration-runtime`](../../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/runtimeoutputcontext.py),
+> which `IntegratedTestJob` installs by overriding
+> `TestJob._create_output_context()`.  Because the helpers raise
+> `SemanticError` unless the process was activated as a job, this
+> is precisely why *plain* `testbase` must not call them —
+> standalone testbase runs without activation.
 
 The directory layout is conventional:
 
 ```
 <presence_dir>/
 ├── cache/
-├── diagnostics/
-│   └── <run_id>/
 ├── logs/
 │   └── <log_basename>-<timestamp>.log
 ├── results/
-│   └── <run_id>/
-│       ├── testresults/
-│       └── ... (per-job results)
+│   └── testresults/
+│       └── <starttime>/
+│           ├── artifacts/<label>/
+│           ├── diagnostics/<label>/
+│           └── tc-by-products/<test_id>/
 ├── settings.config
 └── ... (other artifacts)
 ```
@@ -324,25 +387,30 @@ consumers; no per-application directory layout decisions.
 
 [`optionoverrides.py`](../../../../automojo-runtime/source/packages/automojo/runtime/optionoverrides.py)
 provides programmatic override helpers for runtime variables.
-The pattern: a CLI tool's `--debug` flag sets
+(Unlike the other runtime modules, this one has *not* yet been
+folded into `automojo.thisapp` — it still lives in
+`automojo-runtime`, importing `RuntimeVariablesDesc` from
+`automojo.thisapp.runtimevariables`.)  The helpers are bundled as
+static methods on an `AM_RUNTIME_OPTION_OVERRIDES` class; each
+wraps an `override_variable_value` call for one knob.  The
+pattern: a CLI tool's `--debug-debugger` flag sets
 `AM_DEBUG_DEBUGGER`; a CLI tool's `--seed` flag sets
-`AM_JOB_SEED`; the helpers wrap the `override_variable_value`
-calls in named functions:
+`AM_JOB_SEED`:
 
 ```python
-def override_debug_debugger(debugger: str):
-    ThisApplicationSingleton().override_variable_value(
-        RuntimeVariablesDesc.AM_DEBUG_DEBUGGER,
-        debugger,
-    )
-    return
+class AM_RUNTIME_OPTION_OVERRIDES:
 
-def override_job_seed(seed: str):
-    ThisApplicationSingleton().override_variable_value(
-        RuntimeVariablesDesc.AM_JOB_SEED,
-        seed,
-    )
-    return
+    @staticmethod
+    def override_debug_debugger(debugger: str):
+        this_app = ThisApplicationSingleton()
+        this_app.override_variable_value(RuntimeVariablesDesc.AM_DEBUG_DEBUGGER, debugger)
+        return
+
+    @staticmethod
+    def override_job_seed(job_seed: str):
+        this_app = ThisApplicationSingleton()
+        this_app.override_variable_value(RuntimeVariablesDesc.AM_JOB_SEED, job_seed)
+        return
 ```
 
 The CLI calls:
@@ -352,17 +420,17 @@ The CLI calls:
 @click.option("--seed", default=None, help="...")
 def run_command(debug_debugger, seed):
     if debug_debugger is not None:
-        override_debug_debugger(debug_debugger)
+        AM_RUNTIME_OPTION_OVERRIDES.override_debug_debugger(debug_debugger)
     if seed is not None:
-        override_job_seed(seed)
+        AM_RUNTIME_OPTION_OVERRIDES.override_job_seed(seed)
     # ...
 ```
 
 The CLI doesn't reach into the descriptor model directly — it
-calls a *named override function* per knob.  When a knob is
-renamed, the override function's signature stays stable; the
+calls a *named override method* per knob.  When a knob is
+renamed, the override method's signature stays stable; the
 CLI doesn't change.  When a new knob is added, a new override
-function joins the module; the CLI gets a new option that
+method joins the class; the CLI gets a new option that
 calls it.
 
 The pattern is the chapter-2 *named-parameter-passing*
@@ -375,7 +443,7 @@ Three consumption patterns recur.
 ### Pattern 1: read a runtime variable
 
 ```python
-from automojo.runtime.runtimevariables import RuntimeVariables
+from automojo.thisapp.runtimevariables import RuntimeVariables
 
 run_id = RuntimeVariables.AM_RUN_ID
 log_dir = RuntimeVariables.AM_LOG_DIRECTORY
@@ -389,24 +457,25 @@ within the resolution.
 ### Pattern 2: get a well-known path
 
 ```python
-from automojo.runtime.paths import (
-    get_cache_directory,
-    get_diagnostics_directory,
-    get_results_directory,
+from automojo.thisapp.paths import (
+    get_directory_for_cached_files,
+    get_path_for_diagnostics,
+    get_path_for_output,
 )
 
-cache_dir = get_cache_directory()
-diagnostics_dir = get_diagnostics_directory()
-results_dir = get_results_directory()
+cache_dir = get_directory_for_cached_files()
+output_dir = get_path_for_output()
+diagnostics_dir = get_path_for_diagnostics("connect-timeout")
 ```
 
 The helper creates the directory if needed; subsequent calls
-return the cached path.
+return the cached path.  (`get_path_for_diagnostics` is
+activation-gated — it requires a job activation.)
 
 ### Pattern 3: activate the runtime profile
 
 ```python
-from automojo.runtime.activation import activate_profile_command
+from automojo.thisapp.activation import activate_profile_command
 
 activate_profile_command()
 ```
@@ -426,6 +495,24 @@ doesn't *run* jobs.  Job execution is Volume 1's territory
 (distributed test jobs).  The runtime layer provides identity
 for whatever job is running; the running is elsewhere.
 
+> **What testbase actually uses.**  A key consequence of the
+> testbase decoupling is that *plain* `testbase` does **not**
+> consume this runtime layer at all.  It does not import
+> `RuntimeVariables`, the path helpers, or the activation
+> functions.  Instead it reads the handful of core env knobs it
+> needs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
+> `AM_DEBUG_*`, `AM_DIAGNOSTICS_*`, `AM_TESTRUN_TIMEOUT`) directly
+> from `os.environ` via a tiny, dependency-free module,
+> [`automojo.testbase.environment`](../../../../automojo-testbase/source/packages/automojo/testbase/environment.py).
+> Standalone testbase runs *without* activation — no presence
+> folder, no `RuntimeVariables`, no `automojo-this-app` — and
+> records its run summary to stdout.  The full runtime variable
+> set, the presence-folder results layout, and the rendered HTML
+> summary are the responsibility of `IntegratedTestJob` in
+> `automojo-integration-runtime`, which activates the process as a
+> `JobType.TestRun` job and installs the `RuntimeOutputContext`
+> shown above.
+
 ### Not a CI vendor adapter
 
 `AM_PIPELINE_*` variables identify the CI pipeline, but the
@@ -439,12 +526,12 @@ variables:
 def import_vendor_pipeline_identity():
     if "CI_PIPELINE_ID" in os.environ:
         # GitLab CI
-        override_pipeline_id(os.environ["CI_PIPELINE_ID"])
-        override_pipeline_name(os.environ.get("CI_PIPELINE_NAME", "unnamed"))
+        AM_RUNTIME_OPTION_OVERRIDES.override_pipeline_id(os.environ["CI_PIPELINE_ID"])
+        AM_RUNTIME_OPTION_OVERRIDES.override_pipeline_name(os.environ.get("CI_PIPELINE_NAME", "unnamed"))
     elif "GITHUB_RUN_ID" in os.environ:
         # GitHub Actions
-        override_pipeline_id(os.environ["GITHUB_RUN_ID"])
-        override_pipeline_name(os.environ.get("GITHUB_WORKFLOW", "unnamed"))
+        AM_RUNTIME_OPTION_OVERRIDES.override_pipeline_id(os.environ["GITHUB_RUN_ID"])
+        AM_RUNTIME_OPTION_OVERRIDES.override_pipeline_name(os.environ.get("GITHUB_WORKFLOW", "unnamed"))
     # ... etc.
 ```
 
@@ -469,9 +556,13 @@ The runtime layer is consumed by:
   `ConfigVariablesDesc` extends `RuntimeVariablesDesc`,
   inheriting all runtime variables and adding configuration-
   specific descriptors on top.
-- **Volume 1 (Testing)** — the testbase test runner reads
-  `AM_JOB_*` for job identity, `AM_DEBUG_*` for debugger
-  attachment, `AM_INTERACTIVE_CONSOLE` for output formatting.
+- **Volume 1 (Testing)** — the *integration* test runner
+  (`IntegratedTestJob` in `automojo-integration-runtime`) reads
+  `AM_JOB_*` for job identity, `AM_BUILD_*` / `AM_PIPELINE_*` for
+  run metadata, and routes results through the presence-folder
+  path helpers.  Plain `automojo-testbase` runs standalone and
+  reads only its few core knobs from `os.environ` (see the
+  testbase sidebar above) — it does not consume this layer.
 - **Volume 3 (Orchestration)** — the chapter-21
   bootstrap-name flow propagates `AM_*_NAMES` from the runtime
   layer through to subprocess jobs.
@@ -483,11 +574,14 @@ the typed accessors.
 
 ## Summary
 
-- **`automojo-runtime`** sits one tier above `automojo-this-app`
-  and provides the *operational* runtime variable set plus
-  well-known path helpers plus activation-profile commands.
+- The runtime variable set, path helpers, activation profiles,
+  and enumerations now live in **`automojo.thisapp`** (the old
+  `automojo-runtime` package is being retired and holds only
+  re-export shims).  They provide the *operational* runtime
+  variable set plus well-known path helpers plus
+  activation-profile commands.
 - **`RuntimeVariablesDesc`** extends `PersonaVariablesDesc`
-  (chapter 6) with ~40 descriptors organised into five themes:
+  (chapter 6) with ~40 descriptors organised into themes:
   activation/pod identity, build provenance, run/pipeline/job
   identity, debugging knobs, diagnostics policy.
 - **`AM_JOB_SEED`** uses a factory-function default
@@ -498,22 +592,28 @@ the typed accessors.
   accessor per descriptor, each invoking
   `get_variable_value` through the chapter-6 resolution
   pipeline.
-- **Four activation profiles** — Command, Service, TestRun,
-  Worker.  Each is activated by a single call to
-  `activate_profile_*`; duplicate activation raises
-  `SemanticError`.  Each configures logging appropriately.
-- **Well-known path helpers** — `get_cache_directory`,
-  `get_diagnostics_directory`, `get_results_directory`,
-  `get_testresults_directory`,
-  `get_testcase_byproducts_directory`,
-  `get_temporary_file`.  Each creates the directory on first
-  call and caches the path.
-- **Option overrides** — named functions that wrap
+- **Four activation profiles** — Command, Console, Job, Service.
+  Each is activated by a single call to `activate_profile_*`
+  (`activate_profile_job` takes a `JobType`); duplicate
+  activation is guarded.  Each configures logging appropriately.
+- **Well-known path helpers** — always-available ones
+  (`get_presence_directory`, `get_directory_for_cached_files`,
+  `get_path_for_output`, `get_temporary_file`) and
+  *activation-gated* ones (`get_path_for_testresults`,
+  `get_path_for_diagnostics`, `get_path_for_testcase_by_products`,
+  the summary-template helpers) that raise `SemanticError` unless
+  the process was activated as a job.  Each creates the directory
+  on first call and caches the path.  The gated helpers are
+  consumed by integration-runtime's `RuntimeOutputContext`, not
+  by plain testbase.
+- **Option overrides** (`AM_RUNTIME_OPTION_OVERRIDES`, still in
+  `automojo-runtime`) — static methods that wrap
   `override_variable_value` calls per runtime variable.
   The CLI doesn't reach into the descriptor model; it calls
-  named override functions.
+  named override methods.
 - The runtime layer is *not* a job runner, *not* a CI vendor
-  adapter (the adapter lives in the project), *not* multi-tenant.
+  adapter (the adapter lives in the project), *not* multi-tenant;
+  and plain `testbase` does *not* consume it at all.
 
 The next chapter introduces `automojo-configuration` — the
 configuration-loading machinery that builds on the runtime

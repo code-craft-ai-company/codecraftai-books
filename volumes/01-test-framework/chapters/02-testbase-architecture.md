@@ -21,6 +21,23 @@ chapters revisit the same path looking at a single concept in
 depth — the resource factory model in Chapter 3, the property
 runner in Chapter 4, the JSOS recorder in Chapter 5.
 
+It is worth stating up front what testbase is *not* coupled to.
+The framework's core run path is near-standalone: it depends only
+on `automojo-arcli`, `automojo-errors`, `automojo-interfaces`,
+`automojo-waiting`, and `automojo-xmodules`.  It does *not* depend
+on `automojo-configuration`, `automojo-runtime`, or
+`automojo-this-app`.  The handful of core environment knobs it
+needs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
+`AM_TESTRUN_TIMEOUT`, the `AM_DEBUG_*`/`AM_DIAGNOSTICS_*` flags)
+are read directly from `os.environ` through a tiny dependency-free
+module, `automojo.testbase.environment`.  Everything richer — the
+`RuntimeVariables` descriptor set, the well-known presence-folder
+paths, CI/build metadata — is the integration layer's job, reached
+through injected seams rather than imports.  (The *source* core is
+fully decoupled; the testbase CLI/bootstrap still imports the
+runtime/this-app machinery for activation, a clean-up that is
+in-flight at the time of writing.)
+
 ## The five concepts
 
 A reader who finishes this chapter should be able to define
@@ -35,8 +52,11 @@ the framework is built from them.
    tree through five phases, applying graph operations.
 4. **TestJob** — the job-spanning runner that owns the
    lifecycle: enter → fire hooks → run → finalize → exit.
-5. **JsonResultRecorder** — the recorder that writes the three
-   result files (summary / stream / consolidated).
+5. **ResultRecorder** — the recorder that captures the run.  Plain
+   testbase defaults to `StdoutResultRecorder`, which echoes the
+   summary to stdout and writes the machine-readable JSOS/JSON
+   artefacts; the HTML-rendering `JsonResultRecorder` is the
+   integration runtime's choice (covered below).
 
 Around these five there are couplings (integration,
 configuration, validator), the property runner, the agents CLI,
@@ -150,61 +170,87 @@ about the suite; the hooks describe what events the job
 broadcasts to the integrations.  A given `fire_*` hook can fire
 at a particular phase boundary (the docstrings call out which
 ones — `fire_diagnostic_capture_pre_testrun`'s docstring at
-`testjob.py:524–529` documents its position).
+`testjob.py:487–492` documents its position).
 
 ## TestJob: the lifecycle owner — and the customisation entry point
 
 `TestJob`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:50–131`)
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:45`)
 is the singleton-like object that owns the run.  It has a
-constructor (line 73) that stores the logger, the test root, the
-includes/excludes, and run-level metadata.  It is used as a
+constructor (line 68) that stores the logger, the test root, the
+includes/excludes, and — crucially — obtains its run-level
+metadata and output directories through *injected seams* rather
+than reaching into a runtime/configuration layer.  The
+constructor calls two provider hooks: `_create_run_metadata()`
+returns an `IRunMetadata` (line 95) and `_create_output_context()`
+returns an `IOutputContext` (line 96).  It is used as a
 context manager:
 
 ```python
 with TestJob(logger=logger, testroot="tests/", ...) as job:
-    job.run()
+    job.execute()
 ```
 
 `__enter__`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:133`)
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:109`)
 calls `begin()`.  `__exit__`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:139`)
-calls `finalize()`.  Between them, the job:
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:113`)
+calls `finalize()`.  The run itself happens in `execute()`
+(line 157), invoked between enter and exit.  Across the three
+methods the job:
 
-1. **`begin()`** (line 162): sets up the results directory,
-   constructs the recorder, instantiates the sequencer.
-2. **`fire_attach_to_environment(tseq)`** (line 415): asks the
+1. **`begin()`** (line 135): resolves the results directory from
+   the output context (`self._output_context.get_test_results_dir()`)
+   and computes the artefact filenames under it.  Note: `begin()`
+   does *not* construct the recorder or the sequencer — those are
+   created lazily inside `execute()`.
+2. **`fire_attach_to_framework(tseq)`** (line 389): asks the
+   sequencer to attach integrations to the framework — register
+   originators, wire up couplings.
+3. **`fire_attach_to_environment(tseq)`** (line 379): asks the
    sequencer to attach integrations to the environment.  On a
    single-host run the integrations may have nothing to attach
    to; on a distributed run this hook drives device wake-up.
-3. **`fire_attach_to_framework(tseq)`** (line 425): asks the
-   sequencer to attach integrations to the framework — register
-   originators, wire up couplings.
-4. **`fire_activate_configuration()`** (line 435): no-op on
-   single-host.  In Volume 2's `InteropLibraryTestJob` this
-   activates the landscape's configuration.
-5. **`fire_activate_integration()`** (line 439): no-op on
-   single-host.
-6. **`fire_activate_operations()`** (line 443): no-op on
-   single-host.
-7. **`fire_diagnostic_capture_pre_testrun(tseq, level)`** (line
-   499): captures pre-test diagnostic state — host details, env
+4. **`fire_diagnostic_capture_pre_testrun(tseq, level)`** (line
+   463): captures pre-test diagnostic state — host details, env
    vars, package versions.
-8. **The run itself**: the sequencer's traversal phase walks
+5. **The recorder is constructed** (inside `execute()`, line 256)
+   via `_create_recorder(...)` and entered as a context manager.
+6. **The run itself**: the sequencer's traversal phase walks
    the tree, executing tests and streaming results.
-9. **`fire_diagnostic_capture_post_testrun(tseq, level)`** (line
-   447): captures post-test diagnostic state for failure
+7. **`fire_diagnostic_capture_post_testrun(tseq, level)`** (line
+   411): captures post-test diagnostic state for failure
    triage.
-10. **`finalize()`**: closes the recorder (which writes
-    `testresults.json`), tears down integrations, releases
-    resources.
+8. **`recorder.finalize()`**: in the `finally` block of
+   `execute()` (line 326), the recorder writes its artefacts and
+   the run summary is rendered to the log.
+9. **`finalize()`** (line 521): the `TestJob`-level finalize is a
+   no-op on the base class — there are no integrations to tear
+   down on a single-host standalone run.  Subclasses override it
+   when they own teardown.
 
-The order is the contract.  Volume 2's `InteropLibraryTestJob`
-inherits the order; it overrides only the no-op hooks.  A reader
-who understands this lifecycle understands the distributed
-runner's lifecycle too — the order doesn't change, just the
-hooks' bodies.
+The `fire_*` hooks are the broadcast points.  Two of them — the
+attach hooks — do real work even on plain testbase (they delegate
+to the sequencer).  The other three landscape hooks —
+`fire_activate_configuration()` (line 399),
+`fire_activate_integration()` (line 403), and
+`fire_activate_operations()` (line 407) — are stubs on the base
+class: each logs a debug line and returns.  In fact `execute()`
+does not even call the activation hooks; they exist purely as
+override points for the landscape-activating subclass.
+
+> **Where landscape activation lives.**  The five landscape
+> `fire_*` hooks (the two `fire_attach_*` plus the three
+> `fire_activate_*`) have *bodies* in Volume 2's
+> `InteropLibraryTestJob` (in `automojo-interop`), not here.  On
+> plain testbase there is no landscape to activate, so the
+> activation hooks stay stubs.  Importantly, `IntegratedTestJob`
+> in the integration runtime does *not* override these five
+> hooks either — its job is result recording, not landscape
+> activation.  The order is the contract; the interop subclass
+> fills the stubs in.  A reader who understands this lifecycle
+> understands the distributed runner's lifecycle too — the order
+> doesn't change, just the hooks' bodies.
 
 ### TestJob is the customisation entry point
 
@@ -215,18 +261,46 @@ patterns; the organisation customises"), `TestJob` is the
 specific, concrete plug-in point.
 
 The customisation works by **subclassing**.  The user picks a
-starting layer and overrides the template methods they need:
+starting layer and overrides the template methods they need.
+There is a four-deep inheritance chain, each layer adding one
+concern:
 
-- **`TestJob`** (single-host base, this chapter).  Override
-  `_create_sequencer()`, `_create_recorder()`, or any of the
-  five `fire_*` hooks for single-host customisation.
+- **`TestJob`** (single-host base, this chapter; in
+  `automojo-testbase`).  Standalone: stdout recorder, injected
+  `IRunMetadata`/`IOutputContext` seams, the five landscape
+  `fire_*` hooks as stubs.  Override `_create_sequencer()`,
+  `_create_recorder()`, `_create_output_context()`,
+  `_create_run_metadata()`, or any hook for single-host
+  customisation.
+- **`IntegratedTestJob`** (in `automojo-integration-runtime`;
+  `automojo.integrationruntime.integratedtestjob`).  Adds
+  *integration result recording*: it overrides exactly three
+  provider hooks — `_create_output_context()` to a
+  presence-folder-backed `RuntimeOutputContext`,
+  `_create_run_metadata()` to a `RuntimeVariables`-backed
+  `RuntimeRunMetadata`, and `_create_recorder()` to the
+  HTML-rendering `JsonResultRecorder`.  It does *not* touch the
+  five landscape `fire_*` hooks.
 - **`InteropLibraryTestJob`** (Volume 2; in `automojo-interop`).
-  Override the abstract `_get_landscape()` to return your
-  project's `Landscape` subclass; the framework picks up the
-  custom Features and topology shapes through that landscape.
+  Adds *landscape activation*: it fills in the five `fire_*`
+  hooks and declares the abstract `_get_landscape()`.  Override
+  `_get_landscape()` to return your project's `Landscape`
+  subclass; the framework picks up the custom Features and
+  topology shapes through that landscape.
 - **`DistributedTestJob`** (Volume 2; in `automojo-testplus`).
-  Override `_get_landscape()` and optionally `_create_sequencer()`
+  Adds the distributed sequencer and a concrete `_get_landscape()`
   for distributed multi-host scenarios.
+
+> **In-flight note.**  The chain above is the as-built design,
+> but the re-parenting is not fully landed: `IntegratedTestJob`
+> is built and in place, yet `InteropLibraryTestJob` still
+> extends `TestJob` directly in the interop source today
+> (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`),
+> not `IntegratedTestJob`.  Slotting interop onto `IntegratedTestJob`
+> is the remaining step.  When it lands, an interop run will pick
+> up the presence-folder output context and HTML recorder for
+> free; until then interop runs still get the testbase defaults
+> for those.
 
 The framework's entry points accept the user's subclass:
 
@@ -266,30 +340,54 @@ template methods return.
 
 ## The recorder pipeline
 
-Results are produced by `JsonResultRecorder`
-(`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90–183`).
-The recorder is constructed in `begin()` and wired to the
-sequencer; every test event the sequencer fires (test started,
-test finished, error, skip) is forwarded to the recorder.
+The base `TestJob` records to **stdout** by default.
+`_create_recorder()`
+(`automojo-testbase/source/packages/automojo/testbase/testjob.py:564`)
+returns a `StdoutResultRecorder`
+(`automojo-testbase/source/packages/automojo/testbase/results/recorders/stdoutresultrecorder.py:36`),
+not a `JsonResultRecorder`.  The recorder is constructed inside
+`execute()` (not `begin()`) and entered as a context manager;
+every test event the sequencer fires (test started, test
+finished, error, skip) is forwarded to it.
 
-The recorder produces three artefacts:
+`StdoutResultRecorder` is a thin subclass of `JsonResultRecorder`
+that reuses the JSOS/JSON serialisation but **skips the HTML
+rendering**: its `initialize_report()` is a no-op (no template to
+publish) and its `finalize()` echoes the run summary to stdout
+once.  So a standalone testbase run prints its summary and — when
+an output directory is in play — still writes the machine-readable
+artefacts that the `testbase agents` CLI consumes:
 
-- **`testsummary.json`** — written at finalize.  High-level pass/
-  fail counts, duration, environment fingerprint.  This is what
-  a green/red dashboard reads.
-- **`testresults_stream.jsos`** — written *as tests finish*.
+- **`testrun_summary.json`** — written at finalize.  High-level
+  pass/fail counts, duration, environment fingerprint.  This is
+  what a green/red dashboard reads.
+- **`testrun_results_stream.jsos`** — written *as tests finish*.
   Each test event becomes a JSON record; records are separated
   by an ASCII record-separator character.  A consumer can tail
   this file and parse incrementally.  Chapter 5 covers the
   format in depth.
-- **`testresults.json`** — written at finalize.  The
+- **`testrun_results.json`** — written at finalize.  The
   consolidated final document containing the same information
   as the stream file but reorganised for batch consumption.
 
-The three files exist because three audiences exist: dashboards
-(summary), live monitors (stream), and post-mortem analysis
-(consolidated).  Producing all three is cheaper than asking the
-analysis tools to recompute one from another.
+What plain testbase does *not* produce is the rendered HTML
+summary.  That, along with the presence-folder results layout and
+the CI/build/pipeline metadata, is the responsibility of
+`IntegratedTestJob` in `automojo-integration-runtime`, which
+overrides `_create_recorder()` to return the full
+`JsonResultRecorder`
+(`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90`).
+
+> **Standalone vs. integrated.**  The split is deliberate.  Plain
+> testbase runs *without activation* — no presence folder, no
+> `RuntimeVariables`, no this-app — and records to stdout plus the
+> JSOS/JSON files under whatever output directory the
+> `SimpleOutputContext` resolves (`AM_OUTPUT_DIRECTORY` or
+> `<cwd>/.output`).  The well-known presence-folder results
+> directory, the HTML summary, and the build/pipeline/job metadata
+> are layered on by `IntegratedTestJob` via its three overridden
+> provider hooks (`_create_output_context`, `_create_run_metadata`,
+> `_create_recorder`).
 
 ## Couplings: where integrations live
 
@@ -409,11 +507,13 @@ testbase run --testroot tests/ --include "test_arithmetic*"
 syntax):
 
 1. The arcli entry point parses the command and constructs a
-   `TestJob`.
-2. The job's `__enter__` runs `begin()`, building the recorder
-   and the sequencer.
-3. The sequencer enters the *Discovery* phase: walks
-   `tests/`, imports modules, calls
+   `TestJob` (its constructor resolves the `IRunMetadata` and
+   `IOutputContext` seams).
+2. The job's `__enter__` runs `begin()`, which resolves the
+   results directory from the output context and computes the
+   artefact filenames.  `execute()` then drives the rest.
+3. `execute()` creates the sequencer and enters the *Discovery*
+   phase: walks `tests/`, imports modules, calls
    `collect_test_references()`, applies filters, builds the
    `TestGroup` tree.
 4. The sequencer enters *Collection*: collects originators and
@@ -423,17 +523,23 @@ syntax):
    establish connectivity.
 6. The sequencer enters *Graph*: builds the resource
    dependency graph, plans acquisition order.
-7. The job fires the three `fire_activate_*` hooks (no-ops
-   here).
-8. The job fires `fire_diagnostic_capture_pre_testrun`.
+7. The job fires `fire_diagnostic_capture_pre_testrun`.  (On the
+   base `TestJob` the three `fire_activate_*` hooks are stubs and
+   are not called from `execute()` at all; a landscape-activating
+   subclass is where they do work.)
+8. The recorder is created via `_create_recorder()` —
+   `StdoutResultRecorder` on plain testbase — and entered.
 9. The sequencer enters *Traversal*: for each test in
    dependency-respecting order, the recorder receives a
    "started" event, the test runs, the recorder receives a
    "finished" event, and a record is written to the JSOS
    stream.
 10. The job fires `fire_diagnostic_capture_post_testrun`.
-11. `__exit__` calls `finalize()`: the recorder writes the
-    summary and consolidated documents; couplings tear down.
+11. In the `finally` block, `recorder.finalize()` writes the
+    summary and consolidated documents and echoes the summary to
+    stdout; the run summary is rendered to the log.  `__exit__`
+    then calls `TestJob.finalize()`, a no-op on the standalone
+    base.
 
 Each numbered step has a chapter reference somewhere in this
 volume.  The next chapter goes deep on step 4 and 6 — the

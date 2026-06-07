@@ -109,9 +109,13 @@ Without it, every later book has to re-explain.
 **Estimated pages:** 300–400.
 
 **Portfolio source:** `automojo-interfaces`, `automojo-errors`,
-`automojo-waiting`, `automojo-this-app`, `automojo-extension`,
-`automojo-runtime`, `automojo-configuration`, `automojo-credentials`,
-`automojo-dataprofiles`, `automojo-storage-database`, `automojo-xmodules`.
+`automojo-waiting`, `automojo-this-app` (which now owns the runtime
+foundation — runtime variables, well-known paths, activation, and
+enumerations), `automojo-extension`, `automojo-configuration`,
+`automojo-credentials`, `automojo-dataprofiles`,
+`automojo-storage-database`, `automojo-xmodules`.  *(The old
+`automojo-runtime` package is being retired; it now holds thin
+re-export shims pointing at `automojo.thisapp`.)*
 
 ### Chapters
 
@@ -135,8 +139,15 @@ Without it, every later book has to re-explain.
 7. **Extension and factory machinery** — `SuperFactory`,
    `FactoryProtocolBase`, the precedence model; how to register a new
    factory; how protocol resolution iterates and selects.
-8. **Runtime variables and well-known paths** — the `automojo-runtime`
-   package; activation; well-known directory layout.
+8. **Runtime variables and well-known paths** — the runtime foundation,
+   now hosted in `automojo-this-app` under `automojo.thisapp`
+   (`runtimevariables`, `paths`, `enumerations`, `activation`);
+   `RuntimeVariables` and `resolve_runtime_variables`; the
+   `ActivationProfile` / `JobType` enumerations; activation
+   (`activate_profile_job/console/service/command`); the well-known
+   directory and presence-folder layout (`paths`).  *(The legacy
+   `automojo-runtime` import path `automojo.runtime.X` now redirects to
+   `automojo.thisapp.X`.)*
 9. **Configuration loading** — multi-source resolution
    (`dir://`, `http://`, `couchdb://`, `mongodb://`); the five
    configuration categories (Credentials, Landscapes, Topologies, Runtimes,
@@ -172,7 +183,18 @@ None.  Volume 0 is prerequisite for everything.
 of the platform (~40k LOC, 146 test files, mature) and `arcli` is the
 declarative CLI toolkit underneath every `automojo-*` CLI.  Together they
 are the single-host substrate that distributed test execution (Vol 2)
-extends.
+extends.  `testbase` is now **near-standalone**: its dependencies are
+exactly `automojo-arcli`, `automojo-errors`, `automojo-interfaces`,
+`automojo-waiting`, and `automojo-xmodules` — it no longer depends on
+`automojo-configuration`, the runtime foundation, or `automojo-this-app`.
+It reads the handful of core environment knobs (`AM_DEBUG_*`,
+`AM_DIAGNOSTICS_*`, `AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
+`AM_TESTRUN_TIMEOUT`) directly from `os.environ` via a tiny,
+dependency-free `automojo.testbase.environment` module rather than through
+`RuntimeVariables`, and resolves output + run metadata through injected
+seams (`IOutputContext` / `IRunMetadata`) so that activation, the
+presence folder, and CI/build metadata can be supplied by a higher layer
+(`IntegratedTestJob`, Vol 2 ch. 4) instead of being baked in.
 
 **Estimated pages:** 400–500.
 
@@ -184,7 +206,14 @@ extends.
    resource factories, landscape awareness; why automation tests need a
    different shape than application unit tests.
 2. **`testbase` architecture** — plain function tests, the `verification`
-   API, the testbase runner, the JSOS streaming results pipeline.
+   API, the testbase runner, the results pipeline.  *(By default plain
+   `testbase` runs **without activation** and records the run summary to
+   **stdout** via `StdoutResultRecorder`; the JSOS-to-disk +
+   rendered-HTML pipeline is layered on top by `IntegratedTestJob` in
+   `automojo-integration-runtime` — see Vol 2 ch. 4.  The JSOS
+   serialisation itself is reused by both recorders, so
+   `testrun_results_stream.jsos` / `testrun_summary.json` are still
+   written when an output directory is supplied.)*
 3. **Resource factories and dependency injection** — the testbase fixture
    model; how fixtures compose; how cleanup is sequenced.
 4. **Property-based testing with `@given`** — the constraints model; the
@@ -192,6 +221,12 @@ extends.
    reproducibility via seeds.
 5. **Streaming JSOS results** — machine-readable, replayable test runs;
    per-event schema; consumer patterns (CI dashboards, replay tools).
+   *(The JSOS serialisation lives in `testbase` and is shared by both
+   the default stdout recorder and the integration JSON/HTML recorder;
+   the presence-folder results-directory layout and HTML summary are the
+   responsibility of `IntegratedTestJob` in
+   `automojo-integration-runtime`, not plain `testbase` — see Vol 2
+   ch. 4.)*
 6. **The `testbase agents` machine-readable CLI** — agent-driven test
    discovery, listing, and execution.
 7. **Mocking and stubbing without the framework getting in the way** —
@@ -232,17 +267,20 @@ platform engineers building automation that crosses machine boundaries.
 
 **Why it earns its own volume:** distributed automation is the marquee
 *capability* of the testing tier — it's the union of `automojo-testplus` +
-`automojo-landscaping` + `automojo-interop`'s job machinery +
-`automojo-protocol-ssh` + `automojo-credentials` + `automojo-dataprofiles`.
-Seven repos collaborate.  The recent inheritance-chain refactor that
-collapsed `DistributedTestJob` from ~615 lines to 90 by introducing
-`InteropLibraryTestJob` as the landscape-aware hinge is a complete
-evolution-of-a-design narrative.
+`automojo-landscaping` + `automojo-integration-runtime` +
+`automojo-interop`'s job machinery + `automojo-protocol-ssh` +
+`automojo-credentials` + `automojo-dataprofiles`.  Eight repos collaborate.
+The recent inheritance-chain refactor that collapsed `DistributedTestJob`
+from ~615 lines to 90 by introducing `InteropLibraryTestJob` as the
+landscape-aware hinge — and the follow-on extraction of integration
+result-recording into a new `IntegratedTestJob` layer (see below) — is a
+complete evolution-of-a-design narrative.
 
 **Estimated pages:** 400–500.
 
-**Portfolio source:** `automojo-testplus`, `automojo-interop` (job
-machinery half), `automojo-landscaping`.
+**Portfolio source:** `automojo-testplus`, `automojo-integration-runtime`
+(the `IntegratedTestJob` layer), `automojo-interop` (job machinery half),
+`automojo-landscaping`.
 
 ### Chapters
 
@@ -270,28 +308,57 @@ machinery half), `automojo-landscaping`.
 4. **The TestJob inheritance chain — the customisation cascade** —
    what each layer adds, why it lives where it lives, *and how the
    chain is the framework's customisation entry point* (Volume 0
-   ch.1's meta-thesis made concrete).  Five classes in the hierarchy
-   today:
-   - `TestJob` (in `testbase`, `testjob.py:50`): single-host execution,
-     fixtures, results, the five `fire_*` lifecycle hooks; template
-     methods `_create_sequencer()` and `_create_recorder()`.
-   - `DefaultTestJob` (in `testbase`, `testjob.py:621`): naming
+   ch.1's meta-thesis made concrete).  The hierarchy spans four
+   packages:
+   - `TestJob` (in `testbase`, `testjob.py:45`): single-host execution,
+     fixtures, results, the five `fire_*` lifecycle hooks (which are
+     *stubs* at this layer); template methods `_create_sequencer()` and
+     `_create_recorder()`, plus the provider hooks
+     `_create_output_context()` and `_create_run_metadata()`.  The
+     standalone defaults need **no activation**: the default recorder is
+     `StdoutResultRecorder` (`testjob.py:571`), output roots under
+     `AM_OUTPUT_DIRECTORY` or `<cwd>/.output` via `SimpleOutputContext`,
+     and run metadata comes from `StandaloneRunMetadata` (auto-uuid run
+     id, `(unknown)` build/pipeline/job).
+   - `DefaultTestJob` (in `testbase`, `testjob.py:613`): naming
      fallback; no overrides.
-   - `InteropLibraryTestJob` (in `interop`, `testjob.py:22`): landscape
-     activation overrides on the five `fire_*` hooks; the abstract
-     `_get_landscape()` template method that breaks the would-be
-     circular dependency with `landscaping`.
+   - `IntegratedTestJob` (in `automojo-integration-runtime`,
+     `integratedtestjob.py:51`): **integration result recording.**
+     Overrides exactly three provider hooks —
+     `_create_output_context()` -> `RuntimeOutputContext` (results land
+     under the activated app's well-known *presence folder* via
+     `automojo.thisapp.paths`; activation-gated — raises `SemanticError`
+     unless the process was activated as a job),
+     `_create_run_metadata()` -> `RuntimeRunMetadata` (build / pipeline /
+     job from `RuntimeVariables`), and `_create_recorder()` ->
+     `JsonResultRecorder` (JSOS streaming + rendered HTML summary).  It
+     does **not** touch the five `fire_*` landscape hooks.
+     `DefaultIntegratedTestJob` (`integratedtestjob.py:91`) is the
+     integration naming fallback.
+   - `InteropLibraryTestJob` (in `interop`, `testing/testjob.py:22`):
+     **landscape activation** — overrides on the five `fire_*` hooks and
+     the abstract `_get_landscape()` template method that breaks the
+     would-be circular dependency with `landscaping`.  *(Design note:
+     this class is intended to extend `IntegratedTestJob`, but at the
+     time of writing the re-parent is the in-flight step — in the interop
+     source it still extends `TestJob` directly.  The `fire_*` hooks were
+     never moved into `IntegratedTestJob`; only the result-recording
+     concern was extracted.)*
    - `DistributedTestJob` (in `testplus`, `distributedtestjob.py:24`):
      concrete `_get_landscape()` returning `LandscapeSingleton`;
      `_create_sequencer()` returning a `DistributedTestSequencer`.
    - `DefaultDistributedTestJob` (in `testplus`,
      `distributedtestjob.py:84`): naming fallback for distributed.
 
-   Each layer adds *one* responsibility — single-host execution →
-   landscape awareness → distributed scheduling.  The hierarchy is
-   open: `generic_test_entrypoint(job_type=...)` and
+   Each layer adds *one* responsibility — single-host execution
+   (stdout, no activation) → integration result recording (presence
+   folder, RuntimeVariables, JSOS/HTML) → landscape awareness →
+   distributed scheduling.  The hierarchy is open:
+   `generic_test_entrypoint(job_type=...)` and
    `distributed_test_entrypoint(job_type=...)` accept the user's
-   subclass.  Real scaffolding examples live at
+   subclass (integration runs activate first via
+   `integrated_test_entrypoint`, then delegate to the standalone
+   `generic_test_entrypoint`).  Real scaffolding examples live at
    `automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
    (`CustomTestJob`, `FailingCustomTestJob`).
 
@@ -356,7 +423,13 @@ machinery half), `automojo-landscaping`.
 - The `automojo-testplus` `5ae46f5` inheritance-chain refactor (615 → 90
   lines) plus the `automojo-interop` `c785e9b` introduction of
   `InteropLibraryTestJob` are recent and well-documented.  Chapter 2
-  writes itself.
+  writes itself.  The follow-on extraction of integration result
+  recording into `automojo-integration-runtime`'s `IntegratedTestJob`
+  (presence-folder output context + RuntimeVariables metadata +
+  JSOS/HTML recorder, leaving plain `testbase` to record to stdout
+  without activation) continues the same evolution-of-a-design arc — and
+  the still-pending re-parent of `InteropLibraryTestJob` onto
+  `IntegratedTestJob` is an honest "refactor in flight" sidebar.
 - The two-pass testplus audit (`72431d9` fixed 9 bugs, `c60d7c7` fixed 5
   more) plus the landscaping six-pass audit (19 bugs across 14 files,
   +101 testbase tests across 11 test files) are pre-built audit-diary
@@ -1056,10 +1129,17 @@ Currently more aspirational than written-up, but the design is locked.
   factory machinery from `automojo-extension`.
 - **FlowEngine / FlowNode / Task / TaskGroup** — the taskplus task
   model.  See Vol 3 ch. 18.
+- **IntegratedTestJob** — the integration result-recording layer in
+  `automojo-integration-runtime`, between `TestJob` and
+  `InteropLibraryTestJob`.  Overrides three provider hooks to add the
+  presence-folder output context, RuntimeVariables-derived metadata,
+  and the JSOS/HTML recorder that plain `testbase` deliberately omits.
+  Activation-gated.  See Vol 2 ch. 4.
 - **InteropLibraryTestJob** — the landscape-aware hinge class in
   `automojo-interop` that breaks the would-be circular dependency
-  between `testbase` and `landscaping`.  Parent of `DistributedTestJob`.
-  See Vol 2 ch. 2.
+  between `testbase` and `landscaping`.  Parent of `DistributedTestJob`;
+  intended child of `IntegratedTestJob` (re-parent in flight).
+  See Vol 2 ch. 4.
 - **Landscape** — the model of hosts / devices / services under
   automation.  See Vol 6 ch. 1.
 - **MergeMap** — the automojo-configuration map type used for layered
