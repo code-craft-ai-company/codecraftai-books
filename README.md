@@ -32,7 +32,7 @@ reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix
 | **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
 | **7** | [**Building an AI Agent SDK**](volumes/07-ai-agent-sdk/) | Lifecycle, Tools, Memory, and Observability for Production Agents | **drafted** |
 | **8** | [**Time-Travel Debugging in Production**](volumes/08-timetravel-debugging/) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | **drafted** |
-| App. | [Operating an Code Craft AI Subscription Platform](codecraftai-volumes.md#appendix-volume--operating-an-codecraftai-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
+| App. | [Operating a Code Craft AI Subscription Platform](codecraftai-volumes.md#appendix-volume--operating-a-code-craft-ai-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
 
 ### Volume 8 — drafted
 

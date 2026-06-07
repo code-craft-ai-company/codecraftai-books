@@ -1071,7 +1071,7 @@ words, in
 
 ---
 
-## Appendix Volume — Operating an Code Craft AI Subscription Platform
+## Appendix Volume — Operating a Code Craft AI Subscription Platform
 
 **Subtitle:** *From Git-SHA Pinning to a Published-Package Ecosystem*
 
