@@ -82,7 +82,7 @@ being conflated with it:
   A point of vocabulary worth pinning down here: the *test job*
   hierarchy in Volume 2 (`TestJob` → `InteropLibraryTestJob` →
   `DistributedTestJob`) and the *orchestration job* class
-  (`OrchestrationJob` in `automojo-landscaping/source/.../orchestrationjob.py:34`)
+  (`OrchestrationJob` in `codecraftai-landscaping/source/.../orchestrationjob.py:34`)
   are **separate hierarchies**.  `OrchestrationJob` inherits from
   `ContextUser`, not from `TestJob`.  This volume treats orchestration
   jobs; Volume 2 treats test jobs.  They meet at the bridge tasks of
@@ -115,7 +115,7 @@ does on a Tuesday afternoon when something has gone wrong.
 
 ### Pipelines become portable
 
-A workflow expressed in `automojo-taskplus`'s YAML is identical
+A workflow expressed in `codecraftai-taskplus`'s YAML is identical
 whether it runs on GitLab CI, GitHub Actions, Jenkins, or a developer's
 laptop.  The CI vendor's YAML shrinks to a trigger and a runner image;
 everything else moves into the portable workflow.  The portable
@@ -141,7 +141,7 @@ introduces each.  Part III is the credentials chapter (which is a
 thicker subject than the other five categories combined and earns its
 own part).  Part IV is the local-dev → CI → staging → prod story —
 how the discipline pays off in real workflows.  Part V is the
-implementation in `automojo-taskplus`.  Part VI is the case study and
+implementation in `codecraftai-taskplus`.  Part VI is the case study and
 the wiring to real CI vendors.
 
 A reader who learns nothing else from this volume should leave with

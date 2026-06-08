@@ -1,10 +1,10 @@
 # Volume 5 — Code-Anchor Index
 
-## automojo-interop (chapters 1–3)
+## codecraftai-interop (chapters 1–3)
 
 ### Aspects (the delegation contract)
 
-- `automojo-interop/source/packages/automojo/interop/aspects.py:24–32` — `ActionPattern(IntEnum)` with five members:
+- `codecraftai-interop/source/packages/ccai/interop/aspects.py:24–32` — `ActionPattern(IntEnum)` with five members:
   - `SINGLE_CALL = 0`
   - `SINGLE_CONNECTED_CALL = 1`
   - `DO_UNTIL_SUCCESS = 2`
@@ -19,40 +19,40 @@
 
 ### Freezable (immutability discipline)
 
-- `automojo-xmodules/source/packages/automojo/xmodules/freezable.py:13–29` — `Freezable` base.  `__init__` sets `__frozen__ = False`; `freeze()` sets `__frozen__ = True`; `__setattr__` (line 23) raises `AttributeError` after freeze.
+- `codecraftai-xmodules/source/packages/ccai/xmodules/freezable.py:13–29` — `Freezable` base.  `__init__` sets `__frozen__ = False`; `freeze()` sets `__frozen__ = True`; `__setattr__` (line 23) raises `AttributeError` after freeze.
 
 ### MonitoredScope (deadlock detection)
 
-- `automojo-xmodules/source/packages/automojo/xmodules/xlogging/monitoredscope.py:34–200` — context manager that registers thread-scoped monitoring with global `ScopeMonitor` daemon.  Used by `LocalCommandAgent.run_cmd:104` and `SshBase.run_cmd:545`.
+- `codecraftai-xmodules/source/packages/ccai/xmodules/xlogging/monitoredscope.py:34–200` — context manager that registers thread-scoped monitoring with global `ScopeMonitor` daemon.  Used by `LocalCommandAgent.run_cmd:104` and `SshBase.run_cmd:545`.
 
-### Agents (in `automojo-interop`)
+### Agents (in `codecraftai-interop`)
 
-- `automojo-interop/source/packages/automojo/interop/agents/systemagentbase.py:19` — `SystemAgentBase` (pure base; derived by `LocalCommandAgent`).
-- `automojo-interop/source/packages/automojo/interop/agents/localcommandagent.py:35–247` — `LocalCommandAgent(ISystemContext)`; `run_cmd(command, exp_status, aspects)` at line 70.  Implements all five `ActionPattern` modes via `subprocess.Popen` + `MonitoredScope` + `TimeoutContext`.
-- `automojo-interop/source/packages/automojo/interop/agents/poweragentbase.py:24–68` — `PowerAgentBase`.
+- `codecraftai-interop/source/packages/ccai/interop/agents/systemagentbase.py:19` — `SystemAgentBase` (pure base; derived by `LocalCommandAgent`).
+- `codecraftai-interop/source/packages/ccai/interop/agents/localcommandagent.py:35–247` — `LocalCommandAgent(ISystemContext)`; `run_cmd(command, exp_status, aspects)` at line 70.  Implements all five `ActionPattern` modes via `subprocess.Popen` + `MonitoredScope` + `TimeoutContext`.
+- `codecraftai-interop/source/packages/ccai/interop/agents/poweragentbase.py:24–68` — `PowerAgentBase`.
 
-### Protocols shipped *in* automojo-interop (paramiko-wrapping versions)
+### Protocols shipped *in* codecraftai-interop (paramiko-wrapping versions)
 
-- `automojo-interop/source/packages/automojo/interop/protocols/ssh/sshbase.py:61–627` — `SshBase(ISystemContext)`.  `run_cmd` at line 241 implements all five `ActionPattern` modes; `_create_client` at line 270; `_log_command_result` per `LoggingPattern`.
-- `automojo-interop/source/packages/automojo/interop/protocols/ssh/sshagent.py:37–150` — `SshAgent(SshBase)`; `open_session` at line 63; `open_tunnel` at line 98; `reboot` at line 131.
-- `automojo-interop/source/packages/automojo/interop/protocols/ssh/sshsession.py:44–150` — `SshSession(SshBase)`; context-managed; uses `paramiko.SSHClient`.
-- `automojo-interop/source/packages/automojo/interop/protocols/ssh/sshaspects.py:19–27` — paramiko-allowed exceptions (`AuthenticationException`, `NoValidConnectionsError`, `BadAuthenticationType`).
-- `automojo-interop/source/packages/automojo/interop/protocols/serial/tcpserialagent.py:27–150` — `TcpSerialAgent(SerialAgentBase)`; uses `telnetlib.Telnet`.
-- `automojo-interop/source/packages/automojo/interop/protocols/dns/` — DNS / mDNS support; record types, mDNS browser, validation, flags.
-- `automojo-interop/source/packages/automojo/interop/protocols/power/dlipower/` — DLI power switch support.
+- `codecraftai-interop/source/packages/ccai/interop/protocols/ssh/sshbase.py:61–627` — `SshBase(ISystemContext)`.  `run_cmd` at line 241 implements all five `ActionPattern` modes; `_create_client` at line 270; `_log_command_result` per `LoggingPattern`.
+- `codecraftai-interop/source/packages/ccai/interop/protocols/ssh/sshagent.py:37–150` — `SshAgent(SshBase)`; `open_session` at line 63; `open_tunnel` at line 98; `reboot` at line 131.
+- `codecraftai-interop/source/packages/ccai/interop/protocols/ssh/sshsession.py:44–150` — `SshSession(SshBase)`; context-managed; uses `paramiko.SSHClient`.
+- `codecraftai-interop/source/packages/ccai/interop/protocols/ssh/sshaspects.py:19–27` — paramiko-allowed exceptions (`AuthenticationException`, `NoValidConnectionsError`, `BadAuthenticationType`).
+- `codecraftai-interop/source/packages/ccai/interop/protocols/serial/tcpserialagent.py:27–150` — `TcpSerialAgent(SerialAgentBase)`; uses `telnetlib.Telnet`.
+- `codecraftai-interop/source/packages/ccai/interop/protocols/dns/` — DNS / mDNS support; record types, mDNS browser, validation, flags.
+- `codecraftai-interop/source/packages/ccai/interop/protocols/power/dlipower/` — DLI power switch support.
 
 ### `am-interop` CLI
 
-- `automojo-interop/source/packages/automojo/interop/cli/am_interop_command.py:48–74` — `@click.group("am-interop")` entry.  Uses click (NOT arcli).
-- `automojo-interop/source/packages/automojo/interop/cli/cmdtree/` — currently empty (only README.md); `discover_command_groups()` mechanism exists but no subcommands shipped.
+- `codecraftai-interop/source/packages/ccai/interop/cli/am_interop_command.py:48–74` — `@click.group("am-interop")` entry.  Uses click (NOT arcli).
+- `codecraftai-interop/source/packages/ccai/interop/cli/cmdtree/` — currently empty (only README.md); `discover_command_groups()` mechanism exists but no subcommands shipped.
 
-## automojo-protocol-ssh (chapter 4 — "SSH from scratch")
+## codecraftai-protocol-ssh (chapter 4 — "SSH from scratch")
 
-This is a **separate from-scratch SSH implementation** distinct from the paramiko-wrapping `automojo-interop/protocols/ssh/`.  Five-layer stack:
+This is a **separate from-scratch SSH implementation** distinct from the paramiko-wrapping `codecraftai-interop/protocols/ssh/`.  Five-layer stack:
 
 ### Layer 1 — Packets
 
-- `automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshpacket.py` (132 lines) — `SshPacket` with `add_string`/`add_mpint` (lines 80–100), `to_bytes()` (lines 105–116).
+- `codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshpacket.py` (132 lines) — `SshPacket` with `add_string`/`add_mpint` (lines 80–100), `to_bytes()` (lines 105–116).
 
 ### Layer 2 — Transport (key exchange + encryption)
 
@@ -85,9 +85,9 @@ This is a **separate from-scratch SSH implementation** distinct from the paramik
 - `sshhelpers.py` (684 lines) — primitive directory listing, file I/O fallbacks.
 - `sshaspects.py` (228 lines) — `AspectsCmd(Freezable)` SSH-specific subclass with defaults: `DEFAULT_COMPLETION_TIMEOUT = 600`, `DEFAULT_CONNECTION_TIMEOUT = 16`, `DEFAULT_INACTIVITY_TIMEOUT = 600`, `DEFAULT_INACTIVITY_INTERVAL = 0.5`, `DEFAULT_MONITOR_DELAY = 30`.
 
-## automojo-networking (chapter 5)
+## codecraftai-networking (chapter 5)
 
-Foundation utility (not interop extension); zero dependency on `automojo-interop`.
+Foundation utility (not interop extension); zero dependency on `codecraftai-interop`.
 
 - `interfaces.py:24–82` — `InterfaceClass` enum (`LOOPBACK`, `BRIDGE`, `WIRED`, `WIRELESS`, `TUNNEL`); `get_ipv4_address`, `get_all_ipv4_interfaces`, `encode_address`.
 - `resolution.py:23–192` — `expand_ipv6_addr` (23–65); `get_arp_table` (68–102); `is_ipv4_address`/`is_ipv6_address` (105–156); `refresh_arp_table` (159–192).
@@ -96,7 +96,7 @@ Foundation utility (not interop extension); zero dependency on `automojo-interop
 - `arp.py` — ARP helpers.
 - `trafficcapturecontext.py` — context-manager-based traffic capture.
 
-## automojo-restclient-base (chapter 6)
+## codecraftai-restclient-base (chapter 6)
 
 - `restclientbase.py:41–88` — `RestClientBase` with `AUTH_LEAF`, `VERIFY_CERTIFICATE = True`, `AUTHENTICATION_FAILURES = (HttpForbiddenError)`.  `__init__` accepts `host`, `credential`, `port`, `scheme`, `headers`, `verify_certificate`, `aspects: AspectsRest = DEFAULT_REST_ASPECTS`.
 - `aspectsrest.py:24–116` — `ActionPattern` (same five members) and `AspectsRest` with REST-specific defaults; immutable via `__setattr__` override (frozen pattern, not `Freezable` superclass).
@@ -104,34 +104,34 @@ Foundation utility (not interop extension); zero dependency on `automojo-interop
 - `itemsresult.py:210–275` — `ItemsResult(Generic[CT])` with `is_paged`, `items`, `paging`, `next_page_result`, `prev_page_result` (lazy fetch).
 - `restclientgenerator.py:77–100` — `RestClientGenerator` with `REST_CLIENT_BASE_CLASS`, `GROUP_BASE_TYPE`, `SCHEMA_BASE_TYPE`, `ASPECTS_TYPE`, `PAGEDLIST_TYPE`; `DEFAULT_PAGINATION_DETECTION_HINTS` walks `page` / `per_page` query parameters.
 
-## automojo-restclient-github-public (chapter 7)
+## codecraftai-restclient-github-public (chapter 7)
 
 - 571 Python modules total: ~525 schema files, 42 group files, 76 OpenAPI spec JSON files.
 - `clients/public/groups/repos.py:84–162` — representative method `accept_invitation_for_authenticated_user` and `add_app_access_restrictions`.  Pattern: extract path params via templating, build query params, call `client.perform_call`, parse via `resp.json()` + `_parse_item`.
 - `githubpublicrestclient.py:53–70` — `GithubPublicRestClient(GithubRestClientBase)` instantiates 42 API groups as attributes.
 - `githubrestclientbase.py:34–49` — adds GitHub-specific Accept header (`vnd.github.v3+json`).
 
-## automojo-interop-ext-{upnp, tasker, bluetooth, can} (chapter 8)
+## codecraftai-interop-ext-{upnp, tasker, bluetooth, can} (chapter 8)
 
 ### UPnP
 
-- `automojo-interop-ext-upnp/source/packages/automojo/landscaping/extensions/protocol/upnpprotocolextension.py:24–38` — `UpnpProtocolExtension(UpnpRootDevice, ProtocolExtension)` — dual inheritance.
-- `automojo-interop-ext-upnp/source/packages/automojo/interop/protocols/upnp/` — protocol stack: model/devices, mapping, content, metadata.
+- `codecraftai-interop-ext-upnp/source/packages/ccai/landscaping/extensions/protocol/upnpprotocolextension.py:24–38` — `UpnpProtocolExtension(UpnpRootDevice, ProtocolExtension)` — dual inheritance.
+- `codecraftai-interop-ext-upnp/source/packages/ccai/interop/protocols/upnp/` — protocol stack: model/devices, mapping, content, metadata.
 
 ### Tasker
 
-- `automojo-interop-ext-tasker/source/packages/automojo/interop/protocols/tasker/taskercontroller.py:50–75` — `TaskerController` with `TaskerAspects`.
+- `codecraftai-interop-ext-tasker/source/packages/ccai/interop/protocols/tasker/taskercontroller.py:50–75` — `TaskerController` with `TaskerAspects`.
 
 ### Bluetooth (Bumble)
 
-- `automojo-interop-ext-bluetooth/source/packages/automojo/interop/bluetooth/bluetoothcoordinator.py:10–72` — `BluetoothCoordinator` with background asyncio loop (no Aspects integration).
+- `codecraftai-interop-ext-bluetooth/source/packages/ccai/interop/bluetooth/bluetoothcoordinator.py:10–72` — `BluetoothCoordinator` with background asyncio loop (no Aspects integration).
 
 ### CAN
 
-- `automojo-interop-ext-can/source/packages/automojo/interop/ext/can/cancoordinator.py:9–49` — `CanCoordinator` wrapping `python-can`.  No Aspects integration.
+- `codecraftai-interop-ext-can/source/packages/ccai/interop/ext/can/cancoordinator.py:9–49` — `CanCoordinator` wrapping `python-can`.  No Aspects integration.
 
 ### Registration pattern
 
-- All four use Python implicit namespace packages via `pyproject.toml` `packages = [{include="automojo", from="source/packages"}]`.
+- All four use Python implicit namespace packages via `pyproject.toml` `packages = [{include="ccai", from="source/packages"}]`.
 - UPnP and Tasker integrate via `ProtocolExtension` inheritance + landscape coordinator's namespace discovery at startup.
 - Bluetooth and CAN are standalone coordinators (no landscape integration).

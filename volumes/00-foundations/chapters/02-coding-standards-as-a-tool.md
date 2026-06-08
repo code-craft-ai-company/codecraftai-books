@@ -210,8 +210,8 @@ name is the class name lowercased, also without underscores.  One
 class per file, where the class is the file's reason for existing.
 
 The reason: navigation.  When an engineer reads `from
-automojo.taskplus.tasks.runcommand import RunCommand`, the path
-`automojo/taskplus/tasks/runcommand.py` is the file's location
+ccai.taskplus.tasks.runcommand import RunCommand`, the path
+`ccai/taskplus/tasks/runcommand.py` is the file's location
 mechanically.  No mental translation, no searching, no
 case-folding rules to remember.
 

@@ -1,7 +1,7 @@
 # Chapter 11 — Cross-Platform UI Automation
 
 > *Where the previous chapter walked a scaffolding-stage
-> package, this one walks a mature one.  `automojo-uia`
+> package, this one walks a mature one.  `codecraftai-uia`
 > implements UI automation across Linux (AT-SPI / X11 /
 > Wayland), macOS (Accessibility / scripting bridges), and
 > Windows (UIA — currently stubbed with NotImplementedError).
@@ -13,7 +13,7 @@ The framework's UI automation package is the answer to a
 specific kind of automation question: *the system under test
 is a graphical application*.  Volume 1 chapter 1 listed test
 shapes the framework supports; UI tests are one of them, and
-`automojo-uia` is the substrate.
+`codecraftai-uia` is the substrate.
 
 This chapter walks the platform-neutral hierarchy, the
 per-platform wrappers, the factory dispatch model, and the
@@ -22,7 +22,7 @@ application mappings on top of this substrate.
 
 ## The hierarchy
 
-**File:** `automojo-uia/source/packages/automojo/uia/platforms/base.py`
+**File:** `codecraftai-uia/source/packages/ccai/uia/platforms/base.py`
 
 ```python
 # Lines 13–33
@@ -118,7 +118,7 @@ native UI APIs.
 ### macOS
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/platforms/macos/wrappers/uiaapplication.py:29`
+`codecraftai-uia/source/packages/ccai/uia/platforms/macos/wrappers/uiaapplication.py:29`
 
 ```python
 class MacApplication(WrappedObject, UIApplication):
@@ -154,7 +154,7 @@ per-app class sets `APPLICATION_NAME` and
 ### Linux
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/platforms/linux/wrappers/uiaapplication.py:17`
+`codecraftai-uia/source/packages/ccai/uia/platforms/linux/wrappers/uiaapplication.py:17`
 
 ```python
 class LinuxApplication(LinuxElement, UIApplication):
@@ -187,7 +187,7 @@ agent's responsibility clean.
 ### Windows
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/platforms/windows/`
+`codecraftai-uia/source/packages/ccai/uia/platforms/windows/`
 
 Currently a stub.  The factory's dispatch:
 
@@ -204,7 +204,7 @@ honest about this gap.
 
 ## The factory
 
-**File:** `automojo-uia/source/packages/automojo/uia/factory.py`
+**File:** `codecraftai-uia/source/packages/ccai/uia/factory.py`
 
 ```python
 class AutomationFactory:
@@ -220,12 +220,12 @@ class AutomationFactory:
         system = platform.system()
 
         if system == "Darwin":
-            from automojo.uia.platforms.macos.automation import MacOSAutomation
+            from ccai.uia.platforms.macos.automation import MacOSAutomation
             return MacOSAutomation()
         elif system == "Windows":
              raise NotImplementedError("Windows automation is not yet implemented.")
         elif system == "Linux":
-             from automojo.uia.platforms.linux.automation import LinuxAutomation
+             from ccai.uia.platforms.linux.automation import LinuxAutomation
              return LinuxAutomation()
         else:
             raise NotImplementedError(f"Unsupported platform: {system}")
@@ -251,7 +251,7 @@ implementation is what ships.
 A test using UI automation:
 
 ```python
-from automojo.uia.factory import AutomationFactory
+from ccai.uia.factory import AutomationFactory
 
 engine = AutomationFactory.get_automation_engine()
 calc = engine.get_application_by_name("Calculator")

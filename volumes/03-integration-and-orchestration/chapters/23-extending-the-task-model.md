@@ -12,7 +12,7 @@ chapter closes Part V with the *extension recipe* — how to add a
 new task type when the shipped five don't cover the use case.
 
 The chapter uses a worked target: turning the shipped
-[`GitCheckout`](../../../automojo-taskplus/source/packages/automojo/taskplus/tasks/gitcheckout.py)
+[`GitCheckout`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/gitcheckout.py)
 stub from chapter 19 into a real Git checkout implementation.
 The same recipe applies to any other extension; `GitCheckout` is
 chosen because it's the smallest visible gap in the shipped set
@@ -48,7 +48,7 @@ When three workflows all have a step like this:
 
 ```yaml
 - task: Pull image
-  tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+  tasktype: ccai.taskplus.tasks.runcommand@RunCommand
   command: "docker pull registry.example.com/${IMAGE_NAME}:${IMAGE_TAG}"
 ```
 
@@ -84,7 +84,7 @@ What fields will the workflow author write?  For Git checkout:
 
 ```yaml
 - task: Check out app
-  tasktype: automojo.taskplus.tasks.gitcheckout@GitCheckout
+  tasktype: ccai.taskplus.tasks.gitcheckout@GitCheckout
   repository_url: "git@github.com:example/app.git"
   branch: main                              # optional; default 'main'
   destination: "${WORKSPACE}/app"
@@ -113,7 +113,7 @@ The task class extends `Task` and reads its required fields from
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Real GitCheckout task — replaces the chapter-19 stub.
 
-.. moduleauthor:: AutomationX <automationx@automationmojo.com>
+.. moduleauthor:: CodeCraftX <automationx@code-craft.ai>
 """
 
 from typing import Any, Dict, Optional
@@ -121,9 +121,9 @@ from typing import Any, Dict, Optional
 import os
 import subprocess
 
-from automojo.errors.exceptions import ConfigurationError
+from ccai.errors.exceptions import ConfigurationError
 
-from automojo.taskplus.model.task import Task
+from ccai.taskplus.model.task import Task
 
 
 class GitCheckout(Task):
@@ -221,7 +221,7 @@ Four implementation notes:
 #### Credential resolution
 
 The credential is fetched through the
-[`CredentialManagerSingleton`](../../../automojo-credentials/source/packages/automojo/credentials/wellknown.py)
+[`CredentialManagerSingleton`](../../../codecraftai-credentials/source/packages/ccai/credentials/wellknown.py)
 (chapter 9) via a helper:
 
 ```python
@@ -229,7 +229,7 @@ def _apply_credential_to_env(self, env: Dict[str, str]) -> Dict[str, str]:
     """
         Resolve the credential identifier and apply Git auth to env.
     """
-    from automojo.credentials.wellknown import CredentialManagerSingleton
+    from ccai.credentials.wellknown import CredentialManagerSingleton
 
     cred = CredentialManagerSingleton().lookup_credential(self._credential_id)
 
@@ -284,13 +284,13 @@ so subsequent tasks can read where the checkout landed:
 
 ```yaml
 - task: Check out app
-  tasktype: automojo.taskplus.tasks.gitcheckout@GitCheckout
+  tasktype: ccai.taskplus.tasks.gitcheckout@GitCheckout
   repository_url: "git@github.com:example/app.git"
   destination: "${WORKSPACE}/app"
 
 - task: Build app
-  tasktype: automojo.taskplus.tasks.runcommand@RunCommand
-  command: "cd $(automojo flowstate get gitcheckout.last_destination) && make build"
+  tasktype: ccai.taskplus.tasks.runcommand@RunCommand
+  command: "cd $(ccai flowstate get gitcheckout.last_destination) && make build"
 ```
 
 The `gitcheckout.` prefix is the chapter-21 namespacing
@@ -315,12 +315,12 @@ reference:
 
 ```yaml
 - task: Check out app
-  tasktype: automojo.taskplus.tasks.gitcheckout@GitCheckout
+  tasktype: ccai.taskplus.tasks.gitcheckout@GitCheckout
   ...
 ```
 
 The
-[`Workflow.parse`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py)
+[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
 loader (chapter 20) resolves the reference at parse time:
 imports the module, looks up the class, instantiates with the
 chapter-18 constructor signature.
@@ -336,15 +336,15 @@ Two observations on registration:
   context.**  When the task lives in a separate package, the
   package must be installed (or on `PYTHONPATH`) before the
   orchestration runs.  This is straightforward when the task
-  ships in `automojo-taskplus` itself; for tasks shipped in a
+  ships in `codecraftai-taskplus` itself; for tasks shipped in a
   consumer package (e.g., a project's own `myproject.taskplus`
   module), the package needs to be installed alongside.
 
 ### Step 5 — Write tests
 
-Every shipped task in `automojo-taskplus` has a corresponding
+Every shipped task in `codecraftai-taskplus` has a corresponding
 test file in
-[`source/testroots/automojo/tests/singlehost/taskplus/`](../../../automojo-taskplus/source/testroots/automojo/tests/singlehost/taskplus/).
+[`source/testroots/ccai/tests/singlehost/taskplus/`](../../../codecraftai-taskplus/source/testroots/ccai/tests/singlehost/taskplus/).
 A new task type adds a new test file with the same shape.
 
 A minimal test suite for `GitCheckout`:
@@ -356,10 +356,10 @@ import logging
 import os
 import shutil
 
-from automojo.testbase import verification
+from ccai.testbase import verification
 
-from automojo.errors.exceptions import ConfigurationError
-from automojo.taskplus.tasks.gitcheckout import GitCheckout
+from ccai.errors.exceptions import ConfigurationError
+from ccai.taskplus.tasks.gitcheckout import GitCheckout
 
 
 def _make_logger() -> logging.Logger:
@@ -447,7 +447,7 @@ def test_construct_uses_explicit_branch_and_shallow() -> None:
 def test_perform_task_with_invalid_url_returns_nonzero() -> None:
     """A clone against an unreachable URL returns non-zero."""
 
-    target = "/tmp/automojo-gitcheckout-test"
+    target = "/tmp/codecraftai-gitcheckout-test"
     if os.path.exists(target):
         shutil.rmtree(target)
 
@@ -525,11 +525,11 @@ Worked target: a task that retries a wrapped task on failure.
 
 ```yaml
 - task: Flaky API call (with retry)
-  tasktype: automojo.taskplus.tasks.retry@Retry
+  tasktype: ccai.taskplus.tasks.retry@Retry
   attempts: 3
   delay_seconds: 5
   inner:
-      tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+      tasktype: ccai.taskplus.tasks.runcommand@RunCommand
       command: "curl -f https://flaky-api.example.com/healthcheck"
 ```
 
@@ -540,10 +540,10 @@ implementation:
 ```python
 import time
 
-from automojo.errors.exceptions import ConfigurationError
-from automojo.xmodules.ximport import import_by_name
+from ccai.errors.exceptions import ConfigurationError
+from ccai.xmodules.ximport import import_by_name
 
-from automojo.taskplus.model.task import Task
+from ccai.taskplus.model.task import Task
 
 
 class Retry(Task):
@@ -642,7 +642,7 @@ composition:
       tasktype: my.module@Timeout
       timeout_seconds: 30
       inner:
-          tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+          tasktype: ccai.taskplus.tasks.runcommand@RunCommand
           command: "./run-flaky.sh"
 ```
 
@@ -712,14 +712,14 @@ Workflows reference them by full module path:
   ...
 ```
 
-The package is installed alongside `automojo-taskplus` in the
+The package is installed alongside `codecraftai-taskplus` in the
 orchestration's environment.  No registration step required.
 
 ### Cross-team task library
 
 When multiple teams in an organisation share custom tasks, the
 shared package becomes its own thing —
-`automojo-taskplus-extras` or similar.  The pattern is the
+`codecraftai-taskplus-extras` or similar.  The pattern is the
 same; the maintenance overhead grows with the number of teams,
 which the foundation document's "cross-team profile sharing"
 note also covers (chapter 14).
@@ -727,7 +727,7 @@ note also covers (chapter 14).
 ### Contributing back
 
 Tasks that prove broadly useful can be contributed back to
-`automojo-taskplus` itself.  The criterion: the task is generic
+`codecraftai-taskplus` itself.  The criterion: the task is generic
 (not project-specific), well-tested, and fits the
 "environment-neutral" discipline of the shipped set.  The
 `GitCheckout` recipe target is itself a good candidate —
@@ -759,7 +759,7 @@ recipe above is the implementation.
   the project's namespace).  No central registration; the
   YAML's `module@Class` reference is the registration.  Tasks
   that prove broadly useful can be contributed back to
-  `automojo-taskplus`.
+  `codecraftai-taskplus`.
 
 This is the last chapter of Part V.  The volume now has the
 complete implementation surface: the task model (ch 18), the

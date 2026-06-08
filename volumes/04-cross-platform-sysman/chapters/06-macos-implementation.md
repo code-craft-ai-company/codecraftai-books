@@ -5,9 +5,9 @@
 > `gui/<uid>` domains, not bare-user domains.  pf has no
 > first-class zones — they're emulated via per-anchor files.
 > The macOS hostname is a triple, not a string.  This chapter
-> walks `automojo-sysman-macos` with each quirk explicit.*
+> walks `codecraftai-sysman-macos` with each quirk explicit.*
 
-`automojo-sysman-macos` ships 49 features and 45 test files.
+`codecraftai-sysman-macos` ships 49 features and 45 test files.
 The package follows the patterns Ubuntu established — shared
 `featurebase`, OS-prefixed class names — but adds more
 implementation-specific peculiarities than any other OS in
@@ -17,7 +17,7 @@ the suite.  Convention 11 (elevation-model inversion) was
 ## Layout
 
 ```
-automojo-sysman-macos/source/packages/automojo/sysman/macos/
+codecraftai-sysman-macos/source/packages/ccai/sysman/macos/
 ├── __init__.py
 ├── packagemanagement.py        # Homebrew (Convention 11)
 ├── servicemanagement.py        # launchctl + gui/<uid> domains
@@ -29,7 +29,7 @@ automojo-sysman-macos/source/packages/automojo/sysman/macos/
 
 49 Python files in the implementation directory.  Like
 Ubuntu, no local `featurebase.py` — imports from
-`automojo.sysman.common`.  All public types are
+`ccai.sysman.common`.  All public types are
 `Macos`-prefixed.
 
 ## Homebrew elevation inversion (Convention 11)
@@ -159,8 +159,8 @@ default tracks the common case.
 ```
 Zone mapping: macOS pf has no first-class zone concept, but it
 does have anchor namespaces.  This manager maps each contract
-``zone`` to a pf anchor named ``automojo.<zone>``; the anchor's
-rules live in ``/etc/pf.anchors/automojo.<zone>``.
+``zone`` to a pf anchor named ``ccai.<zone>``; the anchor's
+rules live in ``/etc/pf.anchors/ccai.<zone>``.
 
 Surface choices:
     * Each ``add_*`` / ``remove_*`` verb reads the current anchor
@@ -177,26 +177,26 @@ that can be loaded, listed, flushed independently.
 The macOS manager maps the contract's `zone` argument to
 pf anchor names with a fixed prefix:
 
-- Contract zone `"public"` → pf anchor `"automojo.public"`.
-- Contract zone `"internal"` → pf anchor `"automojo.internal"`.
+- Contract zone `"public"` → pf anchor `"ccai.public"`.
+- Contract zone `"internal"` → pf anchor `"ccai.internal"`.
 
-Anchor rules live in `/etc/pf.anchors/automojo.<zone>`.
+Anchor rules live in `/etc/pf.anchors/ccai.<zone>`.
 The manager reads-modify-writes the file:
 
-1. `cat /etc/pf.anchors/automojo.public` → current rules.
+1. `cat /etc/pf.anchors/ccai.public` → current rules.
 2. Compute the desired post-state.
 3. If matches, return SKIPPED.
-4. Otherwise `tee /etc/pf.anchors/automojo.public` →
+4. Otherwise `tee /etc/pf.anchors/ccai.public` →
    write the new rules.
-5. `pfctl -a automojo.public -f /etc/pf.anchors/automojo.public`
+5. `pfctl -a ccai.public -f /etc/pf.anchors/ccai.public`
    → reload that anchor.
 
 The reload-per-anchor scoping prevents the manager's
 changes from disturbing rules in *other* pf anchors that
-non-automojo tools maintain.
+non-ccai tools maintain.
 
 A separate concern: pf needs `/etc/pf.conf` to *include*
-the automojo.<zone> anchors; otherwise pf doesn't load
+the ccai.<zone> anchors; otherwise pf doesn't load
 them.  The manager doesn't manage `/etc/pf.conf` — that's
 the operator's setup task.  The chapter is honest that the
 sysman tier can't substitute for initial system
@@ -397,7 +397,7 @@ They verify the manager constructs the right argvs.
 ## What's next
 
 Chapter 7 walks the Windows implementation
-(`automojo-sysman-windows`) — 49 features, 45 test files,
+(`codecraftai-sysman-windows`) — 49 features, 45 test files,
 the PowerShell-driven mechanism throughout (cmdlets +
 `ConvertTo-Json`), winget's locale-fragile output parsing,
 the elevation-blocked detection (Convention 6), and the

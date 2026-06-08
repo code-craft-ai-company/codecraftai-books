@@ -7,7 +7,7 @@
 > what mocks should look like.  This chapter is about how
 > testbase's mocking helpers stay out of the way.*
 
-`automojo-testbase` ships its own mocking module rather than
+`codecraftai-testbase` ships its own mocking module rather than
 wrapping `unittest.mock`.  The choice is deliberate: the
 portfolio's mocking needs don't fit neatly under the
 unittest.mock shape, and rather than fight it, testbase ships
@@ -50,7 +50,7 @@ errors (below) are how testbase makes the second part work.
 ## `MockType`: knowing what kind of mock you have
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/mocking.py:46–56
+# codecraftai-testbase/source/packages/ccai/testbase/mocking.py:46–56
 
 class MockType(IntEnum):
     Generic = 0
@@ -89,7 +89,7 @@ something it shouldn't have.
 ## `SpecViolationError`: refusing to play along
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/mocking.py:25–43
+# codecraftai-testbase/source/packages/ccai/testbase/mocking.py:25–43
 
 class SpecViolationError(BaseException):
     """
@@ -132,7 +132,7 @@ For mocks whose only job is to return a value or run a
 callable, testbase ships `SideEffect`:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/mocking.py:59–120
+# codecraftai-testbase/source/packages/ccai/testbase/mocking.py:59–120
 
 class SideEffect:
     def __init__(self,
@@ -172,7 +172,7 @@ compose `SideEffect` instances.
 
 The two top-level mocking constructs:
 
-- **`Mock`** (`automojo-testbase/source/packages/automojo/testbase/mocking.py:1603`)
+- **`Mock`** (`codecraftai-testbase/source/packages/ccai/testbase/mocking.py:1603`)
   — the spec-aware mock class itself.  Constructed with a
   spec (a class, an instance, or a function), it produces
   attribute access and call behaviour shaped by the spec.
@@ -185,7 +185,7 @@ A representative usage:
 ```python
 import testbase
 from testbase.mocking import Mock, MockContext, MockType
-from automojo.billingkit.invoice import InvoiceService
+from ccai.billingkit.invoice import InvoiceService
 
 @testbase.attach.parameter(some_db_session, identifier="db")
 def test_invoice_service_uses_billing_runtime(db):
@@ -196,7 +196,7 @@ def test_invoice_service_uses_billing_runtime(db):
     runtime.tax_rate = SideEffect(lambda: Decimal("0.0875"))
 
     with MockContext() as ctx:
-        ctx.patch("automojo.billingkit.invoice.get_runtime",
+        ctx.patch("ccai.billingkit.invoice.get_runtime",
                   Mock(spec_class=BillingRuntime,
                        mock_type=MockType.Function,
                        side_effect=SideEffect(lambda: runtime)))

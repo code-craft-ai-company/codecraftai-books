@@ -7,11 +7,11 @@
 > is the path the runner takes from "here is a test root" to
 > "here are the results."  This chapter walks that path.*
 
-`automojo-testbase` is not a small framework.  Counting only
+`codecraftai-testbase` is not a small framework.  Counting only
 its own source tree it is around 40,000 lines of Python; the
 test suite that exercises it is 146 test files
-(`automojo-testbase/source/packages/automojo/testbase/`,
-`automojo-testbase/source/tests/`).  But the architecture is
+(`codecraftai-testbase/source/packages/ccai/testbase/`,
+`codecraftai-testbase/source/tests/`).  But the architecture is
 small in the sense that matters: the number of *concepts* a
 reader has to hold in mind to follow a run is fewer than ten.
 
@@ -23,14 +23,14 @@ runner in Chapter 4, the JSOS recorder in Chapter 5.
 
 It is worth stating up front what testbase is *not* coupled to.
 The framework's core run path is near-standalone: it depends only
-on `automojo-arcli`, `automojo-errors`, `automojo-interfaces`,
-`automojo-waiting`, and `automojo-xmodules`.  It does *not* depend
-on `automojo-configuration`, `automojo-runtime`, or
-`automojo-this-app`.  The handful of core environment knobs it
+on `codecraftai-arcli`, `codecraftai-errors`, `codecraftai-interfaces`,
+`codecraftai-waiting`, and `codecraftai-xmodules`.  It does *not* depend
+on `codecraftai-configuration`, `codecraftai-runtime`, or
+`codecraftai-this-app`.  The handful of core environment knobs it
 needs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
 `AM_TESTRUN_TIMEOUT`, the `AM_DEBUG_*`/`AM_DIAGNOSTICS_*` flags)
 are read directly from `os.environ` through a tiny dependency-free
-module, `automojo.testbase.environment`.  Everything richer — the
+module, `ccai.testbase.environment`.  Everything richer — the
 `RuntimeVariables` descriptor set, the well-known presence-folder
 paths, CI/build metadata — is the integration layer's job, reached
 through injected seams rather than imports.  (The *source* core is
@@ -100,7 +100,7 @@ The discovery process answers a single question: given a test
 root path, what test functions exist under it?
 
 `TestRef`
-(`automojo-testbase/source/packages/automojo/testbase/testref.py:25–65`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testref.py:25–65`)
 is the data class.  Each `TestRef` wraps a `FunctionType` and
 stores:
 
@@ -112,14 +112,14 @@ stores:
 - An async flag — whether the function is `async def`.
 
 `TestCollector`
-(`automojo-testbase/source/packages/automojo/testbase/testcollector.py:60–231`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testcollector.py:60–231`)
 is the orchestrator.  Given a test root, includes/excludes, and
 metafilters, the collector:
 
 1. Walks the file system under the test root.
 2. Imports each test module.
 3. Calls `collect_test_references()`
-   (`automojo-testbase/source/packages/automojo/testbase/queries.py:29–94`)
+   (`codecraftai-testbase/source/packages/ccai/testbase/queries.py:29–94`)
    on each imported module.  That function uses
    `inspect.getmembers(mod, inspect.isfunction)` to find
    functions whose names match the test prefix and wraps each
@@ -138,7 +138,7 @@ Once discovery has produced a tree, the sequencer drives it
 through five phases.  The phases are an enum:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/sequencing/testsequencer.py:106–150
+# codecraftai-testbase/source/packages/ccai/testbase/sequencing/testsequencer.py:106–150
 
 class TEST_SEQUENCER_PHASES(IntEnum):
     Initial = 0
@@ -175,7 +175,7 @@ ones — `fire_diagnostic_capture_pre_testrun`'s docstring at
 ## TestJob: the lifecycle owner — and the customisation entry point
 
 `TestJob`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:45`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:45`)
 is the singleton-like object that owns the run.  It has a
 constructor (line 68) that stores the logger, the test root, the
 includes/excludes, and — crucially — obtains its run-level
@@ -192,9 +192,9 @@ with TestJob(logger=logger, testroot="tests/", ...) as job:
 ```
 
 `__enter__`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:109`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:109`)
 calls `begin()`.  `__exit__`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:113`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:113`)
 calls `finalize()`.  The run itself happens in `execute()`
 (line 157), invoked between enter and exit.  Across the three
 methods the job:
@@ -242,7 +242,7 @@ override points for the landscape-activating subclass.
 > **Where landscape activation lives.**  The five landscape
 > `fire_*` hooks (the two `fire_attach_*` plus the three
 > `fire_activate_*`) have *bodies* in Volume 2's
-> `InteropLibraryTestJob` (in `automojo-interop`), not here.  On
+> `InteropLibraryTestJob` (in `codecraftai-interop`), not here.  On
 > plain testbase there is no landscape to activate, so the
 > activation hooks stay stubs.  Importantly, `IntegratedTestJob`
 > in the integration runtime does *not* override these five
@@ -266,14 +266,14 @@ There is a four-deep inheritance chain, each layer adding one
 concern:
 
 - **`TestJob`** (single-host base, this chapter; in
-  `automojo-testbase`).  Standalone: stdout recorder, injected
+  `codecraftai-testbase`).  Standalone: stdout recorder, injected
   `IRunMetadata`/`IOutputContext` seams, the five landscape
   `fire_*` hooks as stubs.  Override `_create_sequencer()`,
   `_create_recorder()`, `_create_output_context()`,
   `_create_run_metadata()`, or any hook for single-host
   customisation.
-- **`IntegratedTestJob`** (in `automojo-integration-runtime`;
-  `automojo.integrationruntime.integratedtestjob`).  Adds
+- **`IntegratedTestJob`** (in `codecraftai-integration-runtime`;
+  `ccai.integrationruntime.integratedtestjob`).  Adds
   *integration result recording*: it overrides exactly three
   provider hooks — `_create_output_context()` to a
   presence-folder-backed `RuntimeOutputContext`,
@@ -281,13 +281,13 @@ concern:
   `RuntimeRunMetadata`, and `_create_recorder()` to the
   HTML-rendering `JsonResultRecorder`.  It does *not* touch the
   five landscape `fire_*` hooks.
-- **`InteropLibraryTestJob`** (Volume 2; in `automojo-interop`).
+- **`InteropLibraryTestJob`** (Volume 2; in `codecraftai-interop`).
   Adds *landscape activation*: it fills in the five `fire_*`
   hooks and declares the abstract `_get_landscape()`.  Override
   `_get_landscape()` to return your project's `Landscape`
   subclass; the framework picks up the custom Features and
   topology shapes through that landscape.
-- **`DistributedTestJob`** (Volume 2; in `automojo-testplus`).
+- **`DistributedTestJob`** (Volume 2; in `codecraftai-testplus`).
   Adds the distributed sequencer and a concrete `_get_landscape()`
   for distributed multi-host scenarios.
 
@@ -295,7 +295,7 @@ concern:
 > but the re-parenting is not fully landed: `IntegratedTestJob`
 > is built and in place, yet `InteropLibraryTestJob` still
 > extends `TestJob` directly in the interop source today
-> (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`),
+> (`codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:22`),
 > not `IntegratedTestJob`.  Slotting interop onto `IntegratedTestJob`
 > is the remaining step.  When it lands, an interop run will pick
 > up the presence-folder output context and HTML recorder for
@@ -313,7 +313,7 @@ distributed_test_entrypoint(job_type=YourCustomDistributedJob)
 ```
 
 Real scaffolding examples live in
-`automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
+`codecraftai-testbase/source/tests/ccai_tests/testbase/integration/test_custom_job_type_integration.py`
 (`CustomTestJob`, `FailingCustomTestJob`).  An SDET writing a
 custom job type follows that pattern: subclass at the right
 layer, override the template methods, plug into the entry
@@ -342,9 +342,9 @@ template methods return.
 
 The base `TestJob` records to **stdout** by default.
 `_create_recorder()`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:564`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:564`)
 returns a `StdoutResultRecorder`
-(`automojo-testbase/source/packages/automojo/testbase/results/recorders/stdoutresultrecorder.py:36`),
+(`codecraftai-testbase/source/packages/ccai/testbase/results/recorders/stdoutresultrecorder.py:36`),
 not a `JsonResultRecorder`.  The recorder is constructed inside
 `execute()` (not `begin()`) and entered as a context manager;
 every test event the sequencer fires (test started, test
@@ -373,10 +373,10 @@ artefacts that the `testbase agents` CLI consumes:
 What plain testbase does *not* produce is the rendered HTML
 summary.  That, along with the presence-folder results layout and
 the CI/build/pipeline metadata, is the responsibility of
-`IntegratedTestJob` in `automojo-integration-runtime`, which
+`IntegratedTestJob` in `codecraftai-integration-runtime`, which
 overrides `_create_recorder()` to return the full
 `JsonResultRecorder`
-(`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90`).
+(`codecraftai-testbase/source/packages/ccai/testbase/results/recorders/jsonresultrecorder.py:90`).
 
 > **Standalone vs. integrated.**  The split is deliberate.  Plain
 > testbase runs *without activation* — no presence folder, no
@@ -399,7 +399,7 @@ some other system.  Three families exist:
   external thing."  Examples: a coupling to a credentials
   store, a coupling to a device pool, a coupling to a
   dataprofile registry.  The base class is at
-  `automojo-testbase/source/packages/automojo/testbase/coupling/integrationcoupling.py`,
+  `codecraftai-testbase/source/packages/ccai/testbase/coupling/integrationcoupling.py`,
   and the public method `establish_connectivity(allow_missing_devices=False)`
   (line 512) is the place where the coupling decides whether
   it can run with whatever it has.
@@ -413,7 +413,7 @@ some other system.  Three families exist:
   `attach_to_test(testscope, suffix)` and run *in tandem* with
   the test, producing their own outcomes recorded alongside the
   test's result.  The base class lives in
-  `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
+  `codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py`.
   This is the substrate for **tandem testing** — the framework's
   answer to "how do you run a test deterministically against a
   distributed system without forbidding observation."  Volume 2
@@ -443,17 +443,17 @@ decorators.  They divide cleanly:
 - **Resource attachment** — `@testbase.attach.parameter(...)`
   attaches a parameter (a fixture, in pytest vocabulary) to a
   specific test
-  (`automojo-testbase/source/packages/automojo/testbase/declaration/attachments.py`).
+  (`codecraftai-testbase/source/packages/ccai/testbase/declaration/attachments.py`).
 - **Resource origination** — `@integration_factory()`,
   `@configuration_factory()`, and `@resource_factory()` register
   the *source* of a resource
-  (`automojo-testbase/source/packages/automojo/testbase/declaration/registrations.py:45–93`).
+  (`codecraftai-testbase/source/packages/ccai/testbase/declaration/registrations.py:45–93`).
   These are usually written in framework or extension modules,
   not test files.
 - **Property-based testing** — `@given(...)` is the
   Hypothesis-style decorator declaring strategies for a test's
   parameters
-  (`automojo-testbase/source/packages/automojo/testbase/properties/decorators.py:23–97`).
+  (`codecraftai-testbase/source/packages/ccai/testbase/properties/decorators.py:23–97`).
   Chapter 4 covers it.
 - **Skip / conditional** — `@skip_if(...)`, `@only_if(...)`,
   and the metafilter family.  These are evaluated at discovery
@@ -483,15 +483,15 @@ Throughout testbase the *test root* is the directory that
 contains test packages.  The convention across the portfolio is:
 
 ```
-<repo>/source/testroots/automojo/tests/
+<repo>/source/testroots/ccai/tests/
                                  ├── singlehost/
                                  ├── distributed/
                                  └── ...
 ```
 
-`automojo-agent-kit`'s test root is the basis for Chapter 10's
-case study.  `automojo-testbase`'s own test root is at
-`automojo-testbase/source/tests/` and demonstrates testbase
+`codecraftai-agent-kit`'s test root is the basis for Chapter 10's
+case study.  `codecraftai-testbase`'s own test root is at
+`codecraftai-testbase/source/tests/` and demonstrates testbase
 testing testbase — a useful self-application that catches
 framework regressions.
 

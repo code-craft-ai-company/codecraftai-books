@@ -45,7 +45,7 @@ predecessor's state.
 
 ## Layer 1 — `LandscapeConfigurationLayer`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/layers/landscapeconfigurationlayer.py:51`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/layers/landscapeconfigurationlayer.py:51`
 
 The configuration layer is the "load and validate" phase.
 It owns the on-disk representation of the landscape and
@@ -56,7 +56,7 @@ contain.
 
 - **`load_landscape(activation_params)`** — reads the
   `LANDSCAPE_CONFIGURATION_MAP` (populated earlier by
-  `automojo-configuration`'s loader) and stores it as
+  `codecraftai-configuration`'s loader) and stores it as
   `self._landscape_info`.
 - **`load_topology(activation_params)`** — same for
   `TOPOLOGY_CONFIGURATION_MAP`, stored as
@@ -114,7 +114,7 @@ inputs are wrong" signal.
 
 ## Layer 2 — `LandscapeIntegrationLayer`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/layers/landscapeintegrationlayer.py:43`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/layers/landscapeintegrationlayer.py:43`
 
 The integration layer is the "instantiate objects" phase.
 It walks the loaded `landscape_info` and constructs in-memory
@@ -216,7 +216,7 @@ the first-contact phase.
 
 ## Layer 3 — `LandscapeOperationalLayer`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/layers/landscapeoperationallayer.py:41`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/layers/landscapeoperationallayer.py:41`
 
 The operational layer is where landscape activation *contacts
 the real world*.  It activates each Coordinator (which brings
@@ -354,7 +354,7 @@ load, etc.
 ## Activation parameters
 
 `LandscapeActivationParams`
-(`automojo-landscaping/source/packages/automojo/landscaping/landscapeparameters.py:19`)
+(`codecraftai-landscaping/source/packages/ccai/landscaping/landscapeparameters.py:19`)
 is the dataclass that controls activation:
 
 ```python

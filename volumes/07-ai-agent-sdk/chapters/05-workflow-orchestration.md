@@ -116,9 +116,9 @@ run in what order, regardless of runtime behaviour.
 A representative workflow:
 
 ```python
-from automojo.agentkit.workflowdefinition import WorkflowDefinition
-from automojo.agentkit.workflowstep import WorkflowStep
-from automojo.agentkit.workflowedge import WorkflowEdge
+from ccai.agentkit.workflowdefinition import WorkflowDefinition
+from ccai.agentkit.workflowstep import WorkflowStep
+from ccai.agentkit.workflowedge import WorkflowEdge
 
 
 def step_search(context):

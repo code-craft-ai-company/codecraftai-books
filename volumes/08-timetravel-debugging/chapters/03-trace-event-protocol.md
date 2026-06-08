@@ -43,7 +43,7 @@ classical way to satisfy both is the *envelope-and-payload* split
 — a fixed-size envelope using `struct` for fast access, and a
 variable-size payload using `pickle` for full fidelity.  The
 pod's serialiser
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceserializer.py:39`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceserializer.py:39`)
 implements this split.
 
 The Volume 1 ch. 5 JSOS streaming format makes the same trade-
@@ -56,7 +56,7 @@ trace recording; the *payload* of a JSOS frame becomes the
 
 The envelope format string is the second line of business
 inside `TraceSerializer`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceserializer.py:28`):
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceserializer.py:28`):
 
 ```python
 # Format: ! = network byte order (big-endian)
@@ -175,7 +175,7 @@ network round-trip cost per event — orders of magnitude more
 than the work to construct the bytes.
 
 `BufferedTraceWriter`
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/bufferedwriter.py:13`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/bufferedwriter.py:13`)
 is the layer that batches.  Its surface is small:
 
 ```python
@@ -229,7 +229,7 @@ contents is rarely worth the complexity.
 The backend is the abstraction that turns an opaque byte
 sequence into a persisted artefact.  Three backends ship with
 the pod
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/backends/`):
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/backends/`):
 
 - `FileStreamBackend` — `file://path/to/trace.bin`, with
   optional rotation at a configurable byte size.
@@ -262,13 +262,13 @@ def create_backend(self, uri: str):
 A new backend (`s3://bucket/prefix`, say, or `kafka://topic`) is
 added by registering its scheme on the registry without changing
 the existing pipeline.  This is the same URI-scheme dispatcher
-pattern that Volume 5 ch. 4 documented for `automojo-interop`'s
+pattern that Volume 5 ch. 4 documented for `codecraftai-interop`'s
 transport layer.
 
 ## 3.6 The TCP backend's failure mode
 
 The TCP backend
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/backends/tcpbackend.py:85-107`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/backends/tcpbackend.py:85-107`)
 makes a deliberate choice on saturation:
 
 ```python
@@ -345,7 +345,7 @@ than blocking.
 ## 3.7 The reader (pod side)
 
 The pod ships a reader as a partial implementation
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/reader.py`,
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/reader.py`,
 117 lines).  Its purpose is two-fold: as a tool to inspect a
 trace file produced by the pod itself, and as the algorithmic
 reference that the server-side deserialiser is meant to mirror.
@@ -394,12 +394,12 @@ pickle cost on every event.
 This is the chapter's honesty point.
 
 The pod-side serialiser
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/traceserializer.py:28`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/traceserializer.py:28`)
 emits the envelope described in §3.2 — 29 bytes, fixed,
 big-endian, six scalar fields, then filename, then pickle.
 
 The server-side deserialiser
-(`automojo-timetravel-server/source/packages/automojo/timetravelserver/streamreceiver/deserializer.py:15-65`)
+(`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/streamreceiver/deserializer.py:15-65`)
 parses a *different* format:
 
 ```python

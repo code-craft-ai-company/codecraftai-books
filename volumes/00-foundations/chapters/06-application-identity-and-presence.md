@@ -7,7 +7,7 @@
 
 The previous chapter introduced the waiting primitives.  This
 chapter introduces the *identity* primitives —
-[`automojo-this-app`](../../../../automojo-this-app/source/packages/automojo/thisapp/),
+[`codecraftai-this-app`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/),
 the package whose `ThisApplication` singleton represents the
 running process to itself.  Every higher tier of the portfolio
 calls into `ThisApplication` to resolve configuration variables,
@@ -19,26 +19,26 @@ is one singleton; one function (`establish_app_persona`) that
 *every* application calls early in startup; one global
 context that carries identity values across the process.  As of the
 runtime-foundation consolidation it *also* owns the machinery that
-used to live in the former `automojo-runtime` package: the
+used to live in the former `codecraftai-runtime` package: the
 `RuntimeVariables` descriptor set, the well-known-paths helpers, the
 profile/job enumerations, and the activation sequence.  The old
-`automojo-runtime` is being retired — it now holds only thin
-re-export shims, and import paths shift from `automojo.runtime.X`
-to `automojo.thisapp.X`.
+`codecraftai-runtime` is being retired — it now holds only thin
+re-export shims, and import paths shift from `ccai.runtime.X`
+to `ccai.thisapp.X`.
 
-This consolidation is what lets `automojo-testbase` sit *above* the
+This consolidation is what lets `codecraftai-testbase` sit *above* the
 identity-and-presence tier without depending on it: testbase reads
 the handful of core environment knobs it needs directly, and the
 richer runtime machinery described later in this chapter is what an
 *integrated* run (Volume 1) layers back on top via
-`automojo-integration-runtime`.
+`codecraftai-integration-runtime`.
 
 ## The two-phase pattern
 
 The identity machinery has a deliberate two-phase startup:
 
 1. **`establish_app_persona(...)`** — called once, before any
-   other automojo machinery.  This sets the application's
+   other ccai machinery.  This sets the application's
    *persona*: name, logger name, log file basename, presence
    directory (where the app's files live on disk), settings
    file path.  After this call, identity is fixed for the
@@ -70,7 +70,7 @@ its persona doesn't get a `None` back — it gets a clear
 ## `establish_app_persona` — the canonical entry point
 
 The function lives in
-[`persona.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/persona.py).
+[`persona.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/persona.py).
 The signature:
 
 ```python
@@ -92,7 +92,7 @@ Walk each parameter.
 ### `name` — the application's identity
 
 The application's name in machine-readable form.  Lowercase
-with hyphens for spaces.  Examples: `"automojo-testbase"`,
+with hyphens for spaces.  Examples: `"codecraftai-testbase"`,
 `"my-deployment-tool"`, `"nightly-runner"`.  Used to derive
 default paths and to identify the process in logs.
 
@@ -174,7 +174,7 @@ construction cost upfront.
 ## `ThisApplication` — the singleton's surface
 
 The
-[`ThisApplication`](../../../../automojo-this-app/source/packages/automojo/thisapp/thisapplication.py)
+[`ThisApplication`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py)
 class exposes seven properties (read-only views of the persona
 fields) and four methods (the *active* surface for variable
 resolution and overrides):
@@ -219,7 +219,7 @@ clearly named.
 
 ## The variable-descriptor model
 
-The richest subsystem in `automojo-this-app` is the
+The richest subsystem in `codecraftai-this-app` is the
 *variable-descriptor* model.  It's the formal mechanism for
 declaring which configuration values a subsystem cares about,
 where each value can come from, and how it's converted to a
@@ -294,10 +294,10 @@ Eight related descriptors, one class.  The class is *iterable* —
 descriptor individually.
 
 The volume's other variable sets follow the same pattern.
-`ConfigVariablesDesc` (in `automojo-configuration`) declares the
+`ConfigVariablesDesc` (in `codecraftai-configuration`) declares the
 configuration-related descriptors.  `RuntimeVariablesDesc` —
-formerly in `automojo-runtime`, now in
-[`automojo.thisapp.runtimevariables`](../../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
+formerly in `codecraftai-runtime`, now in
+[`ccai.thisapp.runtimevariables`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
 — declares the runtime-related descriptors and itself subclasses
 `PersonaVariablesDesc`.  Each subsystem owns its own variable set;
 the sets compose at the `ThisApplication` level.
@@ -391,7 +391,7 @@ identity of the running application.  Subsystems write
 configuration data into it; consumers read it out.
 
 The well-known paths live in
-[`ContextPaths`](../../../../automojo-this-app/source/packages/automojo/thisapp/contextpaths.py)
+[`ContextPaths`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py)
 — a string enum:
 
 ```python
@@ -460,22 +460,22 @@ path; subsystems that need to *override* call
 ## The absorbed runtime foundation
 
 Everything above describes the *persona* machinery — the half of
-`automojo-this-app` that was always here.  The other half arrived
+`codecraftai-this-app` that was always here.  The other half arrived
 with the runtime-foundation consolidation: the modules that used to
-constitute the standalone `automojo-runtime` package now live under
-`automojo.thisapp`, and the application-identity-and-presence tier is
+constitute the standalone `codecraftai-runtime` package now live under
+`ccai.thisapp`, and the application-identity-and-presence tier is
 their home.  They build directly on the descriptor model this
 chapter just introduced.
 
-> **As-built note.**  The old `automojo-runtime` package still
+> **As-built note.**  The old `codecraftai-runtime` package still
 > exists, but only as a set of thin re-export shims so that
-> in-flight callers importing `automojo.runtime.X` keep working
-> while they migrate to `automojo.thisapp.X`.  New code imports from
-> `automojo.thisapp` directly.
+> in-flight callers importing `ccai.runtime.X` keep working
+> while they migrate to `ccai.thisapp.X`.  New code imports from
+> `ccai.thisapp` directly.
 
 ### `RuntimeVariablesDesc` / `RuntimeVariables` — the runtime descriptor set
 
-[`runtimevariables.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
+[`runtimevariables.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
 declares `RuntimeVariablesDesc`, which *subclasses*
 `PersonaVariablesDesc` — so a single descriptor set carries both the
 persona fields and the runtime fields.  It is a large set: build
@@ -506,7 +506,7 @@ It guards against double resolution with a module-level
 
 ### Well-known paths
 
-[`paths.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/paths.py)
+[`paths.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/paths.py)
 turns the resolved runtime variables into concrete on-disk
 locations.  The shipped helpers include:
 
@@ -533,18 +533,18 @@ errors-never-silent discipline applied to the directory layout: a
 plain, non-activated process is told plainly that the presence-folder
 results tree does not exist for it.
 
-> **Consequence for testbase.**  Plain `automojo-testbase` runs
+> **Consequence for testbase.**  Plain `codecraftai-testbase` runs
 > *without* activation — it records to stdout, has no presence
 > folder, and never touches `RuntimeVariables` or this-app.  The
 > presence-folder results layout, JSOS-to-disk streaming, HTML
 > summary, and CI/build metadata are all the responsibility of
-> `IntegratedTestJob` in `automojo-integration-runtime`, which
+> `IntegratedTestJob` in `codecraftai-integration-runtime`, which
 > activates the process as a job and *then* delegates to these
 > path helpers.
 
 ### Profile and job enumerations
 
-[`enumerations.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/enumerations.py)
+[`enumerations.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/enumerations.py)
 defines two string enums that govern *how* a process is activated:
 
 ```python
@@ -571,7 +571,7 @@ sequence builds (`Build`, `Infrastructure`, `Orchestration`,
 
 ### The activation sequence
 
-[`activation.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/activation.py)
+[`activation.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/activation.py)
 ties the enumerations, the runtime variables, and the well-known
 paths together.  It exposes one function per profile —
 `activate_profile_command()`, `activate_profile_console()`,
@@ -590,10 +590,10 @@ paths together.  It exposes one function per profile —
    the `JobType`, assigns a job id if one was not supplied, and
    overrides `AM_OUTPUT_DIRECTORY` accordingly.
 4. **Activates logging** — wires up file, console, or rotating
-   service logging through the `automojo.xmodules.xlogging` helpers.
+   service logging through the `ccai.xmodules.xlogging` helpers.
 
 `activate_profile_job(JobType.TestRun)` is the entry point an
-integrated test run uses.  In `automojo-integration-runtime`, the
+integrated test run uses.  In `codecraftai-integration-runtime`, the
 activation init (`establish_app_persona` →
 `resolve_runtime_variables` → `activate_profile_job(JobType.TestRun)`)
 is what populates the presence-folder output context and the
@@ -613,8 +613,8 @@ The identity machinery is used by every higher tier:
   paths)** goes deeper on the runtime-related variables
   (`AM_RUN_ID`, `AM_INTERACTIVE_CONSOLE`, etc.) and the
   activation sequence — all of which, per the consolidation, now
-  live in `automojo.thisapp` alongside the persona machinery rather
-  than in a separate `automojo-runtime` package.
+  live in `ccai.thisapp` alongside the persona machinery rather
+  than in a separate `codecraftai-runtime` package.
 - **Volume 3 chapter 14 (Configuration profiles as a
   discipline)** proposes the `ContextPaths.ACTIVE_PROFILE`
   addition.  The chapter is using the same machinery this
@@ -670,7 +670,7 @@ without that machinery.
 
 ## Summary
 
-- **`automojo-this-app`** provides the identity and
+- **`codecraftai-this-app`** provides the identity and
   presence machinery every running process in the portfolio
   uses.  Two-phase startup: `establish_app_persona(...)` first
   (sets identity), then `ThisApplicationSingleton()` (gets the
@@ -704,14 +704,14 @@ without that machinery.
   publish their resolved values to the context, making the
   resolution pipeline observable end-to-end.
 - The tier now also **owns the absorbed runtime foundation** (moved
-  here from the retired `automojo-runtime`):
+  here from the retired `codecraftai-runtime`):
   `RuntimeVariablesDesc` / `RuntimeVariables` and
   `resolve_runtime_variables` (runtime descriptor set), the
   well-known-paths helpers in `paths.py` (several activation-gated
   via `JobType.Unknown`), the `ActivationProfile` / `JobType`
   enumerations, and the `activate_profile_*` sequence in
   `activation.py`.  Plain testbase runs *without* this layer;
-  `automojo-integration-runtime` layers it back on for integrated
+  `codecraftai-integration-runtime` layers it back on for integrated
   runs.
 - The machinery is *not* a generic dependency-injection
   container, *not* multi-application, *not* persistent across

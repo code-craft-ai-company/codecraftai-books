@@ -13,7 +13,7 @@
 The Landscape answered *what physical resources exist?*  The
 Topology answers *how are those resources logically organised?*
 
-The two are *separate categories* in `automojo-configuration`
+The two are *separate categories* in `codecraftai-configuration`
 (separate `MergeMap`s — `LANDSCAPE_CONFIGURATION_MAP` and
 `TOPOLOGY_CONFIGURATION_MAP`).  The same Landscape can support
 many Topologies (one fleet organised differently for different
@@ -27,15 +27,15 @@ layer; this chapter walks the schema and its consumption.
 ## Why Topology is left to the user
 
 A point Volume 3 chapter 6 made and this chapter reinforces:
-**there is no `automojo-topology` package.**  Topology is a
+**there is no `codecraftai-topology` package.**  Topology is a
 *configuration category*, not a package.  The framework's
 implementation lives across two repos:
 
-- `automojo-configuration` provides the loader for the
+- `codecraftai-configuration` provides the loader for the
   Topology configuration files (the
   `TOPOLOGY_CONFIGURATION_MAP`, the resolver function, the
   `AM_CONFIG_TOPOLOGY_*` variables).
-- `automojo-landscaping` provides the runtime consumer
+- `codecraftai-landscaping` provides the runtime consumer
   (`LandscapeConfigurationLayer.load_topology` reads the
   loaded data into `_topology_info`;
   `LandscapeOperationalLayer._create_clusters` consumes one
@@ -43,7 +43,7 @@ implementation lives across two repos:
 
 Beyond the canonical `clusters` shape (below), the framework
 imposes no schema.  Per the userguide
-(`automojo-docs/userguide/03-03-topology-file.rst:7–10`):
+(`codecraftai-docs/userguide/03-03-topology-file.rst:7–10`):
 
 > *The Automation Kit currently does not have a fixed format
 > for the topology file.  The topology file is intended for
@@ -85,7 +85,7 @@ Each cluster has:
 
 The framework's consumer:
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/layers/landscapeoperationallayer.py:601–636`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/layers/landscapeoperationallayer.py:601–636`
 
 ```python
 def _create_clusters(self, integ_layer: LandscapeIntegrationLayer, topology_info: Dict[str, Any]):
@@ -124,7 +124,7 @@ cluster.
 
 ## The `LandscapeDeviceCluster` class
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/landscapedevicecluster.py:23`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/landscapedevicecluster.py:23`
 
 ```python
 class LandscapeDeviceCluster:

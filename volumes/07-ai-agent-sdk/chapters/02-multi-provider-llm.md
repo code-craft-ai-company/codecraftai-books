@@ -2,7 +2,7 @@
 
 > *Production agents don't pin themselves to one LLM
 > provider.  Cost varies.  Capabilities differ.  Outages
-> happen.  The `automojo-agent-kit` ships a small, abstract
+> happen.  The `codecraftai-agent-kit` ships a small, abstract
 > `LLMProvider` interface that any provider implementation
 > must honour, plus an `AlternateProviderStrategy` for
 > failover when the primary is unavailable.*
@@ -192,11 +192,11 @@ retries, token counting, streaming):
 
 ```python
 import openai
-from automojo.agentkit.llmprovider import LLMProvider
-from automojo.agentkit.llmconversation import LLMConversation
-from automojo.agentkit.llmresponse import LLMResponse
-from automojo.agentkit.llmmessage import LLMMessage
-from automojo.agentkit.tokenusage import TokenUsage
+from ccai.agentkit.llmprovider import LLMProvider
+from ccai.agentkit.llmconversation import LLMConversation
+from ccai.agentkit.llmresponse import LLMResponse
+from ccai.agentkit.llmmessage import LLMMessage
+from ccai.agentkit.tokenusage import TokenUsage
 
 
 class OpenAIProvider(LLMProvider):

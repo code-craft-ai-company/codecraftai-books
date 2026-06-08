@@ -44,7 +44,7 @@ class.
 
 ## Coordinators
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/coordinatorbase.py:32`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/coordinatorbase.py:32`
 
 ```python
 class CoordinatorBase:
@@ -82,7 +82,7 @@ Three Coordinator hierarchies in the framework:
 
 ### `ClientCoordinatorBase`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/clients/clientcoordinatorbase.py:55`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/clients/clientcoordinatorbase.py:55`
 
 For *apod* clients — the runners and controllers.  The
 Coordinator manages the framework's own machines, not the
@@ -90,7 +90,7 @@ system under test.
 
 ### `ServiceCoordinatorBase`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/services/servicecoordinatorbase.py:57`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/services/servicecoordinatorbase.py:57`
 
 For *infrastructure services* — the named services from
 the Landscape's `services` section.  Per-serviceType
@@ -98,7 +98,7 @@ subclasses handle different service types.
 
 ### `NodeCoordinatorBase`
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/clusters/nodecoordinatorbase.py:57`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/clusters/nodecoordinatorbase.py:57`
 
 For *cluster nodes* — devices that participate in clusters
 declared by the Topology (chapter 5).  The Coordinator
@@ -177,7 +177,7 @@ factory protocol from Volume 0 chapter 7.
 
 The framework's `Agent` term is loose in the source code —
 different protocols call them different things.  The
-canonical example, `SshAgent` from `automojo-protocol-ssh`
+canonical example, `SshAgent` from `codecraftai-protocol-ssh`
 (Volume 5), wraps a per-host SSH connection state and vends
 `SshSession` instances tailored to specific tasks (Volume 2
 chapter 10 walked the SSH side).
@@ -198,7 +198,7 @@ results).
 
 ## ProtocolExtensions
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/extensions/protocol/protocolextension.py:28`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/extensions/protocol/protocolextension.py:28`
 
 ```python
 class ProtocolExtension:
@@ -265,7 +265,7 @@ disambiguate, but readers should keep the distinction in mind.
 
 ## ControlExtension — the service control point
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/extensions/control/controlextension.py:27`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/extensions/control/controlextension.py:27`
 
 ```python
 class ControlExtension:
@@ -361,7 +361,7 @@ contract.
 The word "extension" appears in three places in the
 portfolio.  Always disambiguate:
 
-- `automojo-extension` is the namespace-package factory
+- `codecraftai-extension` is the namespace-package factory
   discovery package (Volume 0 chapter 7).  Has nothing to do
   with Landscape.
 - `ProtocolExtension` is the device-level protocol binding

@@ -8,7 +8,7 @@ The previous two chapters introduced the task model and the five
 shipped task types.  This chapter introduces the *YAML format*
 that workflow authors write to compose those types into a
 runnable orchestration, plus the
-[`Workflow.parse`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py)
+[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
 classmethod that translates the YAML into the in-memory tree
 chapter 18 described.
 
@@ -41,7 +41,7 @@ parameters:
 ```
 
 The shipped
-[`Workflow.parse`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py)
+[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
 implementation enforces this structure.  Two ConfigurationError
 checks at the top:
 
@@ -111,7 +111,7 @@ environment:
 ```
 
 The shipped
-[`execute_workflow`](../../../automojo-taskplus/source/packages/automojo/taskplus/execution.py)
+[`execute_workflow`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/execution.py)
 function exports each entry into `os.environ` before the flow
 executes.  This is the workflow's hook into the
 plumbing-vs-content boundary discussed in chapter 7: the
@@ -134,7 +134,7 @@ task's `perform_task` as the second argument:
 parameters:
     branch: main
     build: nightly-2026-04-30
-    landscape: $HOME/automojo/config/default-landscape.yaml
+    landscape: $HOME/ccai/config/default-landscape.yaml
 ```
 
 Parameters are *workflow-time* values — known when the workflow
@@ -194,7 +194,7 @@ without being rejected.
 Two fields are required: `task` (the label) and `tasktype` (the
 module-and-class reference).  The `if`, `onfailure`, and
 `onsuccess` fields are optional and consumed by the
-[`Task`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/task.py)
+[`Task`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/task.py)
 base class (chapter 18).  Task-specific fields — `command` for
 `RunCommand`, `script` for `ShellScript`, `variables` for
 `CreateEnvironment` — are read by the concrete task class
@@ -203,12 +203,12 @@ directly from `node_info` (chapter 19).
 The `tasktype` field uses a `module@ClassName` syntax:
 
 ```yaml
-tasktype: automojo.taskplus.tasks.runcommand@RunCommand
+tasktype: ccai.taskplus.tasks.runcommand@RunCommand
 ```
 
 The parser splits on `@`, imports the module via
-[`import_by_name`](../../../automojo-xmodules/source/packages/automojo/xmodules/ximport.py)
-from `automojo-xmodules`, and looks up the class:
+[`import_by_name`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/ximport.py)
+from `codecraftai-xmodules`, and looks up the class:
 
 ```python
 task_type = fnode_info["tasktype"]
@@ -267,7 +267,7 @@ through the failure of its constituent tasks.
 ## The recursive walk and ordinal generation
 
 The parser's
-[`_process_flow_info_items`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py)
+[`_process_flow_info_items`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
 method is the recursion that produces the in-memory tree.  It
 takes a list of node info dictionaries and an `ordinal_prefix`
 string, and returns a list of `FlowNode` instances:
@@ -431,24 +431,24 @@ parameters:
 flow:
     # Top-level setup task
     - task: Setup
-      tasktype: automojo.taskplus.tasks.runcommand@RunCommand
-      command: "automojo provisioning apply --spec config/specs/spec-staging-east.yaml"
+      tasktype: ccai.taskplus.tasks.runcommand@RunCommand
+      command: "ccai provisioning apply --spec config/specs/spec-staging-east.yaml"
 
     # Test phase as a taskgroup
     - taskgroup: Test phase
       items:
           - task: Smoke tests
-            tasktype: automojo.taskplus.tasks.runcommand@RunCommand
-            command: "automojo testbase test run tests/smoke"
+            tasktype: ccai.taskplus.tasks.runcommand@RunCommand
+            command: "ccai testbase test run tests/smoke"
 
           - task: Integration tests
-            tasktype: automojo.taskplus.tasks.runcommand@RunCommand
-            command: "automojo testbase test run tests/integration"
+            tasktype: ccai.taskplus.tasks.runcommand@RunCommand
+            command: "ccai testbase test run tests/integration"
             onfailure: Run cleanup
 
           - task: Benchmark
-            tasktype: automojo.taskplus.tasks.runcommand@RunCommand
-            command: "automojo testbase test run tests/benchmark"
+            tasktype: ccai.taskplus.tasks.runcommand@RunCommand
+            command: "ccai testbase test run tests/benchmark"
             if: "parameters['build_id'].startswith('nightly')"
 
     # Cleanup phase as a taskgroup, only if cleanup_after_run
@@ -456,14 +456,14 @@ flow:
       if: "parameters['cleanup_after_run'] == True"
       items:
           - task: Run cleanup
-            tasktype: automojo.taskplus.tasks.shellscript@ShellScript
+            tasktype: ccai.taskplus.tasks.shellscript@ShellScript
             script:
                 - "set -euo pipefail"
-                - "automojo provisioning teardown --spec config/specs/spec-staging-east.yaml"
+                - "ccai provisioning teardown --spec config/specs/spec-staging-east.yaml"
                 - "rm -rf .output/staging-east-canary"
 
           - task: Notify
-            tasktype: automojo.taskplus.tasks.embeddedpython@EmbeddedPython
+            tasktype: ccai.taskplus.tasks.embeddedpython@EmbeddedPython
             script:
                 - "import os"
                 - "import requests"
@@ -478,7 +478,7 @@ Workflow(name='nightly-integration-suite')
 ├── parameters: {branch: main, build_id: nightly-2026-04-30, cleanup_after_run: true}
 └── flow:
     ├── [0] Task("Setup", ordinal="1")
-    │            command: "automojo provisioning apply --spec ..."
+    │            command: "ccai provisioning apply --spec ..."
     ├── [1] TaskGroup("Test phase", ordinal="2")
     │            items:
     │            ├── [0] Task("Smoke tests", ordinal="2.1")

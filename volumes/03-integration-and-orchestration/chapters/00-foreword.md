@@ -42,18 +42,18 @@ Pods are independent.  When the rest of this volume talks about
 through more Specifications — not more parallel tests inside one
 Pod.
 
-The portfolio of `automojo-*` packages implements this discipline.
+The portfolio of `codecraftai-*` packages implements this discipline.
 The configuration loader supports five of the six categories today
-(the sixth is in flight).  The orchestration layer is `automojo-taskplus`.
-The job layer below it is `automojo-testbase` and its distributed
-extension `automojo-testplus`.  The credentials story is
-`automojo-credentials`.  The book draws its examples from these
+(the sixth is in flight).  The orchestration layer is `codecraftai-taskplus`.
+The job layer below it is `codecraftai-testbase` and its distributed
+extension `codecraftai-testplus`.  The credentials story is
+`codecraftai-credentials`.  The book draws its examples from these
 packages because the discipline is implemented there, not because the
 discipline depends on them — the same patterns translate to any
 toolkit a reader might be using.
 
-A note on voice.  The series is narrated by AutomationX, the persona
-that opens every `automojo-*` repository's `AGENTS.md` and that
+A note on voice.  The series is narrated by CodeCraftX, the persona
+that opens every `codecraftai-*` repository's `AGENTS.md` and that
 embodies the platform's rules: debuggability paramount, explicit over
 implicit, errors should never pass silently, properties as simple data
 accessors, every function ending in an explicit `return`.  Those rules

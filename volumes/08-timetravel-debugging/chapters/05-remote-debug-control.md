@@ -21,7 +21,7 @@ servers, each on its own port, each speaking a different
 protocol:
 
 - The **JSON-lines remote-control server**
-  (`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/remote/server.py:23`),
+  (`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/remote/server.py:23`),
   default port `9876`.  Speaks a small command set
   (list_portals, activate_portal, deactivate_portal) over a
   newline-delimited JSON request/response protocol.  Designed
@@ -29,7 +29,7 @@ protocol:
   `CommandDispatcher` (ch. 4 §4.10) or by an operator's CLI
   client.
 - The **MCP server**
-  (`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/remote/mcpserver.py:35`),
+  (`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/remote/mcpserver.py:35`),
   speaks the *Model Context Protocol* — the standard Claude
   agents and other tooling use to discover and call tools.
   Exposes a richer surface (eight tools, including session
@@ -130,7 +130,7 @@ _COMMAND_HANDLERS = {
 
 This is the chapter's spec-vs-implementation honesty point.
 
-The server-side specification (`automojo-timetravel-server`'s
+The server-side specification (`codecraftai-timetravel-server`'s
 `AGENTS.md`, Layer S2.3) declares:
 
 > S2.3 — Trace Configuration Query and Update: Retrieves and
@@ -138,7 +138,7 @@ The server-side specification (`automojo-timetravel-server`'s
 > annotations) on a registered process via its remote-control
 > interface (pod F5.1 / pod F0.2).
 
-The pod-side specification (`automojo-timetravel-pod`'s
+The pod-side specification (`codecraftai-timetravel-pod`'s
 `AGENTS.md`, Layer F5.1) describes the JSON-lines server in
 terms that imply the matching commands:
 
@@ -226,7 +226,7 @@ construction
 `self._credential`; it is never written to disk by the pod.
 Persistence — and rotation, revocation, expiry — lives in the
 *server*'s credential store
-(`automojo-timetravel-server/source/packages/automojo/timetravelserver/persistence/credential_store.py`),
+(`codecraftai-timetravel-server/source/packages/ccai/timetravelserver/persistence/credential_store.py`),
 which the pod's `ServiceRegistration`
 (`pod/remote/registration.py`) consumes by negotiating an
 *instance credential* at registration time.
@@ -430,7 +430,7 @@ elif name == "activate_portal":
         if not capture_id.endswith(".bin"):
             capture_id += ".bin"
 
-        session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
+        session_dir = os.path.join(tempfile.gettempdir(), f"ccai_session_{session_id}")
         if not os.path.exists(session_dir):
             os.makedirs(session_dir, exist_ok=True)
 
@@ -444,7 +444,7 @@ elif name == "activate_portal":
 
 When an agent activates a portal in the context of a session,
 the MCP server allocates a per-session directory under
-`/tmp/automojo_session_<id>/`, generates a capture file path
+`/tmp/ccai_session_<id>/`, generates a capture file path
 inside it, and passes the file URI as the portal's `capture_id`.
 The portal records into that file; the agent later queries the
 file via `query_capture`.

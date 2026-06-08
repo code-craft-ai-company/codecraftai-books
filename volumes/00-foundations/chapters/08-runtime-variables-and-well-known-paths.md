@@ -9,23 +9,23 @@ The previous chapter introduced the extension and factory
 machinery.  This chapter introduces the *runtime* variable set
 and the *well-known path* helpers every higher tier uses.  These
 modules now live inside
-[`automojo-this-app`](../../../../automojo-this-app/source/packages/automojo/thisapp/),
-under the `automojo.thisapp` namespace alongside the chapter-6
+[`codecraftai-this-app`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/),
+under the `ccai.thisapp` namespace alongside the chapter-6
 persona machinery.  (Historically they were a separate
-`automojo-runtime` package; that package is being retired and now
-holds thin re-export shims that forward `automojo.runtime.X` to
-`automojo.thisapp.X`.  Update any `automojo.runtime.*` imports to
-`automojo.thisapp.*`.)
+`codecraftai-runtime` package; that package is being retired and now
+holds thin re-export shims that forward `ccai.runtime.X` to
+`ccai.thisapp.X`.  Update any `ccai.runtime.*` imports to
+`ccai.thisapp.*`.)
 
 > **As-built note.**  The runtime variable set, the path helpers,
 > the activation profiles, and the enumerations were all folded
-> into `automojo-this-app` so that the variable-descriptor model
+> into `codecraftai-this-app` so that the variable-descriptor model
 > and the operational variables ship from one tier.  This also let
-> `automojo-testbase` become near-standalone: testbase does *not*
+> `codecraftai-testbase` become near-standalone: testbase does *not*
 > import `RuntimeVariables` or these path helpers at all.  See the
 > sidebar later in this chapter, "What testbase actually uses".
 
-The runtime-related contents of `automojo.thisapp` are organised
+The runtime-related contents of `ccai.thisapp` are organised
 into these modules:
 
 - **`runtimevariables.py`** — `RuntimeVariablesDesc` and
@@ -40,13 +40,13 @@ into these modules:
 - **`enumerations.py`** — `JobType` and `ActivationProfile`.
 
 The programmatic override helpers (`optionoverrides.py`) have not
-yet been moved into `automojo.thisapp`; they currently still live
-in `automojo-runtime` (see the section on option overrides
+yet been moved into `ccai.thisapp`; they currently still live
+in `codecraftai-runtime` (see the section on option overrides
 below).
 
 ## The runtime variable set
 
-[`runtimevariables.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
+[`runtimevariables.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
 extends `PersonaVariablesDesc` (chapter 6) with the variables
 every running process needs for *operational* concerns —
 distinct from chapter-6's *identity* concerns.
@@ -188,7 +188,7 @@ the call sites are uniform.
 
 ## Activation profiles
 
-[`enumerations.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/enumerations.py)
+[`enumerations.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/enumerations.py)
 defines the `ActivationProfile` enum with four values:
 
 - **`Command`** — the process is running as a CLI command.
@@ -211,7 +211,7 @@ section below shows, the test-reporting path helpers are
 *activation-gated* on `AM_JOB_TYPE` being something other than
 `Unknown`.
 
-[`activation.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/activation.py)
+[`activation.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/activation.py)
 provides four `activate_profile_*` functions — one per profile:
 `activate_profile_command`, `activate_profile_console`,
 `activate_profile_service`, and `activate_profile_job(job_type)`
@@ -268,8 +268,8 @@ The application's startup code calls *one* of the activate
 functions:
 
 ```python
-from automojo.thisapp.persona import establish_app_persona
-from automojo.thisapp.activation import activate_profile_command
+from ccai.thisapp.persona import establish_app_persona
+from ccai.thisapp.activation import activate_profile_command
 
 establish_app_persona(
     name="my-tool",
@@ -287,7 +287,7 @@ to process initialization.
 
 ## Well-known paths
 
-[`paths.py`](../../../../automojo-this-app/source/packages/automojo/thisapp/paths.py)
+[`paths.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/paths.py)
 provides helpers for the directories every running process needs.
 Each helper returns an *absolute path*, creating the directory
 if it doesn't exist.
@@ -354,7 +354,7 @@ only make sense inside a results-collecting job:
 > **These activation-gated helpers are consumed by
 > integration-runtime, not testbase.**  Their only caller is
 > `RuntimeOutputContext` in
-> [`automojo-integration-runtime`](../../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/runtimeoutputcontext.py),
+> [`codecraftai-integration-runtime`](../../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/runtimeoutputcontext.py),
 > which `IntegratedTestJob` installs by overriding
 > `TestJob._create_output_context()`.  Because the helpers raise
 > `SemanticError` unless the process was activated as a job, this
@@ -385,12 +385,12 @@ consumers; no per-application directory layout decisions.
 
 ## Option overrides
 
-[`optionoverrides.py`](../../../../automojo-runtime/source/packages/automojo/runtime/optionoverrides.py)
+[`optionoverrides.py`](../../../../codecraftai-runtime/source/packages/ccai/runtime/optionoverrides.py)
 provides programmatic override helpers for runtime variables.
 (Unlike the other runtime modules, this one has *not* yet been
-folded into `automojo.thisapp` — it still lives in
-`automojo-runtime`, importing `RuntimeVariablesDesc` from
-`automojo.thisapp.runtimevariables`.)  The helpers are bundled as
+folded into `ccai.thisapp` — it still lives in
+`codecraftai-runtime`, importing `RuntimeVariablesDesc` from
+`ccai.thisapp.runtimevariables`.)  The helpers are bundled as
 static methods on an `AM_RUNTIME_OPTION_OVERRIDES` class; each
 wraps an `override_variable_value` call for one knob.  The
 pattern: a CLI tool's `--debug-debugger` flag sets
@@ -443,7 +443,7 @@ Three consumption patterns recur.
 ### Pattern 1: read a runtime variable
 
 ```python
-from automojo.thisapp.runtimevariables import RuntimeVariables
+from ccai.thisapp.runtimevariables import RuntimeVariables
 
 run_id = RuntimeVariables.AM_RUN_ID
 log_dir = RuntimeVariables.AM_LOG_DIRECTORY
@@ -457,7 +457,7 @@ within the resolution.
 ### Pattern 2: get a well-known path
 
 ```python
-from automojo.thisapp.paths import (
+from ccai.thisapp.paths import (
     get_directory_for_cached_files,
     get_path_for_diagnostics,
     get_path_for_output,
@@ -475,7 +475,7 @@ activation-gated — it requires a job activation.)
 ### Pattern 3: activate the runtime profile
 
 ```python
-from automojo.thisapp.activation import activate_profile_command
+from ccai.thisapp.activation import activate_profile_command
 
 activate_profile_command()
 ```
@@ -491,7 +491,7 @@ Three deliberate non-features.
 
 `AM_JOB_*` variables identify the job, but the runtime layer
 doesn't *run* jobs.  Job execution is Volume 1's territory
-(`automojo-testbase`'s test job runner) and Volume 2's
+(`codecraftai-testbase`'s test job runner) and Volume 2's
 (distributed test jobs).  The runtime layer provides identity
 for whatever job is running; the running is elsewhere.
 
@@ -503,13 +503,13 @@ for whatever job is running; the running is elsewhere.
 > needs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
 > `AM_DEBUG_*`, `AM_DIAGNOSTICS_*`, `AM_TESTRUN_TIMEOUT`) directly
 > from `os.environ` via a tiny, dependency-free module,
-> [`automojo.testbase.environment`](../../../../automojo-testbase/source/packages/automojo/testbase/environment.py).
+> [`ccai.testbase.environment`](../../../../codecraftai-testbase/source/packages/ccai/testbase/environment.py).
 > Standalone testbase runs *without* activation — no presence
-> folder, no `RuntimeVariables`, no `automojo-this-app` — and
+> folder, no `RuntimeVariables`, no `codecraftai-this-app` — and
 > records its run summary to stdout.  The full runtime variable
 > set, the presence-folder results layout, and the rendered HTML
 > summary are the responsibility of `IntegratedTestJob` in
-> `automojo-integration-runtime`, which activates the process as a
+> `codecraftai-integration-runtime`, which activates the process as a
 > `JobType.TestRun` job and installs the `RuntimeOutputContext`
 > shown above.
 
@@ -557,10 +557,10 @@ The runtime layer is consumed by:
   inheriting all runtime variables and adding configuration-
   specific descriptors on top.
 - **Volume 1 (Testing)** — the *integration* test runner
-  (`IntegratedTestJob` in `automojo-integration-runtime`) reads
+  (`IntegratedTestJob` in `codecraftai-integration-runtime`) reads
   `AM_JOB_*` for job identity, `AM_BUILD_*` / `AM_PIPELINE_*` for
   run metadata, and routes results through the presence-folder
-  path helpers.  Plain `automojo-testbase` runs standalone and
+  path helpers.  Plain `codecraftai-testbase` runs standalone and
   reads only its few core knobs from `os.environ` (see the
   testbase sidebar above) — it does not consume this layer.
 - **Volume 3 (Orchestration)** — the chapter-21
@@ -575,8 +575,8 @@ the typed accessors.
 ## Summary
 
 - The runtime variable set, path helpers, activation profiles,
-  and enumerations now live in **`automojo.thisapp`** (the old
-  `automojo-runtime` package is being retired and holds only
+  and enumerations now live in **`ccai.thisapp`** (the old
+  `codecraftai-runtime` package is being retired and holds only
   re-export shims).  They provide the *operational* runtime
   variable set plus well-known path helpers plus
   activation-profile commands.
@@ -607,7 +607,7 @@ the typed accessors.
   consumed by integration-runtime's `RuntimeOutputContext`, not
   by plain testbase.
 - **Option overrides** (`AM_RUNTIME_OPTION_OVERRIDES`, still in
-  `automojo-runtime`) — static methods that wrap
+  `codecraftai-runtime`) — static methods that wrap
   `override_variable_value` calls per runtime variable.
   The CLI doesn't reach into the descriptor model; it calls
   named override methods.
@@ -615,7 +615,7 @@ the typed accessors.
   adapter (the adapter lives in the project), *not* multi-tenant;
   and plain `testbase` does *not* consume it at all.
 
-The next chapter introduces `automojo-configuration` — the
+The next chapter introduces `codecraftai-configuration` — the
 configuration-loading machinery that builds on the runtime
 variable model and provides the multi-source, multi-format,
 optionally-encrypted file loader the rest of the portfolio

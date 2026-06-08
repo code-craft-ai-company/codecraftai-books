@@ -4,20 +4,20 @@
 > structure that the application has to fit into.  The Agent
 > Class.  The Tool Class.  The Memory Class.  Inherit from
 > these specific shapes and the library wires you up.
-> `automojo-agent-kit` is an *SDK*.  It ships base classes,
+> `codecraftai-agent-kit` is an *SDK*.  It ships base classes,
 > but the application owns the shape.  This chapter is about
 > the difference, and why a production AI agent benefits from
 > the SDK shape.*
 
-`automojo-agent-kit` is the volume's subject — a Python SDK
-for building AI agents.  The package is large by automojo
+`codecraftai-agent-kit` is the volume's subject — a Python SDK
+for building AI agents.  The package is large by ccai
 standards: ~217 modules, ~46k LOC, 305 test files at last
 count.  Volume 7 is the framework's largest book because its
 subject is the framework's largest package.
 
 This chapter establishes *why the SDK is shaped the way it
 is*.  By the end, a reader should understand the
-framework-vs-SDK distinction, what `automojo-agent-kit`
+framework-vs-SDK distinction, what `codecraftai-agent-kit`
 commits to, and what it deliberately leaves to the application.
 
 ## The framework vs SDK distinction
@@ -42,7 +42,7 @@ agent groups.  Each imposes a *control flow*: you build your
 agent inside the framework's structure, and the framework
 runs it.
 
-`automojo-agent-kit` is an SDK.  It ships:
+`codecraftai-agent-kit` is an SDK.  It ships:
 
 - `Agent` (an abstract base class) — you subclass it.
 - `Tool` (abstract base) — you subclass each tool.
@@ -90,7 +90,7 @@ should look like every other test in the application's test
 suite.  Frameworks often have *test runners* of their own;
 SDKs let the application's existing test framework drive.
 
-`automojo-agent-kit`'s tests use the framework's standard
+`codecraftai-agent-kit`'s tests use the framework's standard
 testbase machinery (Volume 1 chapter 2).  No special
 agent-test runner.  Mocks are constructed using the
 portfolio's standard `Mock` class (Volume 1 chapter 7).
@@ -104,7 +104,7 @@ or magic recovery makes failures harder to diagnose.  An SDK
 that surfaces failures through typed exceptions and
 structured results lets the application decide what to do.
 
-`automojo-agent-kit`'s tools return `ToolResult` objects
+`codecraftai-agent-kit`'s tools return `ToolResult` objects
 with `STATUS_SUCCESS` or `STATUS_FAILURE`; LLM providers
 raise typed exceptions; the agent's lifecycle has explicit
 states (`CREATED / INITIALIZED / RUNNING / PAUSED / ERROR /
@@ -226,9 +226,9 @@ To make the SDK shape concrete, here's a minimal but
 complete Agent subclass.
 
 ```python
-from automojo.agentkit.agent import Agent
-from automojo.agentkit.agentconfiguration import AgentConfiguration
-from automojo.agentkit.lifecyclestate import LifecycleState
+from ccai.agentkit.agent import Agent
+from ccai.agentkit.agentconfiguration import AgentConfiguration
+from ccai.agentkit.lifecyclestate import LifecycleState
 
 
 class HelloAgent(Agent):
@@ -352,7 +352,7 @@ consistent value.
 
 ## What the SDK *doesn't* do
 
-A short list of things `automojo-agent-kit` deliberately
+A short list of things `codecraftai-agent-kit` deliberately
 leaves to the application:
 
 ### It doesn't decide which LLM to use
@@ -429,18 +429,18 @@ The remaining eight chapters walk the SDK by subsystem:
   `MetricsCollector` / `ExecutionRecorder` plus the 13
   built-in agent metrics.
 - **Chapter 7** — testing AI agents.  The 305 test files,
-  the mock-first discipline, the `automojo.testbase.mocking.Mock`
+  the mock-first discipline, the `ccai.testbase.mocking.Mock`
   pattern.
 - **Chapter 8** — property tests at scale.  72 property-
   based test files, the `@given(constraints={"max_examples":
   50})` cap, what the property tests actually catch.
 - **Chapter 9** — building an agent that uses the rest of
-  the automojo portfolio.  An agent that runs sysman
+  the ccai portfolio.  An agent that runs sysman
   features, observes through Volume 8's time-travel
   debugging, exposes a Flask dashboard.
 
 By the end of the volume, a reader should be able to read
-any module in `automojo-agent-kit` and predict its shape
+any module in `codecraftai-agent-kit` and predict its shape
 from the patterns established here.
 
 ## What's next

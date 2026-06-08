@@ -30,7 +30,7 @@ caught and fixed in commit `1545f67`.
 
 ## The class
 
-**File:** `automojo-landscaping/source/packages/automojo/landscaping/friendlyidentifier.py:24`
+**File:** `codecraftai-landscaping/source/packages/ccai/landscaping/friendlyidentifier.py:24`
 
 ```python
 class FriendlyIdentifier:

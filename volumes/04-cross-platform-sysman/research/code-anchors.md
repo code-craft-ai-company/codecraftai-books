@@ -1,12 +1,12 @@
 # Volume 4 — Code-Anchor Index
 
-## automojo-sysman-common (chapters 1–3)
+## codecraftai-sysman-common (chapters 1–3)
 
 ### The contracts
 
-- `automojo-sysman-common/specs/contracts/README.md` — master index (361 lines).
-- `automojo-sysman-common/specs/contracts/README.md:75–364` — the **11 Implementation Conventions** (load-bearing for ch.9).
-- `automojo-sysman-common/specs/contracts/README.md:385–510` — the 50-contract catalogue.
+- `codecraftai-sysman-common/specs/contracts/README.md` — master index (361 lines).
+- `codecraftai-sysman-common/specs/contracts/README.md:75–364` — the **11 Implementation Conventions** (load-bearing for ch.9).
+- `codecraftai-sysman-common/specs/contracts/README.md:385–510` — the 50-contract catalogue.
 - 50 directories under `specs/contracts/`, each with a `contract.md`.  Examples:
   - `package-management/contract.md`
   - `service-management/contract.md`
@@ -23,22 +23,22 @@
 
 ### `featurebase.py` (the shared base)
 
-- `automojo-sysman-common/source/packages/automojo/sysman/common/featurebase.py:113–151` — `ActionStatus`, `FeatureConfig`, `FeatureActionResult` canonical types.
+- `codecraftai-sysman-common/source/packages/ccai/sysman/common/featurebase.py:113–151` — `ActionStatus`, `FeatureConfig`, `FeatureActionResult` canonical types.
 - `featurebase.py:154–205` — `BaseFeatureManager` declaration with `result_class`, `status_class`, `feature_name` overridable class variables.
 - `featurebase.py:229–300` — `_dispatch(*, command, detail, stdin, operation, elevated_override, **extra)` — the helper enforcing dry-run, elevation, result wrapping.
 - `featurebase.py` (366 lines total).
 
 ### Discipline anchors
 
-- `automojo-sysman-common/AGENTS.md:15–26` — high-level project rules.
-- `automojo-sysman-common/userguide/10-02-naming-conventions.rst` — OS-prefixed type names.
-- `automojo-sysman-common/specs/design.md` — package scope (18 lines).
+- `codecraftai-sysman-common/AGENTS.md:15–26` — high-level project rules.
+- `codecraftai-sysman-common/userguide/10-02-naming-conventions.rst` — OS-prefixed type names.
+- `codecraftai-sysman-common/specs/design.md` — package scope (18 lines).
 
-## automojo-sysman-linux-redhat (chapter 4)
+## codecraftai-sysman-linux-redhat (chapter 4)
 
 ### Layout
 
-- `automojo-sysman-linux-redhat/source/packages/automojo/sysman/linux/redhat/` — 47 `.py` files (excluding `__init__.py`).
+- `codecraftai-sysman-linux-redhat/source/packages/ccai/sysman/linux/redhat/` — 47 `.py` files (excluding `__init__.py`).
 
 ### Feature registry
 
@@ -53,19 +53,19 @@
 
 ### Tests
 
-- `source/testroots/testbase/automojo/tests/sysman/linux/redhat/` — 53 test files.
+- `source/testroots/testbase/ccai/tests/sysman/linux/redhat/` — 53 test files.
 
 ### RHEL-specific features (not in Ubuntu)
 
 - `cockpit-management`, `insights-management`, `selinux-management`, `subscription-management`, `tuned-management`.
 - RHEL retains *unprefixed* class names (`PackageManager`, not `RhelPackageManager`) for historical reasons.
 
-## automojo-sysman-linux-ubuntu (chapter 5)
+## codecraftai-sysman-linux-ubuntu (chapter 5)
 
 ### Layout
 
-- `automojo-sysman-linux-ubuntu/source/packages/automojo/sysman/linux/ubuntu/` — 40 `.py` files.
-- Imports `featurebase` from `automojo.sysman.common` (the shared-base pattern).
+- `codecraftai-sysman-linux-ubuntu/source/packages/ccai/sysman/linux/ubuntu/` — 40 `.py` files.
+- Imports `featurebase` from `ccai.sysman.common` (the shared-base pattern).
 
 ### Representative features
 
@@ -84,17 +84,17 @@
 - netplan YAML drop-ins vs NetworkManager KeyFile.
 - `UbuntuServiceScope` enum (SYSTEM vs USER) — distinguishes user-scope services.
 
-## automojo-sysman-macos (chapter 6)
+## codecraftai-sysman-macos (chapter 6)
 
 ### Layout
 
-- `automojo-sysman-macos/source/packages/automojo/sysman/macos/` — 49 `.py` files.
+- `codecraftai-sysman-macos/source/packages/ccai/sysman/macos/` — 49 `.py` files.
 
 ### Representative features
 
 - `packagemanagement.py:159–246` — `MacosPackageManager(BaseFeatureManager)`; uses Homebrew with elevation inversion (Convention 11).
 - `servicemanagement.py:1–75` — uses `launchctl` with `gui/<uid>` domain mapping.
-- `firewallmanagement.py:1–60` — pf via per-anchor files at `/etc/pf.anchors/automojo.<zone>`.
+- `firewallmanagement.py:1–60` — pf via per-anchor files at `/etc/pf.anchors/ccai.<zone>`.
 - `networkconfiguration.py:1–45` — `networksetup` + `ifconfig` + BSD `route` + `scutil`.
 - `configurationmanagement.py:1–80` — plist via `defaults` + plaintext via `cat`/`tee`.
 
@@ -106,20 +106,20 @@
 
 - **Homebrew refuses root** — wraps with `sudo -u <brew_user>` while keeping `elevated=False`.
 - **launchd domains** — `gui/<uid>` for GUI sessions; `system` for system scope.
-- **pf anchors** — zones map to `/etc/pf.anchors/automojo.<zone>` files.
+- **pf anchors** — zones map to `/etc/pf.anchors/ccai.<zone>` files.
 - **Hostname triple** — `HostName` / `ComputerName` / `LocalHostName` set via `scutil`.
 
-## automojo-sysman-windows (chapter 7)
+## codecraftai-sysman-windows (chapter 7)
 
 ### Layout
 
-- `automojo-sysman-windows/source/packages/automojo/sysman/windows/` — 49 `.py` files.
+- `codecraftai-sysman-windows/source/packages/ccai/sysman/windows/` — 49 `.py` files.
 
 ### Representative features
 
 - `packagemanagement.py:1–50` — `WindowsPackageManager(BaseFeatureManager)`; `winget` with locale-fragile column-position parsing.
 - `servicemanagement.py:1–100` — PowerShell `Get-Service` + `ConvertTo-Json -Compress -Depth 5` for stable cross-version parsing.
-- `firewallmanagement.py:1–90` — `New-NetFirewallRule` with `automojo-svc-<service>` / `automojo-port-<port>-<protocol>` rule prefixes.
+- `firewallmanagement.py:1–90` — `New-NetFirewallRule` with `codecraftai-svc-<service>` / `codecraftai-port-<port>-<protocol>` rule prefixes.
 
 ### Tests
 
@@ -133,11 +133,11 @@
 - **No reload signal** — `reload_service` returns FAILED; `reload_daemon` is a no-op.
 - **`elevation_blocked: bool`** on `RunResult` (Convention 6) — the runner pre-detects elevation status.
 
-## automojo-sysman-uefi (chapter 8)
+## codecraftai-sysman-uefi (chapter 8)
 
 ### Layout
 
-- `automojo-sysman-uefi/source/packages/automojo/sysman/uefi/` — **5 modules** (intentional).
+- `codecraftai-sysman-uefi/source/packages/ccai/sysman/uefi/` — **5 modules** (intentional).
 
 ### The five features
 
@@ -155,7 +155,7 @@
 
 ## The 11 Implementation Conventions (chapter 9)
 
-From `automojo-sysman-common/specs/contracts/README.md:75–364`:
+From `codecraftai-sysman-common/specs/contracts/README.md:75–364`:
 
 1. **`ICommandRunner` is the file-I/O seam** — no separate `IFileOperator`; route through `cat` / `tee` / `Get-Content` / `Set-Content`.
 2. **`command: list[str] | None` on action results** — every `*ActionResult` records the argv that ran (or would have run for dry-run).

@@ -21,7 +21,7 @@
 ### The setup
 
 A team running Volume 2's tandem distributed test framework
-(`automojo-testplus` driving `automojo-pod-tcp`) has a test
+(`codecraftai-testplus` driving `codecraftai-pod-tcp`) has a test
 that fails intermittently in CI.  The test exercises a
 distributed system: a *driver* Pod (capital P, the test-
 execution unit from Volume 2) sends a request through a
@@ -102,7 +102,7 @@ the one recording.
 The capture path encodes the CI run ID so concurrent test runs
 don't overwrite each other's recordings.  The pod's portal
 activation
-(`automojo-timetravel-pod/source/packages/automojo/timetravel/pod/portalregistry.py:25-41`)
+(`codecraftai-timetravel-pod/source/packages/ccai/timetravel/pod/portalregistry.py:25-41`)
 stores the capture URI; the next entry into the
 `db.transaction.commit` scope routes the recording there
 (via `portal.py:187-250`).
@@ -117,8 +117,8 @@ The recording, off-line, walked through the pod-side
 `reader.py`:
 
 ```python
-from automojo.timetravel.pod.reader import TraceFileReader
-from automojo.timetravel.pod.timeline import TimelineBuilder
+from ccai.timetravel.pod.reader import TraceFileReader
+from ccai.timetravel.pod.timeline import TimelineBuilder
 
 reader = TraceFileReader("/tmp/ci-debug-16.bin")
 events = list(reader.read_events())
@@ -234,7 +234,7 @@ fails, those portals are the operator's first switch.
 ### The setup
 
 A team running an agent built on Volume 7's
-`automojo-agent-kit` has a customer support bot.  The bot
+`codecraftai-agent-kit` has a customer support bot.  The bot
 should call the `lookup_order` tool first, then call
 `generate_response` second, with the order data threaded through.
 
@@ -411,7 +411,7 @@ sits comfortably in the agent SDK rather than in the pod.
 
 A team running Volume 4's cross-platform sysman tier has a
 feature that *applies a firewall rule* on RHEL hosts.  The
-feature is implemented in `automojo-sysman-rhel` and consumed
+feature is implemented in `codecraftai-sysman-rhel` and consumed
 through the standard sysman client.  The implementation
 shells out to `firewalld`'s `firewall-cmd`.
 
@@ -456,7 +456,7 @@ REST surface:
 
 ```
 POST /processes/{host_id}/portals/sysman.action.run/activate
-  payload: {"capture_id": "file:///var/log/automojo/firewall-debug.bin"}
+  payload: {"capture_id": "file:///var/log/ccai/firewall-debug.bin"}
 ```
 
 (In the implementation as committed, this endpoint returns mock
@@ -471,9 +471,9 @@ A scheduled re-application of the firewall rule fires.  The
 recording captures the action.  The team reads the file:
 
 ```python
-from automojo.timetravel.pod.reader import TraceFileReader
+from ccai.timetravel.pod.reader import TraceFileReader
 
-reader = TraceFileReader("/var/log/automojo/firewall-debug.bin")
+reader = TraceFileReader("/var/log/ccai/firewall-debug.bin")
 events = list(reader.read_events())
 
 # Walk the variable snapshots inside sysman.action.run
@@ -585,7 +585,7 @@ is updated to require positive confirmation with an explicit
 ### Cross-reference to Volume 4
 
 Volume 4's RHEL chapter (ch. 4) walked the
-`automojo-sysman-rhel` package, including the deliberate
+`codecraftai-sysman-rhel` package, including the deliberate
 deviation from Convention 4: RHEL-specific exception types are
 *not* prefixed with the platform name, because the package's
 contract is the OS-specific implementation of a sysman feature

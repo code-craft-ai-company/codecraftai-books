@@ -4,7 +4,7 @@
 Orchestrations and Jobs*
 
 This is the working directory for Volume 3.  The series-level entry for
-this volume lives in [`automojo-volumes.md`](../../automojo-volumes.md);
+this volume lives in [`codecraftai-volumes.md`](../../codecraftai-volumes.md);
 this directory is where the volume gets drafted.
 
 ## Layout
@@ -13,7 +13,7 @@ this directory is where the volume gets drafted.
 03-integration-and-orchestration/
 ├── README.md            # this file
 ├── outline.md           # detailed chapter-by-chapter outline (one level
-│                          deeper than automojo-volumes.md)
+│                          deeper than codecraftai-volumes.md)
 ├── chapters/            # per-chapter draft files
 ├── research/            # findings on open questions; code-anchor index
 ├── case-studies/        # full worked-example pipelines (before / after)
@@ -41,7 +41,7 @@ specific blockers.
   tag; YAML configurations as `yaml`; shell commands as `bash`; Python
   as `python`.
 - Every claim is anchored on a concrete file:line reference into one of
-  the `automojo-*` source repositories.  See
+  the `codecraftai-*` source repositories.  See
   [`research/code-anchors.md`](research/code-anchors.md) for the
   running index.
 - Chapter files start with a one-paragraph chapter abstract, then

@@ -1,6 +1,6 @@
 # Chapter 10 — Credential Resolution
 
-> *The `automojo-credentials` package gives you the vocabulary.  The
+> *The `codecraftai-credentials` package gives you the vocabulary.  The
 > package does not give you a way to fetch the secret value.  This
 > chapter is about that gap and how to close it.*
 
@@ -34,7 +34,7 @@ credentials.yaml ──► YAML parser ──► dict ──►
 ```
 
 The
-[`CredentialManager`](../../../automojo-credentials/source/packages/automojo/credentials/credentialmanager.py)
+[`CredentialManager`](../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py)
 takes a *parsed dictionary* — `credential_info` — and treats every
 string value as opaque.  When the YAML contains
 `password: hunter2`, the resulting `BasicCredential.password` is
@@ -174,7 +174,7 @@ modifying the resolver.
 
 ## The shipped backends (none) and the ones you build
 
-The shipped scope of `automojo-credentials` is zero backends.  The
+The shipped scope of `codecraftai-credentials` is zero backends.  The
 following sections walk through the most common backends a reader
 will build.  Each subsection is a recipe — interface contract,
 implementation sketch, when to use it, when not to.
@@ -187,7 +187,7 @@ Useful for:
 - Containerised deployments where secrets are mounted as files
   (Kubernetes `Secret` mounted to `/run/secrets/...`, Docker
   Swarm secrets, AWS ECS secrets-as-files).
-- Local development where the secret is in `~/.automojo/secrets/`
+- Local development where the secret is in `~/.ccai/secrets/`
   protected by filesystem permissions.
 - CI where the runner has been pre-populated with secret files at a
   well-known path.
@@ -210,7 +210,7 @@ class FileBackend(CredentialBackend):
 Two design decisions worth noting:
 
 - **`expanduser` and `expandvars`** are applied to the path so
-  `${FILE:~/.automojo/secrets/db}` and
+  `${FILE:~/.ccai/secrets/db}` and
   `${FILE:$XDG_RUNTIME_DIR/secrets/db}` both work.
 - **Trailing newline stripping** because most tools that write
   secrets to files (heredocs, `echo`, vault's `vault read -field=...`)
@@ -547,7 +547,7 @@ post-lookup if a specific need surfaces.
 
 ## Host scoping
 
-The shipped `automojo-credentials` package has **no notion of host
+The shipped `codecraftai-credentials` package has **no notion of host
 scope** — a credential applies wherever its identifier is referenced.
 This is sometimes too permissive.  A credential that lets you SSH to
 the staging runner pool should not silently work against the
@@ -755,7 +755,7 @@ worth the migration.
 
 ## Summary
 
-- The `automojo-credentials` package treats secret values as opaque
+- The `codecraftai-credentials` package treats secret values as opaque
   strings.  Resolution — turning `${VAULT:/path}` into the actual
   secret — is the consumer's responsibility, deliberately so.
 - The proposed reference syntax is `${SCHEME:path}`, with each

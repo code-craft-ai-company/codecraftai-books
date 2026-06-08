@@ -6,16 +6,16 @@
 
 The previous chapter wired the orchestration to the CI vendor.
 This chapter wires the orchestration *downward* — to the layers
-of the automojo portfolio that the workflow's tasks invoke.
+of the ccai portfolio that the workflow's tasks invoke.
 Three bridges in particular:
 
 1. **Orchestration → distributed test job** — the
-   `DistributedTestJob` from Volume 2's `automojo-testplus`.
+   `DistributedTestJob` from Volume 2's `codecraftai-testplus`.
 2. **Orchestration → sysman feature** — the cross-OS feature
-   execution machinery from Volume 4's `automojo-sysman-*`
+   execution machinery from Volume 4's `codecraftai-sysman-*`
    packages.
 3. **Orchestration → provisioning** — the Specification
-   application from Volume 6's `automojo-provisioning` (which
+   application from Volume 6's `codecraftai-provisioning` (which
    chapter 4 introduced).
 
 Each bridge is a *task* — a concrete `Task` subclass that wraps
@@ -77,7 +77,7 @@ not logic.
 
 A taskplus workflow that runs a distributed test job invokes a
 `DistributedTestJob` from Volume 2's
-[`automojo-testplus`](../../../automojo-testplus/source/packages/automojo/testplus/).
+[`codecraftai-testplus`](../../../codecraftai-testplus/source/packages/ccai/testplus/).
 The chain of classes — `TestJob` (in testbase) →
 `InteropLibraryTestJob` (in interop) → `DistributedTestJob` (in
 testplus) — is Volume 2's territory; this chapter just shows the
@@ -87,10 +87,10 @@ bridge from a workflow into the chain.
 
 ```yaml
 - task: Run integration suite
-  tasktype: automojo.taskplus.tasks.distributedtest@DistributedTestJobTask
-  test_root: source/testroots/automojo
+  tasktype: ccai.taskplus.tasks.distributedtest@DistributedTestJobTask
+  test_root: source/testroots/ccai
   includes:
-      - automojo.tests.integration
+      - ccai.tests.integration
   excludes: []
   job_seed: ${parameters[job_seed]:-${RANDOM}}
 ```
@@ -120,8 +120,8 @@ The bridge is roughly sixty lines:
 
 from typing import Any, Dict
 
-from automojo.errors.exceptions import ConfigurationError
-from automojo.taskplus.model.task import Task
+from ccai.errors.exceptions import ConfigurationError
+from ccai.taskplus.model.task import Task
 
 
 class DistributedTestJobTask(Task):
@@ -149,7 +149,7 @@ class DistributedTestJobTask(Task):
     def perform_task(self, environment, parameters, flowstate) -> int:
 
         # Late import to avoid coupling taskplus to testplus at module load.
-        from automojo.testplus.distributedtestjob import DistributedTestJob
+        from ccai.testplus.distributedtestjob import DistributedTestJob
 
         # The active landscape comes from the resolved configuration —
         # the chapter-21 bootstrap-name flow already loaded it.
@@ -185,12 +185,12 @@ Three things worth naming.
 
 #### Late import
 
-The `from automojo.testplus.distributedtestjob import
+The `from ccai.testplus.distributedtestjob import
 DistributedTestJob` is inside `perform_task`, not at module top.
 This is deliberate: a workflow that uses taskplus but *not*
 testplus shouldn't pay the cost of importing testplus.  The late
-import means the dependency is *optional* — `automojo-taskplus`
-can be installed without `automojo-testplus` and the bridge
+import means the dependency is *optional* — `codecraftai-taskplus`
+can be installed without `codecraftai-testplus` and the bridge
 class is only constructible when the dependency is present.
 
 The technique generalises.  Bridges that wrap optional dependencies
@@ -250,14 +250,14 @@ propagate to remote workers? — should read Volume 2 chapter 4
 A workflow that runs a sysman feature against a fleet — for
 example, "set the firewall ruleset on every host in the active
 landscape" — invokes one of the
-[`automojo-sysman-*`](../../../automojo-sysman-common/) packages
+[`codecraftai-sysman-*`](../../../codecraftai-sysman-common/) packages
 through a small bridge task.
 
 ### YAML shape
 
 ```yaml
 - task: Configure firewall on staging
-  tasktype: automojo.taskplus.tasks.sysmanfeature@SysmanFeatureTask
+  tasktype: ccai.taskplus.tasks.sysmanfeature@SysmanFeatureTask
   feature: networking.firewall
   action: configure
   parameters:
@@ -302,7 +302,7 @@ class SysmanFeatureTask(Task):
 
     def perform_task(self, environment, parameters, flowstate) -> int:
 
-        from automojo.sysman.common.featurebase import (
+        from ccai.sysman.common.featurebase import (
             run_feature_action_on_landscape,
         )
 
@@ -396,14 +396,14 @@ relevant to their fleet.
 A workflow that needs to provision (or tear down) cloud
 resources before (or after) the rest of its work invokes
 `ProvisioningEngine` from
-[`automojo-provisioning`](../../../automojo-provisioning/source/packages/automojo/provisioning/),
+[`codecraftai-provisioning`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/),
 introduced in chapter 4.
 
 ### YAML shape
 
 ```yaml
 - task: Provision staging-east
-  tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+  tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
   specification: config/specs/spec-staging-east.yaml
   action: apply           # apply | teardown | query
 ```
@@ -418,7 +418,7 @@ Two task-specific fields:
 ```python
 class ProvisioningTask(Task):
     """
-        Applies, tears down, or queries an automojo-provisioning
+        Applies, tears down, or queries an codecraftai-provisioning
         specification (chapter 4) from within a taskplus workflow.
     """
 
@@ -445,7 +445,7 @@ class ProvisioningTask(Task):
 
     def perform_task(self, environment, parameters, flowstate) -> int:
 
-        from automojo.provisioning.provisioningengine import (
+        from ccai.provisioning.provisioningengine import (
             ProvisioningEngine,
         )
 
@@ -515,7 +515,7 @@ after looks like this:
 ```yaml
 flow:
     - task: Provision
-      tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+      tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
       specification: config/specs/spec-staging-east.yaml
       action: apply
 
@@ -524,7 +524,7 @@ flow:
           # ... test tasks ...
 
     - task: Teardown
-      tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+      tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
       specification: config/specs/spec-staging-east.yaml
       action: teardown
       if: "parameters['cleanup_after_run'] == True"
@@ -556,13 +556,13 @@ parameters:
 flow:
     # Bridge 3: provision the test environment
     - task: Provision staging-east
-      tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+      tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
       specification: config/specs/spec-staging-east.yaml
       action: apply
 
     # Bridge 2: configure firewalls on the provisioned hosts
     - task: Configure firewall
-      tasktype: automojo.taskplus.tasks.sysmanfeature@SysmanFeatureTask
+      tasktype: ccai.taskplus.tasks.sysmanfeature@SysmanFeatureTask
       feature: networking.firewall
       action: configure
       parameters:
@@ -574,15 +574,15 @@ flow:
 
     # Bridge 1: run the distributed integration suite
     - task: Run integration suite
-      tasktype: automojo.taskplus.tasks.distributedtest@DistributedTestJobTask
-      test_root: source/testroots/automojo
+      tasktype: ccai.taskplus.tasks.distributedtest@DistributedTestJobTask
+      test_root: source/testroots/ccai
       includes:
-          - automojo.tests.integration
+          - ccai.tests.integration
       job_seed: ${parameters[job_seed]:-${RANDOM}}
 
     # Bridge 3 again: tear down the test environment
     - task: Teardown
-      tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+      tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
       specification: config/specs/spec-staging-east.yaml
       action: teardown
       if: "parameters['cleanup_after_run'] == True"
@@ -610,7 +610,7 @@ Three patterns that look like bridges but aren't.
 
 ### Reaching past the API
 
-A bridge task that imports `automojo.testplus.internal._sequencer_state`
+A bridge task that imports `ccai.testplus.internal._sequencer_state`
 and mutates it directly is reaching past the public API.  When
 the downstream library refactors, the bridge breaks; when the
 breaking change reaches the workflow, the workflow author is
@@ -652,7 +652,7 @@ it as three tasks; the engine sequences them.
 ## Summary
 
 - Three bridges connect the taskplus orchestration layer to the
-  rest of the automojo portfolio: **DistributedTestJob** (Volume
+  rest of the ccai portfolio: **DistributedTestJob** (Volume
   2), **sysman feature** (Volume 4), **provisioning** (Volume
   6).  Each is a thin `Task` subclass — typically 50–80 lines
   — that wraps a single downstream API call.
@@ -662,8 +662,8 @@ it as three tasks; the engine sequences them.
   surface, return a single integer result, write rich state to
   flowstate.
 - Bridges use **late imports** so the dependency on the
-  downstream library is optional — `automojo-taskplus` can
-  install without `automojo-testplus` and the testplus bridge
+  downstream library is optional — `codecraftai-taskplus` can
+  install without `codecraftai-testplus` and the testplus bridge
   class is only constructible when the dependency is present.
 - The downstream APIs read configuration through the runtime
   API automatically.  The bridge does *not* take landscape,

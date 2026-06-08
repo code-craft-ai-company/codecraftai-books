@@ -11,7 +11,7 @@ system proposed.  All of that has built up to one question: *what
 is the thing that takes these typed inputs and runs an
 orchestration?*
 
-The answer in the portfolio is `automojo-taskplus`.  Six chapters
+The answer in the portfolio is `codecraftai-taskplus`.  Six chapters
 of Part V cover it: the task model (this chapter), the built-in
 task types (chapter 19), the workflow YAML grammar (chapter 20),
 how information flows from orchestration to job (chapter 21), how
@@ -47,7 +47,7 @@ order to run it?"*  Three properties are essential:
 The taskplus task model captures these three properties in three
 classes — `FlowNode`, `Task`, `TaskGroup` — that together form a
 small inheritance hierarchy in
-[`automojo-taskplus/source/packages/automojo/taskplus/model/`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/).
+[`codecraftai-taskplus/source/packages/ccai/taskplus/model/`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/).
 The hierarchy is small enough to read in one sitting and rich
 enough to express every workflow shape Part V's chapters will
 build on.
@@ -55,7 +55,7 @@ build on.
 ## `FlowNode` — the abstract base
 
 The root of the task model is
-[`FlowNode`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/flownode.py),
+[`FlowNode`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flownode.py),
 an `abc.ABC` class with no abstract methods.  In its entirety:
 
 ```python
@@ -102,7 +102,7 @@ The ordinal is the trace key.  When a step fails, the log message
 "step 2.3.1 failed" tells the engineer exactly where in the
 workflow to look — even when the workflow has nested taskgroups
 and parallel branches that defy a flat numbering.  The shipped
-[`Workflow.parse`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/workflow.py)
+[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
 generates ordinals as it walks the YAML; tasks and taskgroups
 inherit their ordinals at construction time.
 
@@ -170,7 +170,7 @@ node info.  Workflow authors declare it like this:
 ```
 
 The expression is a Python string evaluated by the
-[`FlowEngine`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/flowengine.py)
+[`FlowEngine`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
 at execution time.  When the expression is `None` (the field was
 absent), the node always runs.  When the expression evaluates to
 falsy, the node is skipped.
@@ -267,7 +267,7 @@ Three signature notes:
   flow logic).
 
 The `AbstractMethodError` import on line 23 of `task.py`
-([`automojo-errors`](../../../automojo-errors/source/packages/automojo/errors/exceptions.py))
+([`codecraftai-errors`](../../../codecraftai-errors/source/packages/ccai/errors/exceptions.py))
 is the canonical error for "this base method must be overridden."
 A concrete task that forgets to override `perform_task` raises
 this at first call.
@@ -490,7 +490,7 @@ state belongs in proper data stores.
 ## Summary
 
 - The taskplus task model is a small inheritance hierarchy in
-  [`automojo-taskplus/source/packages/automojo/taskplus/model/`](../../../automojo-taskplus/source/packages/automojo/taskplus/model/).
+  [`codecraftai-taskplus/source/packages/ccai/taskplus/model/`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/).
   Three classes: **`FlowNode`** (abstract base), **`Task`**
   (leaf with work), **`TaskGroup`** (recursive grouping).
 - Every flow node carries five universal fields:
@@ -516,7 +516,7 @@ state belongs in proper data stores.
   uniformly — without special-case code.
 
 The next chapter introduces the five built-in task types
-shipped in `automojo-taskplus/tasks/`: `RunCommand`,
+shipped in `codecraftai-taskplus/tasks/`: `RunCommand`,
 `ShellScript`, `EmbeddedPython`, `GitCheckout`, and
 `CreateEnvironment`.  Each is a concrete `Task` subclass; each
 illustrates the model's `perform_task` pattern; the chapter

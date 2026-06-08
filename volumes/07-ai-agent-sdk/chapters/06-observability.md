@@ -447,8 +447,8 @@ A few patterns the SDK leaves to the application:
 The SDK ships abstract `TraceExporter` and
 `MetricsExporter` base classes but no concrete exporters.
 The application provides exporters from a separate
-package (e.g., `automojo-agentkit-otlp` for
-OpenTelemetry, `automojo-agentkit-prometheus` for
+package (e.g., `codecraftai-agentkit-otlp` for
+OpenTelemetry, `codecraftai-agentkit-prometheus` for
 Prometheus).
 
 This is intentional separation.  Pinning specific
@@ -479,7 +479,7 @@ deletes recordings older than that; the SDK doesn't.
 
 Chapter 7 walks **testing AI agents**.  The 305-test-file
 discipline.  The mock-first pattern using
-`automojo.testbase.mocking.Mock`.  What gets tested at
+`ccai.testbase.mocking.Mock`.  What gets tested at
 each layer.  The 49-minute wall time at
 `TESTBASE_MAX_EXAMPLES_CAP=10`.
 

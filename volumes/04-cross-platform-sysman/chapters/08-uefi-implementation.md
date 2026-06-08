@@ -8,7 +8,7 @@
 > multi-tier.  This chapter walks the structure and the five
 > features.*
 
-`automojo-sysman-uefi` is *intentionally* the smallest
+`codecraftai-sysman-uefi` is *intentionally* the smallest
 sysman package.  The entire package is 5 feature managers:
 boot management, secure boot, EFI variables, capsule
 updates, and ESP management.
@@ -23,7 +23,7 @@ host OS.
 ## Layout
 
 ```
-automojo-sysman-uefi/source/packages/automojo/sysman/uefi/
+codecraftai-sysman-uefi/source/packages/ccai/sysman/uefi/
 ├── __init__.py
 ├── bootmanagement.py        # firmware boot entries + boot order
 ├── secureboot.py            # Secure Boot state + MOK (Linux)
@@ -33,7 +33,7 @@ automojo-sysman-uefi/source/packages/automojo/sysman/uefi/
 ```
 
 5 modules.  No `featurebase.py` (imports from
-`automojo-sysman-common`).  No registry.  Every type prefixed
+`codecraftai-sysman-common`).  No registry.  Every type prefixed
 with `Uefi`.
 
 ## The five features
@@ -188,10 +188,10 @@ A reader comparing UEFI to the per-OS packages (chapters
 packages are *multi-tier*:
 
 ```
-automojo-sysman-linux-redhat → RHEL-specific managers
-automojo-sysman-linux-ubuntu → Ubuntu-specific managers
-automojo-sysman-macos        → macOS-specific managers
-automojo-sysman-windows      → Windows-specific managers
+codecraftai-sysman-linux-redhat → RHEL-specific managers
+codecraftai-sysman-linux-ubuntu → Ubuntu-specific managers
+codecraftai-sysman-macos        → macOS-specific managers
+codecraftai-sysman-windows      → Windows-specific managers
 ```
 
 Five packages × N features = many manager classes.
@@ -199,7 +199,7 @@ Five packages × N features = many manager classes.
 UEFI is *single-tier*:
 
 ```
-automojo-sysman-uefi → 5 managers, each dispatches internally
+codecraftai-sysman-uefi → 5 managers, each dispatches internally
 ```
 
 One package, 5 features, internal host-OS dispatch.  The
@@ -309,7 +309,7 @@ What the package *deliberately doesn't* cover:
 
 The package's `README.md` explicitly states:
 
-> *`automojo-sysman-uefi` is the firmware-management tier.
+> *`codecraftai-sysman-uefi` is the firmware-management tier.
 > It covers the cross-host firmware concerns that
 > automation can manipulate from a running OS.  Vendor-
 > specific firmware features, firmware development, and

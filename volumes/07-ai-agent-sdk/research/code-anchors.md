@@ -1,10 +1,10 @@
 # Volume 7 — Code-Anchor Index
 
-## automojo-agent-kit overview
+## codecraftai-agent-kit overview
 
-- **Package layout** at `automojo-agent-kit/source/packages/automojo/agentkit/`.
+- **Package layout** at `codecraftai-agent-kit/source/packages/ccai/agentkit/`.
 - **~217 modules**, ~46k LOC.
-- **305 test files** under `source/testroots/automojo/tests/singlehost/agentkit/` (~78k LOC of test code).
+- **305 test files** under `source/testroots/ccai/tests/singlehost/agentkit/` (~78k LOC of test code).
 - **72 property-based test files** (naming convention `test_*_properties.py`).
 - **Recent verification**: 1,964 / 1,964 passed (commit `a2e437a`, Apr 27 2026).
 
@@ -108,14 +108,14 @@
 
 ### Test counts
 
-- 305 test files at `source/testroots/automojo/tests/singlehost/agentkit/` (~78,155 LOC).
+- 305 test files at `source/testroots/ccai/tests/singlehost/agentkit/` (~78,155 LOC).
 - 212 top-level test files (mostly `test_*.py`).
 - 72 property-based test files (`test_*_properties.py`).
 - 5 subdirectory layers: `builtins/` (5), `platform/` (14), `resilience/` (53), `steps/`, `transports/`.
 
 ### Mock pattern
 
-- Tests use `automojo.testbase.mocking.Mock` (not unittest.mock).
+- Tests use `ccai.testbase.mocking.Mock` (not unittest.mock).
 - `Mock().configure(recursive=True)` enables nested mock attribute access.
 - `mock_context().set_attribute(name, value)` for properties.
 - `mock_context().mock_method(name, return_value=...)` for return values.
@@ -130,7 +130,7 @@
 
 ### Recent migration
 
-- Commit `8f31798` (Mar 8 2026) — *"Switch tests over from hypothesis to testbase"* — replaced `hypothesis` with `automojo.testbase.properties`.
+- Commit `8f31798` (Mar 8 2026) — *"Switch tests over from hypothesis to testbase"* — replaced `hypothesis` with `ccai.testbase.properties`.
 - Commit `a2e437a` (Apr 27 2026) — added 89 new modules + 97 new test files.
 
 ### No CI workflow file

@@ -4,7 +4,7 @@
 
 This is the working directory for Volume 5.  The series-level
 entry for this volume lives in
-[`automojo-volumes.md`](../../automojo-volumes.md); this
+[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
 directory is where the volume gets drafted.
 
 ## Volume role in the series
@@ -43,16 +43,16 @@ Bluetooth, CAN, or a custom protocol.
 
 ## Source material
 
-- `automojo-interop` — the foundation: Aspects, ActionPattern,
+- `codecraftai-interop` — the foundation: Aspects, ActionPattern,
   LoggingPattern, the agent base, the local command agent,
   shipped protocols (DNS / mDNS, serial, power), `am-interop`
   CLI.
-- `automojo-protocol-ssh` — SSH from packet to agent.
-- `automojo-networking` — networking primitives.
-- `automojo-restclient-base` — REST foundation.
-- `automojo-restclient-github-public` — auto-generated worked
+- `codecraftai-protocol-ssh` — SSH from packet to agent.
+- `codecraftai-networking` — networking primitives.
+- `codecraftai-restclient-base` — REST foundation.
+- `codecraftai-restclient-github-public` — auto-generated worked
   example.
-- `automojo-interop-ext-upnp`, `-tasker`, `-bluetooth`, `-can`
+- `codecraftai-interop-ext-upnp`, `-tasker`, `-bluetooth`, `-can`
   — protocol extension packages.
 
 ## Layout
@@ -73,7 +73,7 @@ Bluetooth, CAN, or a custom protocol.
 |---|---|---|
 | 1 — Measured Interoperability — the philosophy | drafted | 403 |
 | 2 — The Aspects pattern — the delegation contract | drafted | 521 |
-| 3 — `automojo-interop` — agents, protocols, CLI | drafted | 385 |
+| 3 — `codecraftai-interop` — agents, protocols, CLI | drafted | 385 |
 | 4 — SSH from scratch | drafted | 836 |
 | 5 — Networking toolkit primitives | drafted | 298 |
 | 6 — REST client foundations | drafted | 563 |
@@ -90,7 +90,7 @@ Same as Volumes 0–4 and 6:
 - Markdown throughout.  Code samples in fenced blocks with the
   language tag.
 - Every claim is anchored on a concrete file:line reference
-  into one of the `automojo-*` source repositories.
+  into one of the `codecraftai-*` source repositories.
 - Use the formal name **Measured Interoperability** throughout
   — never the shortened "Measured Interop."
 - Use **persistence behaviours** as the umbrella term for

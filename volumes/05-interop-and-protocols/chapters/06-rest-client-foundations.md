@@ -7,9 +7,9 @@
 > contract; control reverts via typed exception when the
 > contract is exceeded.*
 
-`automojo-restclient-base` is the REST foundation that
-`automojo-restclient-github-public` (chapter 7) and
-Volume 6's `automojo-gitlab` (chapter 13 of Volume 6)
+`codecraftai-restclient-base` is the REST foundation that
+`codecraftai-restclient-github-public` (chapter 7) and
+Volume 6's `codecraftai-gitlab` (chapter 13 of Volume 6)
 build on.  This chapter walks the foundation classes —
 `RestClientBase`, `AspectsRest`, `RestApiGroup`,
 `ItemsResult` — and the auto-generation infrastructure that
@@ -18,7 +18,7 @@ turns OpenAPI specs into Python clients.
 ## The package layout
 
 ```
-automojo-restclient-base/source/packages/automojo/restclient/base/
+codecraftai-restclient-base/source/packages/ccai/restclient/base/
 ├── restclientbase.py         # the core client
 ├── restclientgenerator.py    # the OpenAPI generator
 ├── aspectsrest.py            # AspectsRest + ActionPattern
@@ -104,8 +104,8 @@ work for clients that are constructed but never called.
 **File:** `aspectsrest.py:24–116`
 
 `AspectsRest` is the REST-shaped Aspects subclass.  It lives
-*here* (in `automojo-restclient-base`), not in
-`automojo-interop`'s aspects module.  This is by design —
+*here* (in `codecraftai-restclient-base`), not in
+`codecraftai-interop`'s aspects module.  This is by design —
 REST has specific concerns the base `Aspects` doesn't carry,
 and the REST foundation owns those.
 
@@ -113,7 +113,7 @@ and the REST foundation owns those.
 class ActionPattern(IntEnum):
     """
         REST-shaped action patterns.  Same five values as
-        automojo-interop's ActionPattern.
+        codecraftai-interop's ActionPattern.
     """
     SINGLE_CALL = 0
     SINGLE_CONNECTED_CALL = 1
@@ -452,9 +452,9 @@ class RestClientGenerator:
     ASPECTS_TYPE: Type[AspectsRest] = AspectsRest
     PAGEDLIST_TYPE: Type[PagedList] = PagedList
 
-    SCHEMA_MODULE_ROOT = "automojo.github.rest.clients.public.schemas"
-    GROUP_MODULE_ROOT = "automojo.github.rest.clients.public.groups"
-    CLIENT_MODULE_ROOT = "automojo.github.rest.clients.public"
+    SCHEMA_MODULE_ROOT = "ccai.github.rest.clients.public.schemas"
+    GROUP_MODULE_ROOT = "ccai.github.rest.clients.public.groups"
+    CLIENT_MODULE_ROOT = "ccai.github.rest.clients.public"
 
     DEFAULT_PAGINATION_DETECTION_HINTS = {
         "detection_rules": {
@@ -557,7 +557,7 @@ By the end:
   produces methods following the foundation classes'
   conventions.
 
-The next chapter walks `automojo-restclient-github-public` —
+The next chapter walks `codecraftai-restclient-github-public` —
 the auto-generated GitHub client built on this foundation.
 A 571-module package; the chapter shows what's worth
 testing and what to trust by construction.

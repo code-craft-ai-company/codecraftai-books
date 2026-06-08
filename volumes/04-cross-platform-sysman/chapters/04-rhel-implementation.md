@@ -7,7 +7,7 @@
 > `systemctl`, `firewalld`), and the layered spec architecture
 > that distinguishes RHEL from Ubuntu's shared-base pattern.*
 
-`automojo-sysman-linux-redhat` is the first sysman package
+`codecraftai-sysman-linux-redhat` is the first sysman package
 shipped in the portfolio.  Many of the patterns the other
 four reference implementations follow were *invented* here —
 the registry, the layered spec architecture, the
@@ -18,7 +18,7 @@ discipline.
 ## Layout
 
 ```
-automojo-sysman-linux-redhat/source/packages/automojo/sysman/linux/redhat/
+codecraftai-sysman-linux-redhat/source/packages/ccai/sysman/linux/redhat/
 ├── __init__.py
 ├── featurebase.py            # local extension to the common base
 ├── featureregistry.py        # the 46-feature registry
@@ -63,28 +63,28 @@ FEATURE_DESCRIPTORS = [
     FeatureDescriptor(
         name="command-execution",
         layer=1,
-        module="automojo.sysman.linux.redhat.commandexecution",
+        module="ccai.sysman.linux.redhat.commandexecution",
         class_name="LocalCommandRunner",
         summary="Run single commands, ordered sequences, and shell scripts.",
     ),
     FeatureDescriptor(
         name="package-management",
         layer=3,
-        module="automojo.sysman.linux.redhat.packagemanagement",
+        module="ccai.sysman.linux.redhat.packagemanagement",
         class_name="PackageManager",
         summary="RPM install/remove/update/query via dnf + rpm.",
     ),
     FeatureDescriptor(
         name="service-management",
         layer=3,
-        module="automojo.sysman.linux.redhat.servicemanagement",
+        module="ccai.sysman.linux.redhat.servicemanagement",
         class_name="ServiceManager",
         summary="systemd service lifecycle + journal queries.",
     ),
     FeatureDescriptor(
         name="firewall-management",
         layer=3,
-        module="automojo.sysman.linux.redhat.firewallmanagement",
+        module="ccai.sysman.linux.redhat.firewallmanagement",
         class_name="FirewallManager",
         summary="firewalld zones, services, ports, rich rules.",
     ),
@@ -171,7 +171,7 @@ the inconsistency rather than pay the rename cost.
 A reader importing from RHEL writes:
 
 ```python
-from automojo.sysman.linux.redhat.packagemanagement import (
+from ccai.sysman.linux.redhat.packagemanagement import (
     PackageManager,
     PackageActionResult,
 )
@@ -180,7 +180,7 @@ from automojo.sysman.linux.redhat.packagemanagement import (
 A reader importing from Ubuntu writes:
 
 ```python
-from automojo.sysman.linux.ubuntu.packagemanagement import (
+from ccai.sysman.linux.ubuntu.packagemanagement import (
     UbuntuPackageManager,
     UbuntuPackageActionResult,
 )
@@ -191,10 +191,10 @@ though the class names don't.  Tests that use both packages
 (rare) typically alias one to avoid a class-name collision:
 
 ```python
-from automojo.sysman.linux.redhat.packagemanagement import (
+from ccai.sysman.linux.redhat.packagemanagement import (
     PackageManager as RhelPackageManager,
 )
-from automojo.sysman.linux.ubuntu.packagemanagement import (
+from ccai.sysman.linux.ubuntu.packagemanagement import (
     UbuntuPackageManager,
 )
 ```
@@ -395,9 +395,9 @@ A test that wants to use a Layer-3 feature (e.g.,
 runner.  The framework's typical setup:
 
 ```python
-from automojo.sysman.linux.redhat.commandexecution import LocalCommandRunner
-from automojo.sysman.linux.redhat.packagemanagement import PackageManager
-from automojo.sysman.linux.redhat.featurebase import FeatureConfig
+from ccai.sysman.linux.redhat.commandexecution import LocalCommandRunner
+from ccai.sysman.linux.redhat.packagemanagement import PackageManager
+from ccai.sysman.linux.redhat.featurebase import FeatureConfig
 
 runner = LocalCommandRunner()
 manager = PackageManager(runner=runner, config=FeatureConfig(elevated=True))
@@ -409,7 +409,7 @@ the runner to the manager.  The layered architecture is
 *expressed* in the construction pattern.
 
 The spec files themselves follow the same layering.  Under
-`automojo-sysman-linux-redhat/specs/`, each layer has its
+`codecraftai-sysman-linux-redhat/specs/`, each layer has its
 own subdirectory (`L1/`, `L2/`, `L3/`), and within each
 layer, each feature has its own subdirectory with
 `design.md`, `requirements.md`, and `tasks.md`.  The spec
@@ -421,7 +421,7 @@ formats, and edge cases.
 ## Tests
 
 53 test files at
-`source/testroots/testbase/automojo/tests/sysman/linux/redhat/`.
+`source/testroots/testbase/ccai/tests/sysman/linux/redhat/`.
 
 The test structure mirrors the source structure:
 
@@ -460,9 +460,9 @@ in `source/testroots/...` are the bulk of the test count.
 ## What's next
 
 Chapter 5 walks the Ubuntu implementation
-(`automojo-sysman-linux-ubuntu`) — 40 features, 41 test
+(`codecraftai-sysman-linux-ubuntu`) — 40 features, 41 test
 files, the *prefixed* class names from Convention 4, and
 the shared-base pattern that imports `featurebase` from
-`automojo-sysman-common` rather than defining it locally.
+`codecraftai-sysman-common` rather than defining it locally.
 The Ubuntu package shows what the sysman discipline looks
 like *after* the patterns RHEL established.

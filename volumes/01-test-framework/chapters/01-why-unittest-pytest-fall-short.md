@@ -11,7 +11,7 @@
 
 `unittest` and `pytest` are excellent tools.  Across millions of
 Python codebases they verify the correctness of functions, classes,
-modules, and small graphs of objects.  The `automojo-*` portfolio
+modules, and small graphs of objects.  The `codecraftai-*` portfolio
 uses both — `pytest` runs on the framework's *own* unit tests,
 `unittest` is the foundation of `unittest.mock`'s spec-aware
 mocking, and the discipline of writing testable functions started
@@ -21,7 +21,7 @@ up.
 This volume is not a polemic against pytest.  It is an explanation
 of why a particular kind of test — the kind that runs against a
 *system* rather than a *function* — needs a different framework.
-That framework is `automojo-testbase`, and the rest of Volume 1
+That framework is `codecraftai-testbase`, and the rest of Volume 1
 walks through it.  This chapter establishes *why testbase exists*
 by listing the constraints automation testing places on a runner,
 then asking which of those constraints `pytest` was designed to
@@ -85,7 +85,7 @@ Pytest does the following extremely well:
   rewriting gives you the values of the operands of a failed
   assertion without having to write `assertEqual(a, b, "...")`.
 
-`automojo-testbase` keeps the first three properties.  Tests are
+`codecraftai-testbase` keeps the first three properties.  Tests are
 plain functions whose names start with `test_`, found by
 inspecting modules under a test root (see Chapter 2).  Fixtures
 compose; they are just expressed differently.  Parametrisation
@@ -119,14 +119,14 @@ map onto fixtures:
 - **Activating operations**: starting the side processes (log
   shippers, metric agents) that other tests will rely on.
 
-In `automojo-testbase`, these are five `fire_*` hooks on `TestJob`:
+In `codecraftai-testbase`, these are five `fire_*` hooks on `TestJob`:
 `fire_attach_to_framework`, `fire_attach_to_environment`,
 `fire_activate_configuration`, `fire_activate_integration`,
 `fire_activate_operations` (file:
-`automojo-testbase/source/packages/automojo/testbase/testjob.py:379–408`).
+`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:379–408`).
 On a single-host run all five are no-op stubs — they exist
-because Volume 2's `InteropLibraryTestJob` (in `automojo-interop`,
-`source/packages/automojo/interop/testing/testjob.py:22`) overrides
+because Volume 2's `InteropLibraryTestJob` (in `codecraftai-interop`,
+`source/packages/ccai/interop/testing/testjob.py:22`) overrides
 them to drive landscape activation.  The hooks are *the* place
 where testbase's single-host runner and Volume 2's distributed
 runner meet.
@@ -157,7 +157,7 @@ def test_device_responds(dev):
 ```
 
 The `@testbase.attach.parameter(source, identifier=...)` form
-(`automojo-testbase/source/packages/automojo/testbase/declaration/attachments.py`)
+(`codecraftai-testbase/source/packages/ccai/testbase/declaration/attachments.py`)
 uses an originator to produce the parameter, with constraints
 on lifespan and assigned scope.  The originator can come from a
 *different package* than the test, registered via the namespace
@@ -178,7 +178,7 @@ Testbase produces three result artefacts during a run:
 - `testsummary.json` — the high-level summary of pass/fail counts.
 - `testresults_stream.jsos` — a stream file written *as tests
   finish*, one record per event, prefixed by an ASCII record
-  separator character (`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90–183`).
+  separator character (`codecraftai-testbase/source/packages/ccai/testbase/results/recorders/jsonresultrecorder.py:90–183`).
 - `testresults.json` — the consolidated final document, written
   at the end.
 
@@ -200,7 +200,7 @@ will run for hours without finding anything new.
 
 Testbase ships an environment-variable cap:
 `TESTBASE_MAX_EXAMPLES_CAP`
-(`automojo-testbase/source/packages/automojo/testbase/properties/propertyrunner.py:47–79`)
+(`codecraftai-testbase/source/packages/ccai/testbase/properties/propertyrunner.py:47–79`)
 caps the per-test `max_examples` regardless of what the test
 declared.  CI runs at `TESTBASE_MAX_EXAMPLES_CAP=10` to keep the
 fast path under an hour; full-sweep runs leave the cap unset.
@@ -219,11 +219,11 @@ failures by which device they touched, drive an AI agent that
 decides whether a flake is real.  Stdout doesn't survive that.
 
 Testbase ships an `agents` CLI subcommand
-(`automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/__init__.py:18–28`)
+(`codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/__init__.py:18–28`)
 with three groups: `summary`, `testresult`, `config`.  Each
 returns structured data — extracted from the JSOS stream by a
 parser shared across the subcommands
-(`automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/jsosparser.py`)
+(`codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/jsosparser.py`)
 — that an agent or dashboard can consume directly.  The
 agent-readable surface is *the same* surface a human reads;
 Chapter 6 walks the contract.
@@ -298,7 +298,7 @@ single-actor commitment — but the observers are full
 participants in the ride, with their own perspective and their
 own report at the end.
 
-File: `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`.
+File: `codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py`.
 
 Where parallelism *does* live: at the **job level**, across
 independent **Pods**.  A Pod is a set of devices configured to
@@ -326,23 +326,23 @@ chain of dependencies — configuration, the runtime foundation,
 this-app — that many low-level packages could not import without a
 cycle.  That chain is being severed.  testbase is becoming
 **near-standalone**: its intended dependencies are exactly
-`automojo-arcli`, `automojo-errors`, `automojo-interfaces`,
-`automojo-waiting`, and `automojo-xmodules` — no configuration tier,
+`codecraftai-arcli`, `codecraftai-errors`, `codecraftai-interfaces`,
+`codecraftai-waiting`, and `codecraftai-xmodules` — no configuration tier,
 no runtime foundation, no this-app.  The *core* runner already lives
 on that floor: `TestJob` reads its handful of environment knobs
-directly via the dependency-free `automojo.testbase.environment`
+directly via the dependency-free `ccai.testbase.environment`
 module, and it resolves output and run metadata through injected
 seams (`IOutputContext` / `IRunMetadata`) rather than importing the
 runtime.  The presence-folder results layout, the
 JSOS-to-disk-with-HTML summary, and the CI/build metadata that used
 to be testbase's business are now the job of `IntegratedTestJob` in
-`automojo-integration-runtime`; plain testbase records to stdout and
+`codecraftai-integration-runtime`; plain testbase records to stdout and
 runs without activation.  Chapter 2 and Volume 2 walk that seam.
 
 This is partly in-flight.  The runner core is off the old chain, but
-testbase's *CLI and bootstrap* (`automojo.testbase.initialize`, the
+testbase's *CLI and bootstrap* (`ccai.testbase.initialize`, the
 `cli/` command tree, the result server) still import
-`automojo.runtime.*` and `automojo.thisapp.*`, and `pyproject.toml`
+`ccai.runtime.*` and `ccai.thisapp.*`, and `pyproject.toml`
 still lists configuration, runtime, and this-app among its
 dependencies.  Finishing that decoupling — and trimming the
 dependency list to the five-package floor — is the remaining step;
@@ -357,12 +357,12 @@ it sits below the framework's old dependency chain.
 
 What remains on `unittest` is a small, **permanent** exclusion set:
 
-- `automojo-errors`
-- `automojo-interfaces`
-- `automojo-waiting`
-- `automojo-xmodules`
-- `automojo-arcli`
-- `automojo-extension`
+- `codecraftai-errors`
+- `codecraftai-interfaces`
+- `codecraftai-waiting`
+- `codecraftai-xmodules`
+- `codecraftai-arcli`
+- `codecraftai-extension`
 
 The rationale is a single rule with one product decision attached.
 The first five are testbase's *own* dependencies — a framework
@@ -370,7 +370,7 @@ cannot test the packages it is built on without a bootstrap cycle,
 so those stay on `unittest` by necessity.  (testbase depends on
 `arcli` for its own CLI, which is why `arcli` is on this list even
 though it is otherwise a general-purpose toolkit.)  The sixth,
-`automojo-extension`, is the product decision: it underpins the
+`codecraftai-extension`, is the product decision: it underpins the
 namespace-package extensibility model that `IntegratedTestJob`
 registers through (the same model Volume 0 chapter 7 introduced),
 and keeping it on `unittest` avoids a circularity between the
@@ -388,7 +388,7 @@ the `integration-runtime` reporting package, the `timetravel-pod`
 tracer, the `storage-database` and `dataprofiles` libraries, and the
 `sysman-common` tier — the tests have been converted to testbase at
 the source level.  Each package's tests now live as plain `def test_*`
-functions under `source/testroots/automojo/tests/…` (discovered by the
+functions under `source/testroots/ccai/tests/…` (discovered by the
 runner via `--includes`) where they had been `unittest.TestCase`
 methods under `source/tests/`.  The conversion is one-to-one: every
 original test method becomes exactly one test function; `setUp` /
@@ -422,11 +422,11 @@ Volume 1's ten chapters walk testbase from the outside in:
 - Chapter 6 covers the `agents` machine-readable CLI.
 - Chapter 7 covers testbase's own mocking primitives.
 - Chapter 8 covers `arcli`, the declarative CLI toolkit underneath
-  every `automojo-*` CLI.
+  every `codecraftai-*` CLI.
 - Chapter 9 carries the single-host half of the landscape
   contract — the public API Volume 2 will extend.
 - Chapter 10 is a case study: the 3,700-test single-host suite
-  in `automojo-agent-kit`, with `TESTBASE_MAX_EXAMPLES_CAP=10`,
+  in `codecraftai-agent-kit`, with `TESTBASE_MAX_EXAMPLES_CAP=10`,
   finishing in a CI window short enough that engineers run it
   voluntarily.
 

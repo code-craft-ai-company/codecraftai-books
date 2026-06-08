@@ -9,7 +9,7 @@
 
 The tandem-bicycle metaphor from chapter 2: one driver, many
 observers riding along.  This chapter walks the *bicycle* —
-the actual `automojo-testbase/source/packages/automojo/testbase/tandem/`
+the actual `codecraftai-testbase/source/packages/ccai/testbase/tandem/`
 machinery that holds it together.
 
 ## The class hierarchy
@@ -37,7 +37,7 @@ because no such method exists in the `ValidatorCoupling` /
 
 ## The `Validator` class
 
-**File:** `automojo-testbase/source/packages/automojo/testbase/tandem/validators.py:33`
+**File:** `codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py:33`
 
 ```python
 class Validator(ValidatorCoupling):
@@ -78,7 +78,7 @@ The instance variables (lines 38–49) carry:
 - `_recorder` — handle to the result recorder.  Validators
   call `_recorder.preview()` and `_recorder.record()` to land
   outcomes in the JSOS stream.
-- `_logger` — enhanced logger from `automojo-xmodules`.
+- `_logger` — enhanced logger from `codecraftai-xmodules`.
 
 Per the Volume 0 chapter 2 discipline, every instance variable
 is initialised in `__init__`.  No late introduction.
@@ -290,8 +290,8 @@ mark it.
 
 ```python
 import time
-from automojo.testbase.tandem.validators import Validator
-from automojo.errors.exceptions import SemanticError
+from ccai.testbase.tandem.validators import Validator
+from ccai.errors.exceptions import SemanticError
 
 class DegradedDurationValidator(Validator):
     """

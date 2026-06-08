@@ -8,7 +8,7 @@
 > activation chain make it look simple?*
 
 Volume 3 Part III (chapters 9 through 12) is the canonical
-treatment of credentials in the `automojo-*` portfolio.  It
+treatment of credentials in the `codecraftai-*` portfolio.  It
 walks the credential vocabularies (basic auth, SSH keypairs,
 API tokens, OAuth, certificates, derived credentials), the
 resolution model (vault, file, environment-as-fallback,
@@ -61,7 +61,7 @@ walks Fernet encryption) or fetched from a vault.
 
 ## The CredentialManager — one resolver per Pod
 
-`CredentialManager` (in `automojo-landscaping`) is the job's
+`CredentialManager` (in `codecraftai-landscaping`) is the job's
 credential lookup service.  Initialised by
 `LandscapeConfigurationLayer.initialize_credentials()` during
 `fire_activate_configuration()` (chapter 6 walked the flow),

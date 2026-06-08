@@ -16,10 +16,10 @@ in flight (rotation, encryption, audit); chapter 12 is credentials
 across environments.
 
 The portfolio's
-[`automojo-credentials`](../../../automojo-credentials/source/packages/automojo/credentials/)
+[`codecraftai-credentials`](../../../codecraftai-credentials/source/packages/ccai/credentials/)
 package is the substantive subject of Part III.  An important
 finding from the research that grounded this volume is worth stating
-up front: **`automojo-credentials` is a pure vocabulary layer**.
+up front: **`codecraftai-credentials` is a pure vocabulary layer**.
 It defines the typed credential classes and a registry that loads
 them from configuration data.  It does not ship a single
 resolution backend — no vault integration, no file backend, no
@@ -36,7 +36,7 @@ follows is the recipe for building it well.
 ## The three universal fields
 
 Every credential is an instance of a class inheriting from
-[`BaseCredential`](../../../automojo-credentials/source/packages/automojo/credentials/basecredential.py).
+[`BaseCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/basecredential.py).
 The base class declares three universal fields that every concrete
 credential carries:
 
@@ -83,7 +83,7 @@ tag the framework recognises.  Every concrete credential class
 *requires* a specific category tag to be present in the list and
 raises `ConfigurationError` at construction time if it's missing.
 For example,
-[`SshCredential`](../../../automojo-credentials/source/packages/automojo/credentials/sshcredential.py)
+[`SshCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/sshcredential.py)
 requires the `ssh` category:
 
 ```python
@@ -146,7 +146,7 @@ recognise the privilege tier without parsing the identifier name.
 
 The `categories` list serves a second function beyond filtering:
 the *first matching tag* tells the
-[`CredentialManager`](../../../automojo-credentials/source/packages/automojo/credentials/credentialmanager.py)
+[`CredentialManager`](../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py)
 which concrete credential class to instantiate.  This is the
 category-as-discriminator pattern shared with Data Profiles (chapter
 8) and CloudDevices (chapter 4).
@@ -182,7 +182,7 @@ backend layer is separate.
 
 ### Basic auth
 
-[`BasicCredential`](../../../automojo-credentials/source/packages/automojo/credentials/basiccredential.py)
+[`BasicCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/basiccredential.py)
 — the workhorse type for username/password authentication.  Used
 for HTTP Basic, REST Basic, database `BasicCredential`-driven
 auth.  Two category tags accepted: `basic` (general) and
@@ -199,7 +199,7 @@ Required fields: `username`, `password`.
 
 ### SSH
 
-[`SshCredential`](../../../automojo-credentials/source/packages/automojo/credentials/sshcredential.py)
+[`SshCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/sshcredential.py)
 — SSH credential with multiple authentication modes.  The
 constructor accepts any of: password, keyfile, raw key, or
 SSH-agent flag, and validates that at least one mechanism is
@@ -226,7 +226,7 @@ subsystem.
 
 Three flavours of token-based auth.
 
-[`ApiTokenCredential`](../../../automojo-credentials/source/packages/automojo/credentials/apitokencredential.py)
+[`ApiTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/apitokencredential.py)
 — a single opaque token.  Used for service tokens that don't have a
 notion of a per-user identity.
 
@@ -236,7 +236,7 @@ notion of a per-user identity.
   token: ${VAULT:/secret/staging/jira/service-token}
 ```
 
-[`PersonalApiTokenCredential`](../../../automojo-credentials/source/packages/automojo/credentials/personalapitokencredential.py)
+[`PersonalApiTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/personalapitokencredential.py)
 — a token bound to a username.  Used for personal access tokens
 where the username appears in audit logs (Atlassian, Jira, Bitbucket,
 many SaaS APIs).
@@ -248,7 +248,7 @@ many SaaS APIs).
   token: ${VAULT:/secret/staging/jira/ci-bot-pat}
 ```
 
-[`SecretTokenCredential`](../../../automojo-credentials/source/packages/automojo/credentials/secrettokencredential.py)
+[`SecretTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/secrettokencredential.py)
 — a token paired with the verification *endpoint* the consumer
 must call.  Used for third-party verification services (hCaptcha,
 reCAPTCHA, similar challenge-response APIs) where the token only
@@ -265,7 +265,7 @@ makes sense in the context of a particular service URL.
 
 Two cloud-specific shapes.
 
-[`AwsAccessKeyCredential`](../../../automojo-credentials/source/packages/automojo/credentials/awsaccesskeycredential.py)
+[`AwsAccessKeyCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/awsaccesskeycredential.py)
 — the AWS access-key-id + secret-access-key pair.
 
 ```yaml
@@ -275,7 +275,7 @@ Two cloud-specific shapes.
   secret: ${VAULT:/secret/aws/ci-runner-secret}
 ```
 
-[`AzureClientSecretCredential`](../../../automojo-credentials/source/packages/automojo/credentials/azureclientsecretcredential.py)
+[`AzureClientSecretCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/azureclientsecretcredential.py)
 — Azure application credential (tenant id + client id + client
 secret), used for non-interactive Azure access.
 
@@ -295,7 +295,7 @@ the `CredentialManager`.
 
 ### Generic asymmetric keys
 
-[`PublicKeyCredential`](../../../automojo-credentials/source/packages/automojo/credentials/publickeycredential.py)
+[`PublicKeyCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/publickeycredential.py)
 — a generic public/private keypair, not tied to any particular
 protocol.  Used for application-level signing (JWT signing,
 artifact signing, code-signing keypairs).
@@ -320,7 +320,7 @@ doesn't model.
 GitHub has two shipped classes because it has two distinct
 authentication flows.
 
-[`GithubTokenCredential`](../../../automojo-credentials/source/packages/automojo/credentials/githubtokencredential.py)
+[`GithubTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/githubtokencredential.py)
 — a personal access token (PAT) with a username.  GitHub doesn't
 verify the username for PATs, so the field defaults to `"git"`; it
 exists for logging and tracking.
@@ -332,7 +332,7 @@ exists for logging and tracking.
   token: ${VAULT:/secret/github/ci-bot-pat}
 ```
 
-[`GithubAppCredential`](../../../automojo-credentials/source/packages/automojo/credentials/githubappcredential.py)
+[`GithubAppCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/githubappcredential.py)
 — GitHub Apps authenticate using a private key (or list of keys
 for rotation) signed against the App's identifier.  The credential
 holds either keyfiles, raw keys, or both, with optional passphrase.
@@ -358,7 +358,7 @@ failing silently at first use.
 
 ### WiFi networks
 
-[`WifiChoiceCredential`](../../../automojo-credentials/source/packages/automojo/credentials/wifichoicecredential.py)
+[`WifiChoiceCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/wifichoicecredential.py)
 — a list of SSID+password pairs the consumer can iterate through,
 trying each in turn.  Used for IoT / embedded / mobile-device
 automation where the client may move through several networks
@@ -474,7 +474,7 @@ represented (`SshCredential`, `AwsAccessKeyCredential`,
 is a `${VAULT:...}` reference rather than an inline literal.
 
 The `${VAULT:...}` syntax is **not part of the shipped
-`automojo-credentials` package**.  The shipped package treats the
+`codecraftai-credentials` package**.  The shipped package treats the
 right-hand-side strings as opaque values — so a literal
 `password: hunter2` would load and work.  The `${VAULT:...}`
 expansion is a *resolution discipline* the next chapter establishes:
@@ -510,11 +510,11 @@ on a Topology come from the Landscape entries the Topology references.
 
 The runtime equivalent of the Data Profiles' `DataProfileManager` is
 the
-[`CredentialManager`](../../../automojo-credentials/source/packages/automojo/credentials/credentialmanager.py).
+[`CredentialManager`](../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py).
 Same pattern, different domain:
 
 ```python
-from automojo.credentials.wellknown import CredentialManagerSingleton
+from ccai.credentials.wellknown import CredentialManagerSingleton
 
 manager = CredentialManagerSingleton(...)
 ssh_cred = manager.lookup_credential("ci-runner-ssh")
@@ -583,7 +583,7 @@ database, not by the credential file.
 
 A credentials file with `password: hunter2` inline is a credentials
 file pretending to be a secrets store.  It is not.  The shipped
-`automojo-credentials` package will load such a file — the
+`codecraftai-credentials` package will load such a file — the
 constructor accepts any non-empty string for a password — but the
 result is the same as if you had committed the password to the
 repository.
@@ -636,7 +636,7 @@ exception's traceback.**  Two practices keep this in place:
 
 ## Summary
 
-- `automojo-credentials` is a **pure vocabulary layer** — eleven
+- `codecraftai-credentials` is a **pure vocabulary layer** — eleven
   typed credential classes with three universal fields
   (`identifier`, `categories`, `role`) and category-specific
   extensions.

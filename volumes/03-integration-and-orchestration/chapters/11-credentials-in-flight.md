@@ -18,7 +18,7 @@ The chapter covers three bands of the lifecycle:
 
 1. **Encryption at rest** — when the credential file itself is
    stored as ciphertext rather than plaintext.  The Fernet machinery
-   shipped in `automojo-configuration` is the right tool here and
+   shipped in `codecraftai-configuration` is the right tool here and
    the chapter explains how to use it correctly.
 2. **Rotation in flight** — what happens when a credential changes
    while the orchestration is running.  Long-running pipelines (a
@@ -32,7 +32,7 @@ The chapter covers three bands of the lifecycle:
 ## Encryption at rest
 
 The shipped cryptography module is
-[`automojo-configuration/source/packages/automojo/configuration/cryptography.py`](../../../automojo-configuration/source/packages/automojo/configuration/cryptography.py).
+[`codecraftai-configuration/source/packages/ccai/configuration/cryptography.py`](../../../codecraftai-configuration/source/packages/ccai/configuration/cryptography.py).
 Four functions, all using Fernet symmetric encryption:
 
 ```python
@@ -52,7 +52,7 @@ format: yaml
 encrypted_content: "BASE64-CIPHERTEXT-HERE"
 ```
 
-The `automojo-configuration` loader recognises the
+The `codecraftai-configuration` loader recognises the
 `encrypted_content` key at load time, asks the consumer for a key
 or keyphrase, decrypts the ciphertext, and parses the resulting
 plaintext as the file's actual content.  The encrypted file looks
@@ -66,11 +66,11 @@ To encrypt an existing credentials file:
 
 ```python
 import yaml
-from automojo.configuration.cryptography import (
+from ccai.configuration.cryptography import (
     create_encrypted_configuration,
     generate_fernet_key,
 )
-from automojo.configuration.configurationformat import ConfigurationFormat
+from ccai.configuration.configurationformat import ConfigurationFormat
 
 # Read the plaintext credentials file
 with open("credentials-staging-east.yaml", "r") as fh:
@@ -108,7 +108,7 @@ plain.
 ### A note on the keyphrase
 
 The shipped
-[`generate_fernet_key`](../../../automojo-configuration/source/packages/automojo/configuration/cryptography.py)
+[`generate_fernet_key`](../../../codecraftai-configuration/source/packages/ccai/configuration/cryptography.py)
 is **deterministic**: the same keyphrase always produces the same
 key.  The implementation is `random.Random(keyphrase).randbytes(32)`
 followed by URL-safe base64.
@@ -471,7 +471,7 @@ def _make_credential_aware_excepthook(original):
         # Walk the traceback; for any frame whose locals contain a
         # BaseCredential, blank the locals before the original hook
         # serialises them.
-        from automojo.credentials.basecredential import BaseCredential
+        from ccai.credentials.basecredential import BaseCredential
         tb = exc_traceback
         while tb is not None:
             for var, val in list(tb.tb_frame.f_locals.items()):
@@ -604,7 +604,7 @@ inverts the right architecture.
 A complete in-flight credential discipline has six pieces:
 
 1. **Encryption at rest** when the credentials file is in a
-   plausible-leak location.  Fernet from `automojo-configuration`,
+   plausible-leak location.  Fernet from `codecraftai-configuration`,
    keyphrase with real entropy, files re-encrypted on keyphrase
    rotation.
 2. **TTL caching with rotation** at the resolver layer.  Per-
@@ -629,7 +629,7 @@ workflow.
 ## Summary
 
 - **Encryption at rest** uses the Fernet machinery in
-  `automojo-configuration/cryptography.py`.  An encrypted file is
+  `codecraftai-configuration/cryptography.py`.  An encrypted file is
   a configuration document with `version`, `format`, and
   `encrypted_content` fields.  The shipped `generate_fernet_key` is
   deterministic from a keyphrase — strong-enough keyphrases are

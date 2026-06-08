@@ -65,7 +65,7 @@ the first is the readable one.
 ## `ElementHint`
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/model/declarative.py:14`
+`codecraftai-uia/source/packages/ccai/uia/model/declarative.py:14`
 
 ```python
 class ElementHint(Generic[T]):
@@ -141,7 +141,7 @@ checkers know the right methods.
 ## `DeclarativeApplication`
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/model/declarative.py:489`
+`codecraftai-uia/source/packages/ccai/uia/model/declarative.py:489`
 
 ```python
 class DeclarativeApplication:
@@ -216,7 +216,7 @@ references `calc.Button5`, the framework's
 ## A worked per-app class — Calculator (macOS)
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/platforms/macos/mappings/calculator.py:9`
+`codecraftai-uia/source/packages/ccai/uia/platforms/macos/mappings/calculator.py:9`
 
 ```python
 class Calculator(DeclarativeApplication):
@@ -257,7 +257,7 @@ values.
 A test using this:
 
 ```python
-from automojo.uia.platforms.macos.mappings.calculator import Calculator
+from ccai.uia.platforms.macos.mappings.calculator import Calculator
 
 def test_calculator_addition():
     """
@@ -288,7 +288,7 @@ class.
 The Linux LibreOffice Calc mapping:
 
 **File:**
-`automojo-uia/source/packages/automojo/uia/platforms/linux/mappings/libreoffice_calc.py:37`
+`codecraftai-uia/source/packages/ccai/uia/platforms/linux/mappings/libreoffice_calc.py:37`
 
 ```python
 class LibreOfficeCalc(DeclarativeApplication):

@@ -8,7 +8,7 @@
 The previous chapter introduced the interfaces.  This chapter
 introduces the smallest substantial package in the foundation
 tier:
-[`automojo-waiting`](../../../../automojo-waiting/source/packages/automojo/waiting/).
+[`codecraftai-waiting`](../../../../codecraftai-waiting/source/packages/ccai/waiting/).
 Three files, two classes, one function.  The package's job is
 to give the rest of the portfolio a *correct* answer for "wait
 for a condition with a timeout, and tell me what happened if
@@ -57,14 +57,14 @@ of them ship subtle bugs:
 Each bug is small.  Cumulatively, they make every team's
 `wait_for` slightly different and slightly worse than it could
 be.  The
-[`automojo-waiting`](../../../../automojo-waiting/source/packages/automojo/waiting/)
+[`codecraftai-waiting`](../../../../codecraftai-waiting/source/packages/ccai/waiting/)
 package's job is to fix all of them in one place so that every
 caller benefits.
 
 ## The four shipped types
 
 The package defines exactly four types in
-[`waitmodel.py`](../../../../automojo-waiting/source/packages/automojo/waiting/waitmodel.py):
+[`waitmodel.py`](../../../../codecraftai-waiting/source/packages/ccai/waiting/waitmodel.py):
 
 - **`TimeoutContext`** — the state object that tracks a single
   wait operation.
@@ -81,7 +81,7 @@ Plus one context manager:
   for them on exit.
 
 And one function in
-[`waitfunction.py`](../../../../automojo-waiting/source/packages/automojo/waiting/waitfunction.py):
+[`waitfunction.py`](../../../../codecraftai-waiting/source/packages/ccai/waiting/waitfunction.py):
 
 - **`wait_for_it(looper, *args, ..., wctx=None)`** — the
   public entry point.
@@ -94,7 +94,7 @@ larger interface.
 ## `TimeoutContext` — the state object
 
 The
-[`TimeoutContext`](../../../../automojo-waiting/source/packages/automojo/waiting/waitmodel.py)
+[`TimeoutContext`](../../../../codecraftai-waiting/source/packages/ccai/waiting/waitmodel.py)
 is the chapter's substantive contribution.  It tracks a single
 wait operation and exposes the operation's progress to both the
 caller and the looper function.
@@ -188,7 +188,7 @@ required.
 
 Internal fields track the operation's state through five
 states (`TimeoutState` enum from
-[`constants.py`](../../../../automojo-waiting/source/packages/automojo/waiting/constants.py)):
+[`constants.py`](../../../../codecraftai-waiting/source/packages/ccai/waiting/constants.py)):
 
 - `NotStarted` — the context exists but `mark_begin()` hasn't been
   called.
@@ -203,7 +203,7 @@ The state machine is internal but observable through the
 ## `wait_for_it` — the function
 
 The public entry point in
-[`waitfunction.py`](../../../../automojo-waiting/source/packages/automojo/waiting/waitfunction.py)
+[`waitfunction.py`](../../../../codecraftai-waiting/source/packages/ccai/waiting/waitfunction.py)
 is *one function*.  Annotated with the chapter's discipline:
 
 ```python
@@ -262,7 +262,7 @@ Five things worth naming.
 
 `DEFAULT_WAIT_DELAY = 0`, `DEFAULT_WAIT_INTERVAL = 5`, and
 `DEFAULT_WAIT_TIMEOUT = 60` are defined in
-[`constants.py`](../../../../automojo-waiting/source/packages/automojo/waiting/constants.py).
+[`constants.py`](../../../../codecraftai-waiting/source/packages/ccai/waiting/constants.py).
 Keeping the defaults as named constants makes them
 greppable across the codebase and changeable in one place.
 
@@ -343,7 +343,7 @@ Two additional types address the *cross-thread waiting* case.
 
 ### `WaitGate` — a threading.Event with metadata
 
-[`WaitGate`](../../../../automojo-waiting/source/packages/automojo/waiting/waitmodel.py)
+[`WaitGate`](../../../../codecraftai-waiting/source/packages/ccai/waiting/waitmodel.py)
 wraps a `threading.Event` and adds three pieces of metadata:
 
 ```python
@@ -416,7 +416,7 @@ Three usage patterns recur across the portfolio.
 ### Pattern 1: simple wait for a condition
 
 ```python
-from automojo.waiting.waitfunction import wait_for_it
+from ccai.waiting.waitfunction import wait_for_it
 
 def is_db_accepting_connections(wctx, host, port):
     try:
@@ -562,7 +562,7 @@ expects — the two layers compose cleanly.
 
 ## Summary
 
-- **`automojo-waiting`** is a small package with one job: give
+- **`codecraftai-waiting`** is a small package with one job: give
   the rest of the portfolio a correct, observable, timeout-
   aware *wait for a condition* primitive.
 - The shipped API is **five concepts and one function**:

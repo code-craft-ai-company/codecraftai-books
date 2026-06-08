@@ -6,13 +6,13 @@
 > `time.sleep(30)` before every interaction — wastes time on
 > fast machines and still fails on slow ones.  Hand-written
 > retry loops scatter timing decisions throughout the codebase.
-> `automojo-interop` solves this with **Measured
+> `codecraftai-interop` solves this with **Measured
 > Interoperability**: a clean separation of *Mechanism* (what
 > to do) from *Behaviour* (how persistently to do it).*
 
 This chapter establishes the philosophy that shapes the entire
 interop layer.  Every protocol package built on
-`automojo-interop` — SSH, REST, UPnP, Tasker, Bluetooth, CAN,
+`codecraftai-interop` — SSH, REST, UPnP, Tasker, Bluetooth, CAN,
 serial, power — implements **Measured Interoperability**.  The
 discipline is what makes the protocol stack predictable,
 testable, and tunable across the wildly different timing
@@ -54,7 +54,7 @@ around this premise; the framework's `ActionPattern` enum
 names the canonical persistence behaviours:
 
 ```python
-# automojo-interop/source/packages/automojo/interop/aspects.py:24–32
+# codecraftai-interop/source/packages/ccai/interop/aspects.py:24–32
 
 class ActionPattern(IntEnum):
     SINGLE_CALL = 0                    # Try once, return the result.
@@ -71,7 +71,7 @@ interop layer can apply to a call.  Each call selects one.
 
 The userguide's framing:
 
-> *`automojo-interop` solves this with Measured
+> *`codecraftai-interop` solves this with Measured
 > Interoperability: a clean separation of two concerns.*
 >
 > *Mechanism: The act of sending bytes to a target — invoking
@@ -82,7 +82,7 @@ The userguide's framing:
 > before giving up, when to log results, which error codes to
 > treat as transient.  This is the `Aspects` object's job.*
 >
-> — `automojo-docs/userguide/packages/automojo-interop.rst:25`
+> — `codecraftai-docs/userguide/packages/codecraftai-interop.rst:25`
 
 The word **measured** carries weight.  The interop layer is
 not merely *interoperable* — it is *measured* in its
@@ -205,7 +205,7 @@ layer follows them — *exactly* as long as they say to try,
 *exactly* when they say to stop.
 
 The framework's defaults (from
-`automojo-interop/source/packages/automojo/interop/aspects.py:43–62`):
+`codecraftai-interop/source/packages/ccai/interop/aspects.py:43–62`):
 
 ```python
 DEFAULT_COMPLETION_TIMEOUT = 600          # 10 minutes total
@@ -330,14 +330,14 @@ follows the criteria — including raising on exhaustion
 Interoperability.**  Every protocol package in the portfolio
 implements it:
 
-- `automojo-interop` — the core.  Local commands, SSH (paramiko-
+- `codecraftai-interop` — the core.  Local commands, SSH (paramiko-
   wrapped), serial-over-TCP, power, DNS / mDNS.
-- `automojo-protocol-ssh` — from-scratch SSH.
-- `automojo-restclient-base` — REST foundation; `AspectsRest`
+- `codecraftai-protocol-ssh` — from-scratch SSH.
+- `codecraftai-restclient-base` — REST foundation; `AspectsRest`
   is the REST-shaped Aspects subclass.
-- `automojo-restclient-github-public` — auto-generated GitHub
+- `codecraftai-restclient-github-public` — auto-generated GitHub
   client; every method takes `aspects=AspectsRest(...)`.
-- `automojo-interop-ext-upnp`, `-tasker`, `-bluetooth`, `-can`
+- `codecraftai-interop-ext-upnp`, `-tasker`, `-bluetooth`, `-can`
   — protocol extensions.
 
 The discipline is uniform.  An engineer who understands this

@@ -5,14 +5,14 @@ Replay-Driven Debugging Workflow*
 
 This is the working directory for Volume 8.  The series-level
 entry for this volume lives in
-[`automojo-volumes.md`](../../automojo-volumes.md); this
+[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
 directory is where the volume gets drafted.
 
 ## Volume role in the series
 
 Volume 8 covers the marquee artefact of the portfolio:
-`automojo-timetravel-pod` (the in-process recorder) and
-`automojo-timetravel-server` (the ingestion + analysis service).
+`codecraftai-timetravel-pod` (the in-process recorder) and
+`codecraftai-timetravel-server` (the ingestion + analysis service).
 Together they form the production post-mortem tier — the layer
 that turns "we couldn't reproduce it" into a replayable trace.
 
@@ -42,12 +42,12 @@ ingestion, queryable replay.
 
 ## Source material
 
-- `automojo-timetravel-pod` — the in-process tracer and remote
+- `codecraftai-timetravel-pod` — the in-process tracer and remote
   control plane.  ~28 modules.  Layers F0 (primitives) through
   F5 (remote control), with F6 (read/replay) partially landed.
-- `automojo-timetravel-server` — the ingestion + analysis web
+- `codecraftai-timetravel-server` — the ingestion + analysis web
   service.  ~45 modules.  Layers S0 (persistence) through S5
-  (REST API), built on `automojo-webworks`.
+  (REST API), built on `codecraftai-webworks`.
 
 ## Layout
 
@@ -82,7 +82,7 @@ Same as Volumes 0–7:
 
 - Markdown throughout.
 - Every claim is anchored on a concrete file:line reference
-  into `automojo-timetravel-pod` or `automojo-timetravel-server`.
+  into `codecraftai-timetravel-pod` or `codecraftai-timetravel-server`.
 - Formal vocabulary: "Measured Interoperability", "persistence
   behaviours", "Pod" capitalised, "tandem" testing (one driver /
   many observers — bicycle metaphor).

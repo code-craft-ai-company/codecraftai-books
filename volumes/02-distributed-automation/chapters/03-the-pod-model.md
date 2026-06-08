@@ -249,7 +249,7 @@ how a project plugs in its custom `Landscape` and `Topology`
 subclasses.
 
 Chapter 5 then walks the tandem-validator implementation in
-depth — the actual `automojo-testbase/.../tandem/validators.py`
+depth — the actual `codecraftai-testbase/.../tandem/validators.py`
 machinery, with the real `attach_to_test` signature and the
 JSOS recording flow.
 

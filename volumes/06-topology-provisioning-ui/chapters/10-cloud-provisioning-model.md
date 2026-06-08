@@ -3,14 +3,14 @@
 > *Volume 3 chapter 4 walked Specifications as the
 > orchestration mechanism that produces Landscape and Topology
 > files.  This chapter walks the package that's intended to do
-> the *creation* side: `automojo-provisioning`.  An honest
+> the *creation* side: `codecraftai-provisioning`.  An honest
 > caveat first — the package is currently scaffolding.  The
 > chapter walks the intended shape, anchors on the present
 > scaffolding, and forward-references the implementation.*
 
 A reader who reaches this chapter expecting a tour of working
 AWS / Azure / GCP backends will be disappointed.
-`automojo-provisioning` exists as a *scaffolding* in the
+`codecraftai-provisioning` exists as a *scaffolding* in the
 portfolio — the abstract `CloudProvisioner` is empty, the
 vendor backends are stub subclasses, the `ProvisioningEngine`
 parses YAML but doesn't yet perform checkouts or creations.
@@ -29,7 +29,7 @@ the chapter as forward-reference and lean on Volume 3 chapter
 **File structure:**
 
 ```
-automojo-provisioning/source/packages/automojo/provisioning/
+codecraftai-provisioning/source/packages/ccai/provisioning/
 ├── model/cloud/
 │   ├── cloudprovisioner.py     ← the abstract base
 │   ├── cloudvenue.py           ← named cloud account / project
@@ -53,7 +53,7 @@ vocabulary is in place; the methods that act on it are not.
 ## The abstract base — currently empty
 
 **File:**
-`automojo-provisioning/source/packages/automojo/provisioning/model/cloud/cloudprovisioner.py:2-8`
+`codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudprovisioner.py:2-8`
 
 ```python
 class CloudProvisioner:
@@ -257,7 +257,7 @@ A reader reaching this chapter today should understand:
   A real CI campaign relies on existing Landscape / Topology
   files (Volume 3 chapter 6's "static path" or the user
   tooling at job startup) rather than expecting
-  `automojo-provisioning` to produce them.
+  `codecraftai-provisioning` to produce them.
 
 A contributor who wants to advance the package has the
 roadmap above.  A user who wants to *use* what's there
@@ -283,7 +283,7 @@ equivalent for a mature package would be, but its job is
 ## What the next chapter does
 
 Chapter 11 walks the **UI automation** package
-(`automojo-uia`) — a contrast to the provisioning package in
+(`codecraftai-uia`) — a contrast to the provisioning package in
 that it *is* mature.  Cross-platform UI automation across
 Linux, macOS, and Windows; the `UIElement` /
 `ScreenElement` / `UIWindow` / `UIApplication` hierarchy;

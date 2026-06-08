@@ -4,7 +4,7 @@
 
 This is the working directory for Volume 4.  The series-level
 entry for this volume lives in
-[`automojo-volumes.md`](../../automojo-volumes.md); this
+[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
 directory is where the volume gets drafted.
 
 ## Volume role in the series
@@ -12,7 +12,7 @@ directory is where the volume gets drafted.
 Volume 4 is the **"do it this way"** book of the series.  The
 sysman tier is the most disciplined product line in the
 portfolio: 50 cross-OS contracts in
-`automojo-sysman-common/specs/contracts/` plus five reference
+`codecraftai-sysman-common/specs/contracts/` plus five reference
 implementations (RHEL, Ubuntu, macOS, Windows, UEFI), each
 tested green to thousands of testbase tests.
 
@@ -34,14 +34,14 @@ Ubuntu, macOS, Windows, or UEFI consistently.
 
 ## Source material
 
-- `automojo-sysman-common` — the 50 contracts and the
+- `codecraftai-sysman-common` — the 50 contracts and the
   `featurebase` substrate.
-- `automojo-sysman-linux-redhat` — RHEL implementation.
-- `automojo-sysman-linux-ubuntu` — Ubuntu / Debian
+- `codecraftai-sysman-linux-redhat` — RHEL implementation.
+- `codecraftai-sysman-linux-ubuntu` — Ubuntu / Debian
   implementation.
-- `automojo-sysman-macos` — macOS implementation.
-- `automojo-sysman-windows` — Windows implementation.
-- `automojo-sysman-uefi` — UEFI firmware implementation.
+- `codecraftai-sysman-macos` — macOS implementation.
+- `codecraftai-sysman-windows` — Windows implementation.
+- `codecraftai-sysman-uefi` — UEFI firmware implementation.
 
 ## Layout
 
@@ -79,7 +79,7 @@ Same as Volumes 0–3, 5, 6:
 - Markdown throughout.  Code samples in fenced blocks with the
   language tag.
 - Every claim is anchored on a concrete file:line reference
-  into one of the `automojo-sysman-*` source repositories.
+  into one of the `codecraftai-sysman-*` source repositories.
 - Chapter files start with a one-paragraph chapter abstract,
   then section structure (`##` for sections, `###` for
   subsections).

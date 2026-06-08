@@ -69,7 +69,7 @@ has three universal fields and a category-specific extension:
 ```
 
 The three universals come from
-[`BaseDataProfile`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/basedataprofile.py):
+[`BaseDataProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/basedataprofile.py):
 
 | Field | Purpose |
 |---|---|
@@ -78,7 +78,7 @@ The three universals come from
 | `credential` | A reference to a credential identifier (chapters 9–12) — never the credential value |
 
 Everything else depends on the category.  Five categories ship in
-[`automojo-dataprofiles`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/);
+[`codecraftai-dataprofiles`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/);
 each is implemented as a concrete class inheriting from
 `BaseDataProfile` with its own additional fields and its own
 `validate` classmethod.
@@ -89,7 +89,7 @@ each is implemented as a concrete class inheriting from
 
 For databases reached over TCP with host and port, regardless of
 engine.  The shipped class is
-[`DatabaseBasicTcpProfile`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/databasebasictcpprofile.py).
+[`DatabaseBasicTcpProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/databasebasictcpprofile.py).
 
 ```yaml
 - identifier: staging-db-readwrite
@@ -111,7 +111,7 @@ select the right driver.
 For databases reached over a Unix domain socket — same engine
 catalogue as `basic-tcp` but with a filesystem path instead of host
 and port.  The shipped class is
-[`DatabaseBasicSocketProfile`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/databasebasicsocketprofile.py).
+[`DatabaseBasicSocketProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/databasebasicsocketprofile.py).
 
 ```yaml
 - identifier: local-postgres
@@ -133,7 +133,7 @@ were present.  Two categories make the dispatch a single
 ### `couchdb` — CouchDB
 
 For CouchDB instances.  The shipped class is
-[`CouchDbProfile`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/couchdbprofile.py).
+[`CouchDbProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/couchdbprofile.py).
 
 ```yaml
 - identifier: staging-couchdb
@@ -150,7 +150,7 @@ Required fields: `credential`, `dbname`, `host`, `port`.  Optional:
 because its connection-string format is non-standard (the database
 name lives in the path, the auth lives in the userinfo) and because
 the
-[`automojo-configuration`](../../../automojo-configuration/source/packages/automojo/configuration/sources/couchdbsource.py)
+[`codecraftai-configuration`](../../../codecraftai-configuration/source/packages/ccai/configuration/sources/couchdbsource.py)
 loader supports CouchDB as a *configuration source* — the same
 profile shape doubles for "database we read from" and "config store
 we read configuration from."
@@ -158,7 +158,7 @@ we read configuration from."
 ### `mongodb-atlas` — MongoDB Atlas
 
 For MongoDB Atlas deployments.  The shipped class is
-[`MongoDBAtlasProfile`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/mongodbatlasprofile.py).
+[`MongoDBAtlasProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/mongodbatlasprofile.py).
 
 ```yaml
 - identifier: staging-atlas
@@ -172,7 +172,7 @@ is the Atlas connection *template* — the literal string MongoDB Atlas
 gives you in its console — with `<username>` and `<password>`
 placeholders.  At runtime the credential is materialised and the
 template is expanded by
-[`MongoDBAtlasProfile.connection_string(credobj)`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/mongodbatlasprofile.py).
+[`MongoDBAtlasProfile.connection_string(credobj)`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/mongodbatlasprofile.py).
 
 This category exists separately from `basic-tcp` because Atlas's
 `mongodb+srv://` scheme expands to a list of hosts via DNS at
@@ -183,7 +183,7 @@ what Atlas actually requires.
 ### `snowflake` — Snowflake
 
 For Snowflake databases.  The shipped class is
-[`SnowflakeProfile`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/snowflakeprofile.py).
+[`SnowflakeProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/snowflakeprofile.py).
 
 ```yaml
 - identifier: staging-snowflake
@@ -280,7 +280,7 @@ Five profiles, five categories represented.  Notice three things:
 The orchestration consumes profiles by name:
 
 ```python
-from automojo.dataprofiles.wellknown import DataProfileManagerSingleton
+from ccai.dataprofiles.wellknown import DataProfileManagerSingleton
 
 profile = DataProfileManagerSingleton().lookup_profile(
     "staging-db-app-rw"
@@ -309,7 +309,7 @@ becomes a process-environment value.
 
 Every Data Profile has a `category` field that selects which
 concrete class to instantiate when the file is loaded.  The
-[`DataProfileManager`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/dataprofilemanager.py)
+[`DataProfileManager`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/dataprofilemanager.py)
 performs this dispatch:
 
 ```python
@@ -327,11 +327,11 @@ else:
     logger.warning(f"Unknown category '{category}' ...")
 ```
 
-This is the standard automojo discriminator pattern: a string field
+This is the standard ccai discriminator pattern: a string field
 on the data, a class attribute on the implementations, a dispatch
 that matches them at load time.  The pattern shows up in
-`automojo-credentials` (chapter 9), in
-`automojo-provisioning` (chapter 4 — `category` on
+`codecraftai-credentials` (chapter 9), in
+`codecraftai-provisioning` (chapter 4 — `category` on
 `CloudDevice`), and elsewhere.  Adding a new Data Profile category —
 say, `redis-sentinel` for Redis Sentinel deployments where the
 single-host model breaks down — means adding a new class and adding
@@ -384,7 +384,7 @@ Three deliberate boundaries:
 
    The Data Profile does *not* resolve the host through the
    Landscape automatically.  This is a deliberate design choice
-   from `automojo-dataprofiles`: the profile is self-contained
+   from `codecraftai-dataprofiles`: the profile is self-contained
    data; the Landscape is queried separately.  The result is
    that a Data Profile is a *complete* description of how to reach
    a data source, even if the corresponding Landscape isn't loaded.
@@ -420,10 +420,10 @@ of one duplicated hostname.
 ## The `DataProfileManager` and lookup-by-name
 
 At runtime the orchestration interacts with profiles through the
-[`DataProfileManagerSingleton`](../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/wellknown.py):
+[`DataProfileManagerSingleton`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/wellknown.py):
 
 ```python
-from automojo.dataprofiles.wellknown import DataProfileManagerSingleton
+from ccai.dataprofiles.wellknown import DataProfileManagerSingleton
 
 manager = DataProfileManagerSingleton()
 profile = manager.lookup_profile("staging-db-app-rw")

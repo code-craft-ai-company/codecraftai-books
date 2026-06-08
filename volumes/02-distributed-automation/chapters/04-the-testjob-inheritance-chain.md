@@ -56,7 +56,7 @@ default `job_type=`.
 > `InteropLibraryTestJob` onto `IntegratedTestJob` has not yet
 > landed: in the interop source today,
 > `InteropLibraryTestJob` still extends `TestJob` directly
-> (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`
+> (`codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:22`
 > reads `class InteropLibraryTestJob(TestJob)`).  The diagram
 > above is the *intended* chain; the section on
 > `InteropLibraryTestJob` notes where the source currently
@@ -66,20 +66,20 @@ default `job_type=`.
 
 ## Layer 1 — `TestJob` (the near-standalone single-host base)
 
-**File:** `automojo-testbase/source/packages/automojo/testbase/testjob.py:45`
+**File:** `codecraftai-testbase/source/packages/ccai/testbase/testjob.py:45`
 
 `TestJob` is the foundation.  Volume 1 chapter 2 walked it in
 detail; this chapter recaps what's relevant for distributed
 extension.
 
 `testbase` is now *near-standalone* — it no longer depends on
-`automojo-configuration`, `automojo-runtime`, or
-`automojo-this-app`.  A plain `TestJob` runs **without
+`codecraftai-configuration`, `codecraftai-runtime`, or
+`codecraftai-this-app`.  A plain `TestJob` runs **without
 activation**: no presence folder, no `RuntimeVariables`, no
 this-app.  It reads the handful of core env knobs it needs
 (AM_DEBUG_*, AM_DIAGNOSTICS_*, AM_TESTROOT, AM_OUTPUT_DIRECTORY,
 AM_RUN_ID, AM_TESTRUN_TIMEOUT) directly from `os.environ` via the
-tiny, dependency-free `automojo.testbase.environment` module, and
+tiny, dependency-free `ccai.testbase.environment` module, and
 records its run summary to **stdout**.  Everything heavier —
 the presence-folder results layout, JSOS-to-disk, the HTML
 summary, CI/build metadata — is the responsibility of
@@ -138,9 +138,9 @@ are fixed before `begin()` or any test executes.
 A point worth being explicit about because the next layer adds
 it: `TestJob` has *no concept of a landscape*.  There is no
 `_get_landscape()` method, no landscape parameter, no
-import of `automojo-landscaping` from anywhere in `testbase`.
-This is intentional — `automojo-testbase` is the foundation
-tier (Volume 0); `automojo-landscaping` is upstream of it.  The
+import of `codecraftai-landscaping` from anywhere in `testbase`.
+This is intentional — `codecraftai-testbase` is the foundation
+tier (Volume 0); `codecraftai-landscaping` is upstream of it.  The
 dependency arrow runs `landscaping → interop → testbase`, not
 the other way.  Volume 0 chapter 4 walks the protocol-based
 discipline that makes this possible.
@@ -154,12 +154,12 @@ installed.
 
 ## Layer 2 — `IntegratedTestJob` (integration result recording)
 
-**File:** `automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py:51`
+**File:** `codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integratedtestjob.py:51`
 
 `IntegratedTestJob` is the layer that *re-supplies the
 heavyweight reporting* the near-standalone `TestJob`
 deliberately leaves out.  It lives in the **new**
-`automojo-integration-runtime` package (deps: `testbase` +
+`codecraftai-integration-runtime` package (deps: `testbase` +
 `this-app` + `extension`) and adds exactly one responsibility:
 **integration result recording**.  It does so by overriding the
 *three* provider hooks `TestJob` exposes — and nothing else.
@@ -197,8 +197,8 @@ Each override replaces a standalone default with its
 integration counterpart:
 
 - `_create_output_context()` → `RuntimeOutputContext`
-  (`automojo-integration-runtime/source/packages/automojo/integrationruntime/runtimeoutputcontext.py`)
-  — delegates to `automojo.thisapp.paths` so results, diagnostics,
+  (`codecraftai-integration-runtime/source/packages/ccai/integrationruntime/runtimeoutputcontext.py`)
+  — delegates to `ccai.thisapp.paths` so results, diagnostics,
   and per-testcase by-products land under the activated app's
   **well-known presence folder**.  It is **activation-gated**:
   it raises `SemanticError` unless the process was activated as a
@@ -206,7 +206,7 @@ integration counterpart:
   `AM_RESULT_PATH_FOR_TESTS`).  This replaces `TestJob`'s
   `SimpleOutputContext`, which roots under `<cwd>/.output`.
 - `_create_run_metadata()` → `RuntimeRunMetadata`
-  (`automojo-integration-runtime/source/packages/automojo/integrationruntime/runtimerunmetadata.py`)
+  (`codecraftai-integration-runtime/source/packages/ccai/integrationruntime/runtimerunmetadata.py`)
   — sources build / pipeline / job metadata from the resolved
   `RuntimeVariables` (the real CI/runtime context) instead of the
   `"(unknown)"` placeholders `StandaloneRunMetadata` supplies.
@@ -220,9 +220,9 @@ integration counterpart:
 as a test-run job before `begin()` resolves the presence-folder
 paths.  The activation itself — `establish_app_persona` +
 `resolve_runtime_variables` + `activate_profile_job(JobType.TestRun)`
-— lives in `automojo.integrationruntime.initialize`, and
+— lives in `ccai.integrationruntime.initialize`, and
 integration runs reach the job through
-`automojo.integrationruntime.entrypoints.integrated_test_entrypoint`,
+`ccai.integrationruntime.entrypoints.integrated_test_entrypoint`,
 which activates and then delegates to testbase's standalone
 `generic_test_entrypoint`.  This keeps activation out of the
 class hierarchy: `IntegratedTestJob` consumes the activated
@@ -235,12 +235,12 @@ for this layer — same role as `DefaultTestJob` and
 
 ## Layer 3 — `InteropLibraryTestJob` (the landscape-aware hinge)
 
-**File:** `automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`
+**File:** `codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:22`
 
 `InteropLibraryTestJob` is the *hinge* of the chain.  It adds
 exactly one responsibility: **landscape activation on the five
 `fire_*` hooks**.  It does so without taking a hard dependency
-on `automojo-landscaping` — by introducing an abstract
+on `codecraftai-landscaping` — by introducing an abstract
 template method `_get_landscape()` that subclasses must
 override.
 
@@ -260,14 +260,14 @@ override.
 ### The class declaration
 
 ```python
-# automojo-interop/source/packages/automojo/interop/testing/testjob.py:22
+# codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:22
 # As built today — still extends TestJob.  Intended parent: IntegratedTestJob.
 
 class InteropLibraryTestJob(TestJob):
     """
         Interop-tier test-job base class.
 
-        Extends :class:`automojo.testbase.testjob.TestJob` (single-host) with
+        Extends :class:`ccai.testbase.testjob.TestJob` (single-host) with
         the **landscape-activation lifecycle** required by any test job that
         runs against a real environment described through the landscape model
         — devices, services, coordinators, control points, integration
@@ -288,7 +288,7 @@ def _get_landscape(self) -> Any:
         Concrete subclasses must override this method to return the
         landscape instance their environment is built from
         (typically ``LandscapeSingleton()`` from
-        ``automojo.landscaping.wellknown``).
+        ``ccai.landscaping.wellknown``).
 
         :raises NotImplementedError: When called on a class that does
                                      not override the hook.
@@ -387,21 +387,21 @@ overrides bolted on.  The duplication had three problems:
 1. **The duplication itself.**  Two copies of the lifecycle
    logic meant any change to `TestJob` had to be made twice.
 2. **The dependency direction.**  `DistributedTestJob` was in
-   `automojo-testplus`, which is downstream of
-   `automojo-testbase`.  The duplicated code in
+   `codecraftai-testplus`, which is downstream of
+   `codecraftai-testbase`.  The duplicated code in
    `DistributedTestJob` re-implemented `TestJob` semantics in a
    downstream package — a clear inheritance smell.
 3. **The hook implementation.**  The five `fire_*` overrides in
    the original `DistributedTestJob` had hard imports of
    `LandscapeSingleton`.  This made the class un-importable on
-   a host without `automojo-landscaping` installed — an
+   a host without `codecraftai-landscaping` installed — an
    ergonomic failure at the package boundary.
 
 The c785e9b refactor introduced `InteropLibraryTestJob` as the
 intermediate layer that:
 
 - Inherits cleanly from `TestJob` (no duplication).
-- Lives in `automojo-interop` (a tier above `testbase` but below
+- Lives in `codecraftai-interop` (a tier above `testbase` but below
   `landscaping`).
 - Defines `_get_landscape()` as abstract, deferring the landscape
   import to the concrete subclass.
@@ -413,7 +413,7 @@ the same factoring discipline: rather than baking
 presence-folder recording, `RuntimeVariables` metadata, and HTML
 rendering into `TestJob` (which would re-couple the foundation
 tier to `this-app` and `RuntimeVariables`), that behaviour was
-lifted into a separate `automojo-integration-runtime` package
+lifted into a separate `codecraftai-integration-runtime` package
 and slotted in *between* `TestJob` and `InteropLibraryTestJob`.
 As noted above, the final wiring — re-parenting
 `InteropLibraryTestJob` onto `IntegratedTestJob` — is the
@@ -423,7 +423,7 @@ in-flight step; until it lands, interop's class still extends
 
 ## Layer 4 — `DistributedTestJob` (the distributed plug-in)
 
-**File:** `automojo-testplus/source/packages/automojo/testplus/distributedtestjob.py:24`
+**File:** `codecraftai-testplus/source/packages/ccai/testplus/distributedtestjob.py:24`
 
 `DistributedTestJob` is the layer that *concretes* the abstract
 `_get_landscape()` and adds *the distributed sequencer*.  It is
@@ -446,7 +446,7 @@ def _get_landscape(self) -> Any:
 ```
 
 The concrete `_get_landscape` returns
-`LandscapeSingleton()` from `automojo.landscaping.wellknown`.
+`LandscapeSingleton()` from `ccai.landscaping.wellknown`.
 The singleton is factory-overridable (a custom `Landscape`
 subclass registered through the factory protocol replaces the
 default — Volume 0 chapter 7 walks the factory model), so a
@@ -576,21 +576,21 @@ A project building a custom distributed test scenario:
    distributed_test_entrypoint(job_type=YourCustomJob)
    ```
 
-The entry point is `automojo-testplus/source/packages/automojo/testplus/entrypoints.py:38`
+The entry point is `codecraftai-testplus/source/packages/ccai/testplus/entrypoints.py:38`
 for distributed jobs,
-`automojo-integration-runtime/source/packages/automojo/integrationruntime/entrypoints.py`
+`codecraftai-integration-runtime/source/packages/ccai/integrationruntime/entrypoints.py`
 (`integrated_test_entrypoint`) for activated integration jobs,
-and `automojo-testbase/source/packages/automojo/testbase/entrypoints.py:135`
+and `codecraftai-testbase/source/packages/ccai/testbase/entrypoints.py:135`
 (`generic_test_entrypoint`) for standalone single-host.  Real
 scaffolding examples live in
-`automojo-testbase/source/tests/automojo_tests/testbase/integration/test_custom_job_type_integration.py`
+`codecraftai-testbase/source/tests/ccai_tests/testbase/integration/test_custom_job_type_integration.py`
 (`CustomTestJob`, `FailingCustomTestJob`).
 
 ## Not in the chain — `OrchestrationJob`
 
 A point of vocabulary worth re-emphasising (Volume 3 chapter 1
 also makes it): `OrchestrationJob` (in
-`automojo-landscaping/source/packages/automojo/landscaping/orchestrationjob.py:23`)
+`codecraftai-landscaping/source/packages/ccai/landscaping/orchestrationjob.py:23`)
 is **not a `TestJob` subclass**.  It inherits from
 `ContextUser`.
 

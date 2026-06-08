@@ -18,7 +18,7 @@ and know what each field does.
 ## The class — `Aspects`
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/aspects.py:63–130`
+`codecraftai-interop/source/packages/ccai/interop/aspects.py:63–130`
 
 ```python
 class Aspects(Freezable):
@@ -121,7 +121,7 @@ hatches for different failure modes.
 ## `AspectsCmd` — command-shaped subclass
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/aspects.py:133–197`
+`codecraftai-interop/source/packages/ccai/interop/aspects.py:133–197`
 
 ```python
 class AspectsCmd(Aspects):
@@ -301,7 +301,7 @@ suppress the noise.
 ## `Freezable` — immutability after construction
 
 **File:**
-`automojo-xmodules/source/packages/automojo/xmodules/freezable.py:13`
+`codecraftai-xmodules/source/packages/ccai/xmodules/freezable.py:13`
 
 ```python
 class Freezable:
@@ -369,7 +369,7 @@ the cost of the protocol calls themselves.
 ## `MonitoredScope` — the deadlock detector
 
 **File:**
-`automojo-xmodules/source/packages/automojo/xmodules/xlogging/monitoredscope.py:34`
+`codecraftai-xmodules/source/packages/ccai/xmodules/xlogging/monitoredscope.py:34`
 
 ```python
 class MonitoredScope:
@@ -508,7 +508,7 @@ specific concerns of cross-machine wire calls.
 
 ## What's next
 
-Chapter 3 walks `automojo-interop` itself — the package
+Chapter 3 walks `codecraftai-interop` itself — the package
 structure, the Agent base classes, the shipped protocols
 (local commands, SSH paramiko-wrapped, serial-over-TCP, DNS,
 power), and the `am-interop` CLI scaffolding.  Where this
@@ -516,6 +516,6 @@ chapter walked the *delegation contract*, the next chapter
 walks the *agents that fulfil it*.
 
 Chapter 4 then deep-dives the from-scratch SSH stack in
-`automojo-protocol-ssh` — packets up to agents — as an
+`codecraftai-protocol-ssh` — packets up to agents — as an
 in-depth worked example of Measured Interoperability applied
 to a complex protocol.

@@ -131,7 +131,7 @@ The project ships:
 ```python
 # my_project/landscape.py
 
-from automojo.landscaping.landscape import Landscape
+from ccai.landscaping.landscape import Landscape
 from typing import List, Tuple
 
 
@@ -163,7 +163,7 @@ class MyProjectLandscape(Landscape):
 ```python
 # my_project/devices.py
 
-from automojo.landscaping.landscapedevice import LandscapeDevice
+from ccai.landscaping.landscapedevice import LandscapeDevice
 
 
 class MyProjectDevice(LandscapeDevice):
@@ -185,8 +185,8 @@ class MyProjectDevice(LandscapeDevice):
 ```python
 # my_project/factories.py
 
-from automojo.factories.factoryextension import FactoryExtension
-from automojo.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
+from ccai.factories.factoryextension import FactoryExtension
+from ccai.landscaping.landscapingfactoryprotocol import LandscapingFactoryProtocol
 
 
 class MyProjectLandscapingFactory(FactoryExtension, LandscapingFactoryProtocol):
@@ -199,15 +199,15 @@ class MyProjectLandscapingFactory(FactoryExtension, LandscapingFactoryProtocol):
 ```
 
 The factory is registered through the
-`automojo.extensions.my_project` namespace package.
+`ccai.extensions.my_project` namespace package.
 
 ## The custom test job
 
 ```python
 # my_project/testjobs.py
 
-from automojo.testplus.distributedtestjob import DistributedTestJob
-from automojo.landscaping.wellknown import LandscapeSingleton
+from ccai.testplus.distributedtestjob import DistributedTestJob
+from ccai.landscaping.wellknown import LandscapeSingleton
 
 
 class CrossOSConfigTestJob(DistributedTestJob):
@@ -223,7 +223,7 @@ The entry point:
 ```python
 # tests/cross_os_config/run.py
 
-from automojo.testplus.entrypoints import distributed_test_entrypoint
+from ccai.testplus.entrypoints import distributed_test_entrypoint
 from my_project.testjobs import CrossOSConfigTestJob
 
 
@@ -239,7 +239,7 @@ invokes this entry point.
 When the orchestration triggers the test job:
 
 1. **Configuration phase.**  Files load.  Credentials
-   resolve through `automojo-credentials` (Volume 2 chapter
+   resolve through `codecraftai-credentials` (Volume 2 chapter
    11).  `MyProjectLandscape.validate_topology` runs:
    - The framework's checks pass (clusters section's
      references all resolve).
@@ -358,8 +358,8 @@ After the test job completes, an orchestration task (Volume 3
 chapter 25) reports results to GitLab:
 
 ```python
-from automojo.gitlab.rest.clients.gitlabrestclient import GitLabRestClient
-from automojo.gitlab.rest.clients.parameters import (
+from ccai.gitlab.rest.clients.gitlabrestclient import GitLabRestClient
+from ccai.gitlab.rest.clients.parameters import (
     NotesPostapiv4projectsidissuesissueiidnotesParams as PostNoteParams
 )
 
@@ -388,8 +388,8 @@ presents a status dashboard:
 ```python
 # webservice/dashboard.py
 
-from automojo.webservice.xflask.securityblueprint import SecurityBlueprint
-from automojo.webservice.xflask.basesecurity import RouteSecurityManager
+from ccai.webservice.xflask.securityblueprint import SecurityBlueprint
+from ccai.webservice.xflask.basesecurity import RouteSecurityManager
 from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)

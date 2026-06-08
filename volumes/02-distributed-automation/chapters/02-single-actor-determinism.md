@@ -100,7 +100,7 @@ A point of pedantry worth landing: an observer that *could*
 change state (e.g., a "monitor" that helpfully restarts a
 failing service) is *not an observer*.  It's a second actor.
 The framework's Validator base class
-(`automojo-testbase/source/packages/automojo/testbase/tandem/validators.py:33`)
+(`codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py:33`)
 makes this distinction structural — validators inherit from
 `ValidatorCoupling`, not from any class that has the framework's
 write surface.  A validator that needed to act would need to be
@@ -153,7 +153,7 @@ async def main():
 If `test_a` and `test_b` run against the same Pod, they can
 produce non-deterministic outcomes by racing.  The framework's
 `DistributedTestSequencer`
-(`automojo-testplus/source/packages/automojo/testplus/distributedtestsequencer.py:33`)
+(`codecraftai-testplus/source/packages/ccai/testplus/distributedtestsequencer.py:33`)
 preserves serial test execution for exactly this reason.  Tests
 within a Pod are sequential, period.
 
@@ -239,8 +239,8 @@ Three structural commitments hold the model together:
 ### 1. Sequential test execution within a Pod
 
 `DistributedTestSequencer`
-(`automojo-testplus/source/packages/automojo/testplus/distributedtestsequencer.py:33`)
-extends `TestSequencer` from `automojo-testbase` but does *not*
+(`codecraftai-testplus/source/packages/ccai/testplus/distributedtestsequencer.py:33`)
+extends `TestSequencer` from `codecraftai-testbase` but does *not*
 override the test-execution loop.  The base sequencer's
 `execute_tests()` method (`testsequencer.py:412`) walks tests in
 declaration order, one at a time.  The distributed sequencer
@@ -254,9 +254,9 @@ model rules out.
 ### 2. The actor / observer type distinction
 
 The `Validator` class
-(`automojo-testbase/source/packages/automojo/testbase/tandem/validators.py:33`)
+(`codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py:33`)
 inherits from `ValidatorCoupling` (in
-`automojo-testbase/.../coupling/validatorcoupling.py:44`), which
+`codecraftai-testbase/.../coupling/validatorcoupling.py:44`), which
 inherits from `BaseCoupling`.  Validators have access to the
 test scope and the recorder — they can *observe and report* —
 but they do not have access to the test's *write surface*

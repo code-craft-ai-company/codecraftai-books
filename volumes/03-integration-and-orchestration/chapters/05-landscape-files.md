@@ -15,12 +15,12 @@ That is the job of the Landscape.
 
 A Landscape is the **inventory of what's in scope for a pipeline
 run**.  It is the second of the six configuration categories, the
-first that lives inside `automojo-configuration` (chapter 4's
+first that lives inside `codecraftai-configuration` (chapter 4's
 Specification was the exception).  Every orchestration consumes
 exactly one resolved Landscape — the resolution is the result of
 loading one or more landscape files by name and merging them through
 the standard
-[`MergeMap`](../../../automojo-xmodules/source/packages/automojo/xmodules/xcollections/mergemap.py)
+[`MergeMap`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py)
 mechanism introduced in chapter 3.
 
 ## The structure of a Landscape file
@@ -53,7 +53,7 @@ or as a no-op landscape for syntax-only test runs; not useful for
 actual work.
 
 A real landscape — the one shipped at
-[`automojo-automation-kit/userguide/examples/landscape.yaml`](../../../automojo-automation-kit/userguide/examples/landscape.yaml)
+[`codecraftai-automation-kit/userguide/examples/landscape.yaml`](../../../codecraftai-automation-kit/userguide/examples/landscape.yaml)
 — populates both sections:
 
 ```yaml
@@ -144,7 +144,7 @@ points where the landscape composes with other categories:
 
 - `deviceType` selects which device-handler implementation will be
   instantiated to drive this client.  The handler is registered
-  through `automojo-extension`'s factory protocol; the landscape
+  through `codecraftai-extension`'s factory protocol; the landscape
   says "make me a `network/client-linux`," and the factory machinery
   resolves to the right concrete class.
 - `role` is application-defined.  It exists for the orchestration
@@ -215,21 +215,21 @@ but travel with the landscape into observability systems.  Like the
 service-type extension fields, these are owned by the consuming
 code, not by the landscape format.
 
-## The `automojo-landscaping` runtime model
+## The `codecraftai-landscaping` runtime model
 
 The Landscape file is the configuration; the
-[`Landscape`](../../../automojo-landscaping/source/packages/automojo/landscaping/landscape.py)
-class in `automojo-landscaping` is the runtime model the
+[`Landscape`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscape.py)
+class in `codecraftai-landscaping` is the runtime model the
 orchestration interacts with.  Volume 6 of this series covers the
 runtime model in depth; Chapter 5 of this volume cares only about
 the file-to-runtime boundary.
 
 In the runtime model, each apod `client` becomes a
-[`LandscapeDevice`](../../../automojo-landscaping/source/packages/automojo/landscaping/landscapedevice.py),
+[`LandscapeDevice`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscapedevice.py),
 each infrastructure `service` becomes a
-[`LandscapeService`](../../../automojo-landscaping/source/packages/automojo/landscaping/landscapeservice.py),
+[`LandscapeService`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscapeservice.py),
 and the whole landscape is wrapped in a
-[`Landscape`](../../../automojo-landscaping/source/packages/automojo/landscaping/landscape.py)
+[`Landscape`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscape.py)
 singleton with checkin / checkout primitives for safe coordinated
 access.  The mapping is one-to-one: every entry in the YAML produces
 exactly one runtime object.  No magic, no inference.
@@ -518,7 +518,7 @@ continues to apply.
 - Migration from hardcoded hostnames is mechanical: extract the
   inventory, replace direct references with name lookups, add
   per-environment landscape files.
-- The runtime model in `automojo-landscaping` produces one
+- The runtime model in `codecraftai-landscaping` produces one
   `LandscapeDevice` per apod client and one `LandscapeService` per
   infrastructure service.  The mapping is one-to-one; the file is
   the structural truth.

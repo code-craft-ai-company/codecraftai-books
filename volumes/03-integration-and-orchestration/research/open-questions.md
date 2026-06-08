@@ -11,17 +11,17 @@ to look for the answer, and the answer if found.
 **Status:** answered.
 
 **Answer:** **(b)** Specifications is a separate concept that lives in
-`automojo-provisioning`.  It is **not** a sixth managed type within
-`automojo-configuration`.
+`codecraftai-provisioning`.  It is **not** a sixth managed type within
+`codecraftai-configuration`.
 
 Evidence:
-- `automojo-configuration/source/packages/automojo/configuration/configurationvariables.py:37-42`
+- `codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py:37-42`
   — exactly five `CONFIGURATION_MAPS` instances exist (Credentials,
   DataProfiles, Landscapes, Runtimes, Topologies); no
   `SPECIFICATION_*` map.
-- `automojo-configuration/source/packages/automojo/configuration/configurationmaps.py:41-337`
+- `codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py:41-337`
   — five resolution functions; no `resolve_specifications_*`.
-- `automojo-provisioning/source/packages/automojo/provisioning/provisioningengine.py:55-73`
+- `codecraftai-provisioning/source/packages/ccai/provisioning/provisioningengine.py:55-73`
   — `create_provisioning_engine(specification: str)` loads a YAML
   specification with top-level `apod` and `environment` keys.
 
@@ -31,7 +31,7 @@ configuration.  The same word is used for two different concepts in
 the portfolio.
 
 **Implication for Chapter 4:** anchors on
-`automojo-provisioning`'s `ProvisioningEngine.create_provisioning_engine`
+`codecraftai-provisioning`'s `ProvisioningEngine.create_provisioning_engine`
 and the YAML `apod`/`environment` schema.  The chapter introduces
 Specifications as parallel-but-distinct from the five managed
 configuration types — a sixth category at the discipline level even
@@ -43,7 +43,7 @@ though the portfolio implements it through a different package.
 
 **Status:** answered.
 
-**Answer:** `automojo-credentials` is a **pure vocabulary layer**.
+**Answer:** `codecraftai-credentials` is a **pure vocabulary layer**.
 Zero resolution backends are shipped.
 
 Vocabulary (11 credential classes):
@@ -93,22 +93,22 @@ documentation of shipped tooling.
 
 Affirmative findings (building blocks that exist):
 
-- **`override_variable_value`** at `automojo-this-app/source/packages/automojo/thisapp/thisapplication.py:222-256`
+- **`override_variable_value`** at `codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py:222-256`
   — sets `_application_variables[vkey] = new_value`, updates
   `os.environ` if the descriptor source is `ENVIRONMENT`, and
   hot-swaps a small set of `ThisApplication` instance fields
   (`service_name`, `log_basename`, `log_directory`, `logger_name`).
-- **`ConfigOptionOverrides`** at `automojo-configuration/source/packages/automojo/configuration/optionoverrides.py:20-254`
+- **`ConfigOptionOverrides`** at `codecraftai-configuration/source/packages/ccai/configuration/optionoverrides.py:20-254`
   — static methods that wrap `override_variable_value` for the five
   managed configuration types.
-- **`MergeMap`** at `automojo-xmodules/source/packages/automojo/xmodules/xcollections/mergemap.py:42-77`
+- **`MergeMap`** at `codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py:42-77`
   — `MutableMapping` that holds an ordered list of maps and composes
   them with overlay semantics.  Used as the storage for each
   `CONFIGURATION_MAPS` entry.
-- **`get_variable_value`** at `automojo-this-app/source/packages/automojo/thisapp/thisapplication.py:161-219`
+- **`get_variable_value`** at `codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py:161-219`
   — retrieves a current resolved variable; resolution order is
   override → environment → settings → default.
-- **`TESTBASE_MAX_EXAMPLES_CAP`** at `automojo-testbase` (env var
+- **`TESTBASE_MAX_EXAMPLES_CAP`** at `codecraftai-testbase` (env var
   `ENV_MAX_EXAMPLES_CAP` in `propertyrunner.py`) — the canonical
   ad-hoc runtime knob; this is the smallest example of the
   "config-as-runtime-behavior-switch" pattern.
@@ -124,7 +124,7 @@ Negative findings (what's not there):
 4. **No declarative profile composition syntax** — `MergeMap` exists
    in code, but config files have no `extends:` / `includes:` syntax.
 5. **No active-profile name variable** — `ContextPaths` enum
-   (`automojo-this-app/source/packages/automojo/thisapp/contextpaths.py:52-82`)
+   (`codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py:52-82`)
    has `JOB_ID`, `JOB_NAME`, `PIPELINE_ID`, `RUNID`, but no
    `ACTIVE_PROFILE` slot.
 6. **No "give me all active variables as a dict" accessor** —
@@ -158,14 +158,14 @@ ship.
 
 **Answer:** all five managed categories accept either YAML or JSON;
 the loader tries `.yaml`, `.yml`, `.json` in that order at
-`automojo-configuration/source/packages/automojo/configuration/sources/directorysource.py`
+`codecraftai-configuration/source/packages/ccai/configuration/sources/directorysource.py`
 and `configurationloader.py`.
 
 Real example files found in the portfolio:
 
-- **Landscape:** `automojo-automation-kit/userguide/examples/landscape.yaml`
+- **Landscape:** `codecraftai-automation-kit/userguide/examples/landscape.yaml`
   — top-level keys `environment`, `apod`, `infrastructure`.
-- **Runtime:** `automojo-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml`
+- **Runtime:** `codecraftai-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml`
   — top-level keys `breakpoints`, `debugger`, `logging`, `paths`,
   `paths-templates`, `results-configuration`, `testroot`, `version`.
 

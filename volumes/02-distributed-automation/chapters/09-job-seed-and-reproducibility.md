@@ -89,7 +89,7 @@ What does *not* travel:
 Volume 1 chapter 4 walked this:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/properties/propertyrunner.py:82
+# codecraftai-testbase/source/packages/ccai/testbase/properties/propertyrunner.py:82
 
 def derive_test_seed(job_seed: bytes, test_name: str) -> int:
     payload = job_seed + b":" + test_name.encode("utf-8")
@@ -310,4 +310,4 @@ under test.  The Aspects pattern from Volume 5 chapter 1
 shows up here as the behaviour-parameterisation knob for
 timeout, retry, connection failure handling on every wire
 call.  The chapter also surveys the `SshAgent` and
-`SshSession` machinery from `automojo-protocol-ssh`.
+`SshSession` machinery from `codecraftai-protocol-ssh`.

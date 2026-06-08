@@ -4,7 +4,7 @@
 
 This is the working directory for Volume 6.  The series-level
 entry for this volume lives in
-[`automojo-volumes.md`](../../automojo-volumes.md); this
+[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
 directory is where the volume gets drafted.
 
 ## Volume role in the series
@@ -28,7 +28,7 @@ Volume 6 walks what's *in* those inputs.  Specifically:
   orchestration side; Volume 6 walks the implementation.
 - UI automation: the special case where the system under test
   is a graphical application.  Cross-platform via the
-  `automojo-uia` package; declarative application mappings
+  `codecraftai-uia` package; declarative application mappings
   for known applications; the same coupling /
   ProtocolExtension model applied to UI elements rather than
   network protocols.
@@ -43,11 +43,11 @@ GUI application.
 
 ## Source material
 
-- `automojo-landscaping` — the environment model itself.
-- `automojo-provisioning` — cloud provisioning backends.
-- `automojo-uia` — cross-platform UI automation.
-- `automojo-gitlab` — REST integration worked example.
-- `automojo-webservice-flask` — web-service scaffolding.
+- `codecraftai-landscaping` — the environment model itself.
+- `codecraftai-provisioning` — cloud provisioning backends.
+- `codecraftai-uia` — cross-platform UI automation.
+- `codecraftai-gitlab` — REST integration worked example.
+- `codecraftai-webservice-flask` — web-service scaffolding.
 
 ## Layout
 
@@ -90,7 +90,7 @@ Same as Volumes 0, 1, 2, 3:
 - Markdown throughout.  Code samples in fenced blocks with the
   language tag.
 - Every claim is anchored on a concrete file:line reference into
-  one of the `automojo-*` source repositories.
+  one of the `codecraftai-*` source repositories.
 - Chapter files start with a one-paragraph chapter abstract,
   then section structure (`##` for sections, `###` for
   subsections).

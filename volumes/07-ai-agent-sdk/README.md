@@ -4,13 +4,13 @@
 
 This is the working directory for Volume 7.  The series-level
 entry for this volume lives in
-[`automojo-volumes.md`](../../automojo-volumes.md); this
+[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
 directory is where the volume gets drafted.
 
 ## Volume role in the series
 
 Volume 7 is the *largest* volume by source-material size.
-`automojo-agent-kit` is the largest codebase in the portfolio
+`codecraftai-agent-kit` is the largest codebase in the portfolio
 — ~46k LOC, ~217 modules, 292 testbase test files, 3,744
 tests at fast-CI cap (`TESTBASE_MAX_EXAMPLES_CAP=10`).  The
 volume is the SDK book — *how to build* a production AI
@@ -39,7 +39,7 @@ for building an agent that runs reliably in production.
 
 ## Source material
 
-- `automojo-agent-kit` — the SDK itself.
+- `codecraftai-agent-kit` — the SDK itself.
 
 ## Layout
 
@@ -65,7 +65,7 @@ for building an agent that runs reliably in production.
 | 6 — Observability for agents | drafted | 494 |
 | 7 — Testing AI agents | drafted | 453 |
 | 8 — Property tests at scale | drafted | 485 |
-| 9 — Building an agent that uses the rest of the automojo portfolio | drafted | 518 |
+| 9 — Building an agent that uses the rest of the ccai portfolio | drafted | 518 |
 
 **Volume 7 fully drafted: 9 chapters, 4,455 lines, ~41,000 words.**
 
@@ -75,7 +75,7 @@ Same as Volumes 0–6:
 
 - Markdown throughout.
 - Every claim is anchored on a concrete file:line reference
-  into `automojo-agent-kit`.
+  into `codecraftai-agent-kit`.
 - Chapter files start with a one-paragraph chapter abstract,
   then section structure (`##` for sections, `###` for
   subsections).

@@ -50,7 +50,7 @@ The two are distinct.  The same Landscape can underpin many
 Topologies (one fleet of devices, organised differently for
 different test campaigns).  The same Topology pattern can apply
 to many Landscapes (the cluster-with-spare shape, applied to
-different fleets).  In `automojo-configuration`'s loader, they
+different fleets).  In `codecraftai-configuration`'s loader, they
 live in *separate* MergeMaps — `LANDSCAPE_CONFIGURATION_MAP` and
 `TOPOLOGY_CONFIGURATION_MAP` — exactly because they are
 independent inputs.
@@ -69,12 +69,12 @@ runs *against* — a concrete set of resources organised concretely.
 Pods are the unit of horizontal scaling at the CI layer (more on
 that below).
 
-There is **no `automojo-topology` package**.  Topology is a
+There is **no `codecraftai-topology` package**.  Topology is a
 *configuration category*, not a package.  The shape of a topology
 file beyond a small canonical convention (a `clusters` section
 with `name` / `group` / `nodes` / `spares` keys consumed by
 `LandscapeOperationalLayer._create_clusters` in
-`automojo-landscaping`) is **left to the user to implement**.
+`codecraftai-landscaping`) is **left to the user to implement**.
 The framework loads the file; the user decides what's in it.
 
 A *single-host* landscape is the special case where the
@@ -102,10 +102,10 @@ hooks (Chapter 2):
 
 On a single-host run using `TestJob` directly, the last three
 are *no-op stubs*
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:399–409`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:399–409`)
 — they only log a `debug` line and `return`.  Volume 2's
 `InteropLibraryTestJob`
-(`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`)
+(`codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:22`)
 overrides each of them to drive landscape activation:
 
 - `fire_activate_configuration()` calls
@@ -122,7 +122,7 @@ use the same `TestJob` lifecycle.
 > **A new class sits in the chain — but not on these hooks.**
 > Between `TestJob` and `InteropLibraryTestJob` there is now an
 > intermediate base class, `IntegratedTestJob`
-> (`automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py`),
+> (`codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integratedtestjob.py`),
 > introduced by the integration-runtime package.  It is worth
 > naming here so the chain is not surprising in Volume 2, but it
 > is important to be precise about *what it adds*:
@@ -139,7 +139,7 @@ use the same `TestJob` lifecycle.
 > inheritance cascade.)  At the time of writing, the interop
 > tier's re-parent onto `IntegratedTestJob` is still in flight:
 > `InteropLibraryTestJob` currently extends `TestJob` directly
-> (`automojo-interop/source/packages/automojo/interop/testing/testjob.py:22`),
+> (`codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:22`),
 > so a distributed run does not yet inherit the integration
 > result-recording behaviour through this chain.
 
@@ -152,7 +152,7 @@ shapes that work on either side.
 ### 1. Couplings with `establish_connectivity`
 
 The `IntegrationCoupling` base class
-(`automojo-testbase/source/packages/automojo/testbase/coupling/integrationcoupling.py:512`)
+(`codecraftai-testbase/source/packages/ccai/testbase/coupling/integrationcoupling.py:512`)
 exposes a method:
 
 ```python
@@ -243,7 +243,7 @@ def is_distributed_landscape() -> bool:
         single-host import failures.
     """
     try:
-        from automojo.interop.testing.testjob import InteropLibraryTestJob
+        from ccai.interop.testing.testjob import InteropLibraryTestJob
     except ImportError:
         rtnval = False
         return rtnval
@@ -299,7 +299,7 @@ Just so the contract is concrete: here is what
 reference to Volume 2):
 
 ```python
-# automojo-interop/source/packages/automojo/interop/testing/testjob.py:88
+# codecraftai-interop/source/packages/ccai/interop/testing/testjob.py:88
 
 def fire_attach_to_environment(self, tseq) -> None:
     """
@@ -345,7 +345,7 @@ to keep them separate so a reader knows immediately which
 side they are on.
 
 The case study in Chapter 10 is the `singlehost/` root of
-`automojo-agent-kit`.
+`codecraftai-agent-kit`.
 
 ## Determinism: single actor, multiple observers
 
@@ -375,7 +375,7 @@ The framework's resolution to "but I want concurrent observation
 of the system under test" is **tandem testing**: the test is the
 single actor, and one or more *validators* attach to the test
 scope as observers.  The validator base class lives in
-`automojo-testbase/source/packages/automojo/testbase/tandem/validators.py`
+`codecraftai-testbase/source/packages/ccai/testbase/tandem/validators.py`
 and inherits `ValidatorCoupling`.  The framework calls
 `validator.attach_to_test(testscope, suffix)`, the validator
 registers its own `TestResult` alongside the test's, and when
@@ -579,7 +579,7 @@ is the *what*; subclassing is the *how*; `TestJob` is the
 
 ## Composability across categories
 
-A property of `automojo-configuration` worth establishing here
+A property of `codecraftai-configuration` worth establishing here
 because the rest of Volume 1's tests depend on understanding it:
 **every configuration category is composable**.
 
@@ -661,7 +661,7 @@ output shape.  Only the hooks' bodies differ.
 
 ## What's next
 
-- Chapter 10 — Case study.  The `automojo-agent-kit`
+- Chapter 10 — Case study.  The `codecraftai-agent-kit`
   single-host suite at `TESTBASE_MAX_EXAMPLES_CAP=10`,
   finishing in 49 minutes wall time.  A working demonstration
   of every chapter that came before.

@@ -11,7 +11,7 @@ packages substitute for each other without their callers
 caring which implementation is on the other end.
 
 The package is
-[`automojo-interfaces`](../../../../automojo-interfaces/source/packages/automojo/interfaces/).
+[`codecraftai-interfaces`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/).
 Eight files; eight protocols; one purpose: **shared contract
 definitions that downstream packages implement and other
 downstream packages consume.**  The package itself contains no
@@ -35,7 +35,7 @@ reasons:
 
 1. **Decoupling.**  An implementer that already inherits from
    another base (or that lives in a package that doesn't depend
-   on `automojo-interfaces` at the inheritance level) can still
+   on `codecraftai-interfaces` at the inheritance level) can still
    *be* an `ICommandRunner` if it has the right method shape.
    No forced inheritance; no diamond-inheritance problems.
 2. **Substitutability.**  Test mocks and fakes don't need to
@@ -57,7 +57,7 @@ walks each, anchored on the actual code.
 
 ### `ICommandRunner` — running commands across system boundaries
 
-[`icommandrunner.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/icommandrunner.py)
+[`icommandrunner.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/icommandrunner.py)
 defines the most-used protocol in the portfolio.  Its job: provide
 a uniform shape for *running a command*, regardless of whether
 the command runs locally, over SSH, in a container, or via some
@@ -111,7 +111,7 @@ received.
 
 ### `IFileOperator` — filesystem operations across boundaries
 
-[`ifileoperator.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/ifileoperator.py)
+[`ifileoperator.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/ifileoperator.py)
 is `ICommandRunner`'s sibling for filesystem work.  Five methods:
 `write_text`, `delete`, `read_text`, `list_dir`, `exists`.  Each
 takes an `elevated: bool` parameter, mirroring the privilege
@@ -140,7 +140,7 @@ these five.
 
 ### `ISerializable` — dict round-trip
 
-[`iserializable.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/iserializable.py)
+[`iserializable.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/iserializable.py)
 is the smallest protocol in the package.  Two methods:
 
 ```python
@@ -170,7 +170,7 @@ YAML/JSON.
 
 ### `IBasicCredential` — username + password
 
-[`ibasiccredential.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/ibasiccredential.py)
+[`ibasiccredential.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/ibasiccredential.py)
 is the smallest credential interface.  Two read-only properties:
 
 ```python
@@ -184,9 +184,9 @@ class IBasicCredential(Protocol):
 
 Used by code that consumes basic credentials without caring
 *which* credential class produced them.  A
-[`CouchDbProfile.connection_string(credobj: IBasicCredential)`](../../../../automojo-dataprofiles/source/packages/automojo/dataprofiles/couchdbprofile.py)
+[`CouchDbProfile.connection_string(credobj: IBasicCredential)`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/couchdbprofile.py)
 takes any object with `.username` and `.password` properties —
-a real `BasicCredential` from `automojo-credentials`, a test
+a real `BasicCredential` from `codecraftai-credentials`, a test
 `FakeBasicCredential`, an inherited `SshCredential` that has
 both fields, etc.
 
@@ -199,9 +199,9 @@ discipline in action.
 
 ### `IIncludeFilter` and `IExcludeFilter` — list filtering
 
-[`iincludefilter.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/iincludefilter.py)
+[`iincludefilter.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/iincludefilter.py)
 and
-[`iexcludefilter.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/iexcludefilter.py)
+[`iexcludefilter.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/iexcludefilter.py)
 provide a uniform interface for filtering lists of items.  They
 are siblings:
 
@@ -235,7 +235,7 @@ default.
 
 ### `IHint` — friendly identification
 
-[`ihint.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/ihint.py)
+[`ihint.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/ihint.py)
 is a small protocol for objects that can produce a "hint" string
 matching them against another object:
 
@@ -245,17 +245,17 @@ class IHint(Protocol):
     def matches(self, obj: Any) -> bool: ...
 ```
 
-Used by `automojo-landscaping`'s
-[`FriendlyIdentifier`](../../../../automojo-landscaping/source/packages/automojo/landscaping/friendlyidentifier.py)
+Used by `codecraftai-landscaping`'s
+[`FriendlyIdentifier`](../../../../codecraftai-landscaping/source/packages/ccai/landscaping/friendlyidentifier.py)
 class.  A landscape's apod entries carry friendly names ("dev01",
 "runner-east-1") that match the actual host name through hint
 strings.  The protocol formalises the relationship.
 
 ### `ITestJob` — the test-job contract
 
-[`itestjob.py`](../../../../automojo-interfaces/source/packages/automojo/interfaces/itestjob.py)
+[`itestjob.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/itestjob.py)
 is the largest of the eight protocols.  It defines the contract
-for a test job — the unit of work `automojo-testbase` and its
+for a test job — the unit of work `codecraftai-testbase` and its
 extensions execute:
 
 ```python
@@ -375,32 +375,32 @@ discovery logic explicit.
 
 ## How interfaces drive the dependency graph
 
-The `automojo-interfaces` package sits at the bottom of the
+The `codecraftai-interfaces` package sits at the bottom of the
 portfolio's dependency graph.  Specifically:
 
 ```
-                    automojo-interfaces  (this package)
+                    codecraftai-interfaces  (this package)
                             ▲
                             │ imported by everyone
                             │
            ┌────────────────┼─────────────────┐
            │                │                 │
-   automojo-credentials   automojo-       automojo-landscaping
+   codecraftai-credentials   codecraftai-       codecraftai-landscaping
            │              dataprofiles            │
            │                │                     │
            └────────────────┼─────────────────────┘
                             │
                             ▼
-                automojo-interop, sysman, ...
+                codecraftai-interop, sysman, ...
 ```
 
 Two important properties of this graph:
 
-- **`automojo-interfaces` depends on nothing.**  Not even on
-  `automojo-errors`.  It's the leaf; it can be installed
+- **`codecraftai-interfaces` depends on nothing.**  Not even on
+  `codecraftai-errors`.  It's the leaf; it can be installed
   standalone.
 - **Every package that wants to *interoperate* depends on
-  `automojo-interfaces`.**  The dependency is small (eight
+  `codecraftai-interfaces`.**  The dependency is small (eight
   small files); the value is large (every package speaks the
   shared contract language).
 
@@ -417,7 +417,7 @@ Three signals that a new interface is the right move:
 
 When a consuming package has *one shape it wants to consume* and
 two or more implementing packages produce that shape, the shape
-is an interface.  The interface goes in `automojo-interfaces`;
+is an interface.  The interface goes in `codecraftai-interfaces`;
 both implementers depend on the interfaces package; the consumer
 depends only on the interfaces package.
 
@@ -436,7 +436,7 @@ implementation in for a lower-tier dependency (chapter-7's
 extension and factory machinery is the substantive form of this
 pattern), the seam is an interface.
 
-The package's `automojo-interfaces` deliberately stays *small*.
+The package's `codecraftai-interfaces` deliberately stays *small*.
 Eight files today; growth is deliberate.  Each new interface
 goes through the question: *do at least two existing or planned
 implementations want to satisfy this shape?*  If yes, add it; if
@@ -444,7 +444,7 @@ no, don't add the interface yet.
 
 ## Summary
 
-- **`automojo-interfaces`** is the leaf of the portfolio's
+- **`codecraftai-interfaces`** is the leaf of the portfolio's
   dependency graph.  Eight protocol files; one purpose: shared
   contract definitions for substitutable behaviour.
 - The protocols are **`typing.Protocol`** (structural typing),

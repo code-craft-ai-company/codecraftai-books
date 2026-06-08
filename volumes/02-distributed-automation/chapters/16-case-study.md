@@ -205,7 +205,7 @@ class CrossOSConfigTestJob(DistributedTestJob):
 
 The `_get_landscape()` returns the project's `CrossOSConfigLandscape`
 subclass (registered via the factory protocol in
-`automojo-landscaping/wellknown.py:LandscapeSingleton`).  The
+`codecraftai-landscaping/wellknown.py:LandscapeSingleton`).  The
 landscape's `Topology` subclass is our `CrossOSConfigTopology`
 above.  The framework's chain plugs both in.
 
@@ -213,7 +213,7 @@ The entry point:
 
 ```python
 # tests/cross_os_config/run.py
-from automojo.testplus.entrypoints import distributed_test_entrypoint
+from ccai.testplus.entrypoints import distributed_test_entrypoint
 from myproject.testjobs import CrossOSConfigTestJob
 
 if __name__ == "__main__":

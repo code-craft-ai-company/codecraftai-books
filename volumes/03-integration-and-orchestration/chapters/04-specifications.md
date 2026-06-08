@@ -11,8 +11,8 @@ description of the resources that must exist before an orchestration
 runs.
 
 Specifications are the only one of the six categories that does not
-live inside `automojo-configuration`.  They live in
-[`automojo-provisioning`](../../../automojo-provisioning/source/packages/automojo/provisioning/).
+live inside `codecraftai-configuration`.  They live in
+[`codecraftai-provisioning`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/).
 The reason is structural: the other five categories are loaded *by*
 the orchestration as it starts; Specifications are consumed *before*
 the orchestration starts.  They describe a state of the world that the
@@ -74,7 +74,7 @@ profiles:
 ```
 
 The structure is parsed by
-[`ProvisioningEngine.create_provisioning_engine(specification=...)`](../../../automojo-provisioning/source/packages/automojo/provisioning/provisioningengine.py)
+[`ProvisioningEngine.create_provisioning_engine(specification=...)`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/provisioningengine.py)
 which loads the YAML and instantiates four kinds of model objects.
 The four are layered abstractions, not a flat list.  Understanding
 the layering is the key to writing maintainable specs.
@@ -82,7 +82,7 @@ the layering is the key to writing maintainable specs.
 ### Layer 1 — CloudVenue: where we provision
 
 A
-[`CloudVenue`](../../../automojo-provisioning/source/packages/automojo/provisioning/model/cloud/cloudvenue.py)
+[`CloudVenue`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudvenue.py)
 describes a target account in a cloud provider:
 
 ```yaml
@@ -106,13 +106,13 @@ Multiple venues can coexist in one Specification — you can provision
 across AWS and Azure in a single spec — but the typical case is one
 venue per spec, with multiple specs for multi-cloud setups.  Per
 the per-provider provisioners shipped under
-[`venues/{aws,azure,google}/`](../../../automojo-provisioning/source/packages/automojo/provisioning/venues/),
+[`venues/{aws,azure,google}/`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/venues/),
 the supported providers are AWS, Azure, and Google Cloud.
 
 ### Layer 2 — CloudGroup: how resources are organised
 
 A
-[`CloudGroup`](../../../automojo-provisioning/source/packages/automojo/provisioning/model/cloud/cloudgroup.py)
+[`CloudGroup`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudgroup.py)
 describes a logical grouping with associated tags:
 
 ```yaml
@@ -136,7 +136,7 @@ systems, so the cost-center attribution is automatic.
 ### Layer 3 — CloudResourceProfile: what kind of resource
 
 A
-[`CloudResourceProfile`](../../../automojo-provisioning/source/packages/automojo/provisioning/model/cloud/cloudresourceprofile.py)
+[`CloudResourceProfile`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudresourceprofile.py)
 is a parameterised template for resources of a particular shape:
 
 ```yaml
@@ -172,7 +172,7 @@ cloud.
 ### Layer 4 — CloudDevice: which specific resources
 
 A
-[`CloudDevice`](../../../automojo-provisioning/source/packages/automojo/provisioning/model/cloud/clouddevice.py)
+[`CloudDevice`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/clouddevice.py)
 is a single instance to be provisioned, referencing a group, a
 profile, and a role:
 
@@ -278,7 +278,7 @@ apod:
 The file is consumed by:
 
 ```python
-from automojo.provisioning.provisioningengine import ProvisioningEngine
+from ccai.provisioning.provisioningengine import ProvisioningEngine
 
 engine = ProvisioningEngine.create_provisioning_engine(
     specification="config/specs/spec-ci-runner-pool.yaml"
@@ -327,7 +327,7 @@ the source of truth for an environment's existence.  Re-running the
 provisioner on a schedule keeps the environment in the desired
 state, repairing drift.  This is the same operating model
 Terraform, Pulumi, and other infrastructure-as-code systems use; the
-`automojo-provisioning` package brings it inside the portfolio so
+`codecraftai-provisioning` package brings it inside the portfolio so
 the same toolchain that runs the orchestration can also run the
 provisioner.
 
@@ -444,7 +444,7 @@ to a Specification in three steps:
 2. **Replace the inline shell with a provisioner invocation.**  The
    pipeline's shell call becomes:
    ```bash
-   automojo-provisioning apply --spec config/specs/spec-ci-runner-pool.yaml
+   codecraftai-provisioning apply --spec config/specs/spec-ci-runner-pool.yaml
    ```
    The migration is mechanical; the spec carries the same intent the
    shell carried.
@@ -466,7 +466,7 @@ Honest scoping notes:
   cloud APIs.  A lab full of physical hardware needs a different
   provisioning approach (PXE, Ansible against a static inventory, or
   the kind of orchestrated lab-power package
-  [`automojo-interop`](../../../automojo-interop/) ships).  Treat the
+  [`codecraftai-interop`](../../../codecraftai-interop/) ships).  Treat the
   static inventory as the Landscape (chapter 5) and skip the
   Specification.
 - **SaaS-only environments.**  If the environment is "an account in
@@ -487,8 +487,8 @@ infrastructure to provision.
 
 - A **Specification** is a declarative manifest of the resources that
   must exist before an orchestration runs.
-- It lives in `automojo-provisioning`, separate from the five other
-  configuration categories that live in `automojo-configuration`,
+- It lives in `codecraftai-provisioning`, separate from the five other
+  configuration categories that live in `codecraftai-configuration`,
   because it is consumed *before* the orchestration rather than *by*
   the orchestration.
 - The format has four layered abstractions: **CloudVenue** (where),
@@ -502,7 +502,7 @@ infrastructure to provision.
 - Specifications does *not* contain orchestration steps, build
   recipes, or runtime configuration.  Each has its own category.
 - Migration from inlined CI shell to Specification is mechanical:
-  lift the recipe, swap the inline call for `automojo-provisioning
+  lift the recipe, swap the inline call for `codecraftai-provisioning
   apply --spec ...`, generate the landscape from the provisioner.
 - Where there's no cloud to provision (bare-metal, SaaS-only,
   local-dev), the discipline degrades gracefully — the

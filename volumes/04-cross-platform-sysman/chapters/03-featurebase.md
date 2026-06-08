@@ -2,7 +2,7 @@
 
 > *The contracts are markdown.  The implementations are
 > Python.  The bridge is `featurebase` — a 366-line module in
-> `automojo-sysman-common` that ships `BaseFeatureManager`,
+> `codecraftai-sysman-common` that ships `BaseFeatureManager`,
 > `FeatureConfig`, `FeatureActionResult`, and the `_dispatch`
 > helper that enforces the contract invariants (dry-run,
 > elevation, idempotency, result wrapping).*
@@ -43,7 +43,7 @@ how dry-run is reported, the change happens in
 ## The four canonical types
 
 **File:**
-`automojo-sysman-common/source/packages/automojo/sysman/common/featurebase.py:113–151`
+`codecraftai-sysman-common/source/packages/ccai/sysman/common/featurebase.py:113–151`
 
 ```python
 class ActionStatus(Enum):
@@ -568,7 +568,7 @@ JSON serialisation, UEFI's single-tier dispatch.
 ## What's next
 
 Chapter 4 walks the RHEL implementation
-(`automojo-sysman-linux-redhat`) — the historical reference
+(`codecraftai-sysman-linux-redhat`) — the historical reference
 that established the patterns.  RHEL retains unprefixed
 class names (the documented Convention 4 exception) and
 ships a 46-feature registry that's the closest thing to a

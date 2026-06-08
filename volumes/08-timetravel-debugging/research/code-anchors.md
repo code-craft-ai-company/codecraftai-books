@@ -2,7 +2,7 @@
 
 This file is the index of file:line anchors used by the chapter
 drafts.  All claims in the chapters cite paths under
-`automojo-timetravel-pod` or `automojo-timetravel-server`.
+`codecraftai-timetravel-pod` or `codecraftai-timetravel-server`.
 
 ## Pod — recording engine
 
@@ -142,7 +142,7 @@ function body in `with TimeTravelPortal(name):`.  Branch on
 - **MCP server** — `pod/remote/mcpserver.py:88-232`.  Eight tools
   (create/renew/close session, list/query captures, list/activate/
   deactivate portal).  Transports: stdio, TCP, Unix pipe.  Session
-  directories under `/tmp/automojo_session_<id>` with 60 s TTL
+  directories under `/tmp/ccai_session_<id>` with 60 s TTL
   cleanup.  This bridges pod control to AI agents (Volume 7
   ch. 6 — the agent-driven debug session is what `mcpserver.py`
   enables).
@@ -340,7 +340,7 @@ committed*, not the idealised version.
 
 ### **HONESTY POINT: REST API is not wired to the core**
 
-`automojo-webworks` `RestBlueprint` namespaces are registered
+`codecraftai-webworks` `RestBlueprint` namespaces are registered
 correctly, the routes exist, OpenAPI docs render — but every
 endpoint returns mock data.  No wiring to `RegistrationService`,
 `ProcessRegistry`, `TraceSearchEngine`, `CallGraphBuilder`,

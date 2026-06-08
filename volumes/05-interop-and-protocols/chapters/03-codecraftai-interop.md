@@ -1,4 +1,4 @@
-# Chapter 3 — `automojo-interop` — Agents, Protocols, CLI
+# Chapter 3 — `codecraftai-interop` — Agents, Protocols, CLI
 
 > *Chapters 1 and 2 walked the philosophy and the delegation
 > contract.  This chapter walks the package itself — the
@@ -7,7 +7,7 @@
 > and the `am-interop` CLI scaffolding.  By the end, a reader
 > can locate any Agent in the package and predict its shape.*
 
-`automojo-interop` is a foundation tier package.  It supplies
+`codecraftai-interop` is a foundation tier package.  It supplies
 the Agent base classes that protocol-specific code subclasses,
 ships a handful of common protocols directly, and provides
 the `am-interop` CLI as a command-line surface for ad-hoc
@@ -15,13 +15,13 @@ interop tasks.
 
 This chapter is a *survey*.  Where chapter 4 deep-dives one
 protocol (the from-scratch SSH stack), this chapter walks the
-*breadth* of `automojo-interop` so a reader knows what's in
+*breadth* of `codecraftai-interop` so a reader knows what's in
 the package and where to find each thing.
 
 ## Package layout
 
 ```
-automojo-interop/source/packages/automojo/interop/
+codecraftai-interop/source/packages/ccai/interop/
 ├── aspects.py             # chapter 2 covered this
 ├── agents/
 │   ├── systemagentbase.py     # base for all system agents
@@ -51,11 +51,11 @@ Three top-level concerns:
   package.  SSH, serial, DNS, power.
 - **`cli/`** — the `am-interop` command-line tool.
 
-A note up front: the SSH code in `automojo-interop/protocols/ssh/`
+A note up front: the SSH code in `codecraftai-interop/protocols/ssh/`
 is *paramiko-wrapping* — it uses the `paramiko` library
 under the hood and adds the Aspects-driven persistence
 behaviours on top.  This is the production SSH stack used by
-most projects.  A *separate* package, `automojo-protocol-ssh`,
+most projects.  A *separate* package, `codecraftai-protocol-ssh`,
 implements SSH from scratch (no paramiko).  Chapter 4 walks
 the from-scratch implementation as an in-depth worked example;
 most readers using SSH in production are using the
@@ -66,7 +66,7 @@ paramiko-wrapping version surveyed here.
 ### `SystemAgentBase`
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/agents/systemagentbase.py:19`
+`codecraftai-interop/source/packages/ccai/interop/agents/systemagentbase.py:19`
 
 The pure abstract base.  Most production Agents inherit from
 the protocol-specific bases (`SshBase`, `SerialAgentBase`,
@@ -78,7 +78,7 @@ declares "I'm an Agent" for type-checking and discovery.
 ### `LocalCommandAgent`
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/agents/localcommandagent.py:35–247`
+`codecraftai-interop/source/packages/ccai/interop/agents/localcommandagent.py:35–247`
 
 ```python
 class LocalCommandAgent(ISystemContext):
@@ -113,8 +113,8 @@ mechanism differs.
 A use case for `LocalCommandAgent` in a real test:
 
 ```python
-from automojo.interop.agents.localcommandagent import LocalCommandAgent
-from automojo.interop.aspects import AspectsCmd, ActionPattern
+from ccai.interop.agents.localcommandagent import LocalCommandAgent
+from ccai.interop.aspects import AspectsCmd, ActionPattern
 
 agent = LocalCommandAgent()
 
@@ -139,7 +139,7 @@ explicit aspects for the persistence behaviour.
 ### `PowerAgentBase`
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/agents/poweragentbase.py:24–68`
+`codecraftai-interop/source/packages/ccai/interop/agents/poweragentbase.py:24–68`
 
 The base for power-control agents — devices that can turn
 outlets on and off, query outlet state, monitor power
@@ -162,7 +162,7 @@ The class is an example of the framework's
 chapter 4.  An SDET adding a new power-controller integration
 follows the pattern.
 
-## Protocols shipped in `automojo-interop`
+## Protocols shipped in `codecraftai-interop`
 
 ### SSH (paramiko-wrapping)
 
@@ -232,7 +232,7 @@ the same connection.
 ### Serial-over-TCP
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/protocols/serial/tcpserialagent.py:27–150`
+`codecraftai-interop/source/packages/ccai/interop/protocols/serial/tcpserialagent.py:27–150`
 
 ```python
 class TcpSerialAgent(SerialAgentBase):
@@ -263,7 +263,7 @@ the agent.
 ### DNS / mDNS
 
 **Path:**
-`automojo-interop/source/packages/automojo/interop/protocols/dns/`
+`codecraftai-interop/source/packages/ccai/interop/protocols/dns/`
 
 The DNS module contains stateless utilities for DNS protocol
 work:
@@ -284,7 +284,7 @@ discovery utilities directly.
 ### Power
 
 **Path:**
-`automojo-interop/source/packages/automojo/interop/protocols/power/`
+`codecraftai-interop/source/packages/ccai/interop/protocols/power/`
 
 The shipped power implementation targets DLI Web Power
 Switches:
@@ -308,14 +308,14 @@ PDU, a custom relay board) writes its own
 ## The `am-interop` CLI
 
 **File:**
-`automojo-interop/source/packages/automojo/interop/cli/am_interop_command.py:48–74`
+`codecraftai-interop/source/packages/ccai/interop/cli/am_interop_command.py:48–74`
 
 ```python
 @click.group("am-interop")
 @click.option('-v', '--verbose', count=True)
 def am_interop_root_command(verbose):
     """
-        am-interop — Command-line interface for the automojo interop layer.
+        am-interop — Command-line interface for the ccai interop layer.
     """
     # ...
 ```
@@ -331,7 +331,7 @@ The chapter is honest about this: the CLI is *scaffolded* for
 ad-hoc interop tasks — running a command on a remote host,
 opening a tunnel, querying DNS, controlling power — but the
 shipped subcommands are still in flight.  A reader using
-`automojo-interop` today uses the Python APIs directly; the
+`codecraftai-interop` today uses the Python APIs directly; the
 CLI will be useful when the subcommands land.
 
 The framework's other CLIs (`testbase`, `taskplus`, etc.) use
@@ -347,8 +347,8 @@ interop-side perspective:
 - A Landscape file declares devices and services with
   `deviceType` / `serviceType` fields.
 - Each `deviceType` (e.g., `network/ssh`) maps to a
-  *Coordinator* in `automojo-landscaping`.
-- The Coordinator instantiates one of `automojo-interop`'s
+  *Coordinator* in `codecraftai-landscaping`.
+- The Coordinator instantiates one of `codecraftai-interop`'s
   Agents (e.g., `SshAgent`) for each device.
 - A Coordinator wraps the Agent in a `ProtocolExtension` and
   attaches it to the `LandscapeDevice`.
@@ -357,7 +357,7 @@ interop-side perspective:
   applies the Aspects-driven persistence behaviour from
   chapter 2.
 
-So `automojo-interop` provides the *agents*; `automojo-landscaping`
+So `codecraftai-interop` provides the *agents*; `codecraftai-landscaping`
 provides the *coordinators and protocol extensions*.  The two
 packages compose.  Volume 6 walks the landscape side; this
 chapter walks the interop side.
@@ -378,7 +378,7 @@ By the end of this chapter a reader should:
   (scaffolded, subcommands pending).
 
 The next chapter walks the from-scratch SSH stack at
-`automojo-protocol-ssh` in depth — packets up to agents.  It
+`codecraftai-protocol-ssh` in depth — packets up to agents.  It
 is the volume's most code-anchored chapter, and reading it
 gives the reader a complete picture of what a substantial
 Measured Interoperability protocol looks like all the way

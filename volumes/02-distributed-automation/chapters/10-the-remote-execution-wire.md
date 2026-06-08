@@ -37,7 +37,7 @@ For distributed wire calls, every call accepts an `Aspects`
 parameter (or the protocol-specific subclass).  In SSH:
 
 ```python
-# automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshaspects.py:77
+# codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshaspects.py:77
 
 class Aspects(Freezable):
     """
@@ -86,12 +86,12 @@ signatures.  Every distributed wire call works the same way.
 
 ## The SSH stack — what a test calls
 
-The SSH machinery in `automojo-protocol-ssh` exposes three
+The SSH machinery in `codecraftai-protocol-ssh` exposes three
 levels:
 
 ### `SshSession` — context manager around an SSH client
 
-**File:** `automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshsession.py:45`
+**File:** `codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshsession.py:45`
 
 ```python
 class SshSession(SshBase):
@@ -134,7 +134,7 @@ failures.
 
 ### `SshAgent` — vending sessions for a host
 
-**File:** `automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshagent.py:38`
+**File:** `codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshagent.py:38`
 
 ```python
 class SshAgent(SshBase):
@@ -166,7 +166,7 @@ ProtocolExtension (`device.ssh`) which delegates to the
 
 ### `SshChannel` — raw channel ops
 
-**File:** `automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshconnection.py:14`
+**File:** `codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshconnection.py:14`
 
 For tests that need direct channel-level control (request a
 PTY, push raw bytes, drive an interactive shell), the
@@ -188,7 +188,7 @@ handled differently:
 ### 1. Authentication failures — `SshAuthError`
 
 ```python
-# automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshauth.py:11
+# codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshauth.py:11
 
 class SshAuthError(Exception):
     pass
@@ -202,7 +202,7 @@ config changed.
 ### 2. SFTP failures — `SshSFTPError`
 
 ```python
-# automojo-protocol-ssh/source/packages/automojo/protocols/ssh/sshsftp.py:26
+# codecraftai-protocol-ssh/source/packages/ccai/protocols/ssh/sshsftp.py:26
 
 class SshSFTPError(Exception):
     pass
@@ -359,7 +359,7 @@ testing.  Volume 5 walks:
 - The full SSH protocol stack (auth, transport, channels,
   SFTP, tunnels).
 - The REST client foundations
-  (`automojo-restclient-base`).
+  (`codecraftai-restclient-base`).
 - The serial / power / mDNS / UPnP protocols and their
   agents.
 - The Aspects pattern in depth, with the patterns for

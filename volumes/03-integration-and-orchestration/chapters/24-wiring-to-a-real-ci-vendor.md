@@ -8,7 +8,7 @@ Welcome to Part VI.  The volume's discipline (Parts I–IV) and
 implementation (Part V) are now complete.  This part is the
 *operational* layer — how the typed configurations and the
 taskplus engine actually meet a CI vendor's pipeline runner; how
-the discipline composes with the rest of the automojo portfolio
+the discipline composes with the rest of the ccai portfolio
 across volume boundaries; the case-study capstone that walks one
 real port end-to-end; and the honest discussion of where the
 discipline is *not* the right fit.
@@ -33,7 +33,7 @@ Every CI vendor's shim eventually contains the same one-line
 invocation:
 
 ```bash
-AM_PROFILE=integration-ci automojo testbase test run \
+AM_PROFILE=integration-ci ccai testbase test run \
     --workflow config/workflows/integration.yaml
 ```
 
@@ -41,7 +41,7 @@ AM_PROFILE=integration-ci automojo testbase test run \
 rather than wrapped through testbase:)
 
 ```bash
-AM_PROFILE=integration-ci automojo taskplus workflow run \
+AM_PROFILE=integration-ci ccai taskplus workflow run \
     config/workflows/integration.yaml
 ```
 
@@ -64,7 +64,7 @@ schedule:
 ```yaml
 # .gitlab-ci.yml
 default:
-  image: registry.example.com/automojo-runner:latest
+  image: registry.example.com/codecraftai-runner:latest
   before_script:
     - poetry install --no-interaction
 
@@ -78,8 +78,8 @@ integration-mr:
   variables:
     AM_PROFILE: "integration-ci"
   script:
-    - automojo testbase test run --workflow config/workflows/integration.yaml ||
-      (automojo profile capture --output failure-snapshot.json && exit 1)
+    - ccai testbase test run --workflow config/workflows/integration.yaml ||
+      (ccai profile capture --output failure-snapshot.json && exit 1)
   artifacts:
     when: on_failure
     paths:
@@ -94,7 +94,7 @@ nightly-full-sweep:
   variables:
     AM_PROFILE: "nightly-full-sweep"
   script:
-    - automojo testbase test run --workflow config/workflows/nightly.yaml
+    - ccai testbase test run --workflow config/workflows/nightly.yaml
   artifacts:
     when: always
     paths:
@@ -108,13 +108,13 @@ Twenty-eight lines.  Walk what's there.
 
 ```yaml
 default:
-  image: registry.example.com/automojo-runner:latest
+  image: registry.example.com/codecraftai-runner:latest
   before_script:
     - poetry install --no-interaction
 ```
 
 Two responsibilities.  The `image:` provides the runner — a
-container with the toolchain and the `automojo-*` packages
+container with the toolchain and the `codecraftai-*` packages
 installed.  The `before_script:` runs the project's dependency
 installation step.  These are the *one-time setup* steps for the
 job; everything after is the workflow.
@@ -134,8 +134,8 @@ integration-mr:
   variables:
     AM_PROFILE: "integration-ci"
   script:
-    - automojo testbase test run --workflow config/workflows/integration.yaml ||
-      (automojo profile capture --output failure-snapshot.json && exit 1)
+    - ccai testbase test run --workflow config/workflows/integration.yaml ||
+      (ccai profile capture --output failure-snapshot.json && exit 1)
   artifacts:
     when: on_failure
     paths:
@@ -151,7 +151,7 @@ other four are the workflow's *narrow* contract with the vendor:
 - `variables: AM_PROFILE: "integration-ci"` — the chapter-14
   profile selector.  One env var; the rest of the configuration
   selection cascades from the profile.
-- `script:` — one line of `automojo testbase test run` plus the
+- `script:` — one line of `ccai testbase test run` plus the
   chapter-16 capture-on-failure pattern.
 - `artifacts:` — the chapter-16 capture artifact plus the test
   output directory.
@@ -166,7 +166,7 @@ Notice what's *not* in the vendor YAML:
 - **No imperative setup.**  No `kubectl apply`, no `aws ec2
   create-instance`, no `docker pull`.  When provisioning is
   needed, it's a step *inside* the taskplus workflow (chapter
-  4's Specification consumed by `automojo provisioning apply`).
+  4's Specification consumed by `ccai provisioning apply`).
 - **No conditional branching by environment.**  No `if [ "$CI"
   = "true" ]; then ...; fi`.  The profile selector handles every
   environment-specific behaviour at the configuration layer.
@@ -181,7 +181,7 @@ nightly-full-sweep:
   variables:
     AM_PROFILE: "nightly-full-sweep"
   script:
-    - automojo testbase test run --workflow config/workflows/nightly.yaml
+    - ccai testbase test run --workflow config/workflows/nightly.yaml
   artifacts:
     when: always
     paths:
@@ -241,7 +241,7 @@ jobs:
   integration-pr:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    container: ghcr.io/example/automojo-runner:latest
+    container: ghcr.io/example/codecraftai-runner:latest
     env:
       AM_PROFILE: integration-ci
       VAULT_ADDR: ${{ vars.VAULT_ADDR }}
@@ -251,8 +251,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: poetry install --no-interaction
       - run: |
-          automojo testbase test run --workflow config/workflows/integration.yaml \
-            || (automojo profile capture --output failure-snapshot.json && exit 1)
+          ccai testbase test run --workflow config/workflows/integration.yaml \
+            || (ccai profile capture --output failure-snapshot.json && exit 1)
       - name: Upload failure artifact
         if: failure()
         uses: actions/upload-artifact@v4
@@ -265,7 +265,7 @@ jobs:
   nightly-full-sweep:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
-    container: ghcr.io/example/automojo-runner:latest
+    container: ghcr.io/example/codecraftai-runner:latest
     env:
       AM_PROFILE: nightly-full-sweep
       VAULT_ADDR: ${{ vars.VAULT_ADDR }}
@@ -274,7 +274,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: poetry install --no-interaction
-      - run: automojo testbase test run --workflow config/workflows/nightly.yaml
+      - run: ccai testbase test run --workflow config/workflows/nightly.yaml
       - name: Upload artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -292,7 +292,7 @@ and per-step structure.  But the *structure* is identical:
   image).
 - Each job sets exactly four env vars: `AM_PROFILE` plus the
   three Vault-bootstrap secrets.
-- Each job runs `automojo testbase test run`.
+- Each job runs `ccai testbase test run`.
 - Each job uploads the appropriate artifact.
 
 The same workflow YAML — `config/workflows/integration.yaml` —
@@ -330,7 +330,7 @@ A Jenkins `Jenkinsfile` for the same project:
 pipeline {
     agent {
         docker {
-            image 'registry.example.com/automojo-runner:latest'
+            image 'registry.example.com/codecraftai-runner:latest'
             args '-v ${WORKSPACE}:/workspace -w /workspace'
         }
     }
@@ -351,8 +351,8 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                    automojo testbase test run --workflow config/workflows/integration.yaml \
-                        || (automojo profile capture --output failure-snapshot.json && exit 1)
+                    ccai testbase test run --workflow config/workflows/integration.yaml \
+                        || (ccai profile capture --output failure-snapshot.json && exit 1)
                 '''
             }
         }
@@ -404,7 +404,7 @@ syntax.  The discipline accepts this and confines it to the shim.
 
 ### 2. Runner image plus toolchain bootstrap
 
-Which container, with which Python version and which automojo
+Which container, with which Python version and which ccai
 packages, runs the job?  Per-vendor mechanism:
 
 - GitLab: `default: image:` plus `before_script:`.
@@ -412,7 +412,7 @@ packages, runs the job?  Per-vendor mechanism:
 - Jenkins: `agent { docker { image '...' } }` plus a setup stage.
 
 The runner image typically pre-installs the toolchain
-(`asdf`-managed Python, `poetry`, the `automojo-*` packages).
+(`asdf`-managed Python, `poetry`, the `codecraftai-*` packages).
 The shim's setup step is then a one-liner (`poetry install`) that
 fetches the project's specific dependencies.
 
@@ -510,7 +510,7 @@ integration-multi:
   variables:
     AM_PROFILE: $PROFILE
   script:
-    - automojo testbase test run --workflow config/workflows/integration.yaml
+    - ccai testbase test run --workflow config/workflows/integration.yaml
 ```
 
 The same workflow runs twice in parallel, once with
@@ -640,7 +640,7 @@ quarter rewrite is what the discipline delivers.
   trigger the workflow and provide a runner image.  Everything
   else is the taskplus workflow's responsibility.
 - The taskplus invocation in every vendor's shim is one line:
-  `automojo testbase test run --workflow <file>`, with
+  `ccai testbase test run --workflow <file>`, with
   `AM_PROFILE` set in the environment.
 - **Three full vendor shims** (GitLab CI, GitHub Actions,
   Jenkins) are shown end-to-end; each is 28–43 lines.  The
@@ -663,7 +663,7 @@ quarter rewrite is what the discipline delivers.
   change; everything in `config/` does not.
 
 The next chapter develops the bridges to other layers of the
-automojo portfolio — orchestration → distributed test job (Volume
+ccai portfolio — orchestration → distributed test job (Volume
 2), orchestration → sysman feature (Volume 4), orchestration →
 provisioning (Volume 6).  Where this chapter showed the
 *outward* wiring (CI vendor), the next chapter shows the

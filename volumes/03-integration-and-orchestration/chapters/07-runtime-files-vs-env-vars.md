@@ -261,7 +261,7 @@ hostnames, parallelism — you are paying the plumbing tax.
 ## What moves into configuration files: the content
 
 Everything else.  Concretely, the runtime YAML in
-[`automojo-testbase`](../../../automojo-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml)
+[`codecraftai-testbase`](../../../codecraftai-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml)
 — a real shipped file — has the following top-level keys:
 
 ```yaml
@@ -272,10 +272,10 @@ logging:
     console: INFO
     logfile: DEBUG
 paths:
-  output: /var/log/automojo
+  output: /var/log/ccai
 results-configuration:
   format: jsos
-testroot: source/testroots/automojo
+testroot: source/testroots/ccai
 version: 1.0.0
 ```
 
@@ -295,7 +295,7 @@ opening claim.
 
 The portfolio ships one well-known environment variable that
 controls runtime behaviour:
-[`TESTBASE_MAX_EXAMPLES_CAP`](../../../automojo-testbase/userguide/10-04-03-testing-frameworks-testbase.rst).
+[`TESTBASE_MAX_EXAMPLES_CAP`](../../../codecraftai-testbase/userguide/10-04-03-testing-frameworks-testbase.rst).
 It caps the number of cases each property test will run.  Set
 `TESTBASE_MAX_EXAMPLES_CAP=10` and a property declared with
 `@given(constraints={"max_examples": 50})` runs only 10 cases.
@@ -412,8 +412,8 @@ profiles, but their *names* will never change again.
 The application code that read `LOG_LEVEL` from the environment now
 reads it from the resolved runtime configuration.  The resolution
 machinery — `RuntimeVariables`, `RuntimeVariablesDesc`, and
-`resolve_runtime_variables` — is owned by `automojo.thisapp` (it moved
-there from the now-retired `automojo-runtime` package, whose modules
+`resolve_runtime_variables` — is owned by `ccai.thisapp` (it moved
+there from the now-retired `codecraftai-runtime` package, whose modules
 are thin re-export shims during the migration).  The resolved values
 are exposed through the `RuntimeVariables` accessor set, which reads
 from the application context that the runtime profile was merged into:
@@ -423,7 +423,7 @@ from the application context that the runtime profile was merged into:
 log_level = os.environ.get("LOG_LEVEL", "INFO")
 
 # After
-from automojo.thisapp.runtimevariables import RuntimeVariables
+from ccai.thisapp.runtimevariables import RuntimeVariables
 log_level = RuntimeVariables.AM_LOG_LEVEL_CONSOLE
 ```
 
@@ -431,16 +431,16 @@ log_level = RuntimeVariables.AM_LOG_LEVEL_CONSOLE
 > — runtime profile YAML merged into the application context, the
 > `RuntimeVariables` accessor set, and the activation that lights up
 > the well-known presence folder — belongs to the **integration**
-> layer.  `automojo-integration-runtime` performs it during its
-> [`initialize`](../../../automojo-integration-runtime/source/packages/automojo/integrationruntime/initialize.py)
+> layer.  `codecraftai-integration-runtime` performs it during its
+> [`initialize`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/initialize.py)
 > step (`resolve_runtime_variables` + `activate_profile_job`) and only
 > `IntegratedTestJob` consumes it.  The standalone `testbase`
 > test-execution core (the `TestJob` / `TestSequencer` / recorder path)
-> does *not* import `automojo.thisapp`; it reads only its handful
+> does *not* import `ccai.thisapp`; it reads only its handful
 > of core execution knobs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`,
 > `AM_RUN_ID`, `AM_TESTRUN_TIMEOUT`, the `AM_DEBUG_*`/`AM_DIAGNOSTICS_*`
 > family) straight from `os.environ` through the tiny dependency-free
-> [`automojo.testbase.environment`](../../../automojo-testbase/source/packages/automojo/testbase/environment.py)
+> [`ccai.testbase.environment`](../../../codecraftai-testbase/source/packages/ccai/testbase/environment.py)
 > module.  The integration layer sets those same environment variables,
 > so the fixed-interface variable *names* are identical whether a job
 > runs standalone or under the runtime — only the resolution machinery
@@ -465,19 +465,19 @@ configuration file, support both forms in parallel for a release,
 then remove the environment-variable form.
 
 Use
-[`override_variable_value`](../../../automojo-this-app/source/packages/automojo/thisapp/thisapplication.py)
+[`override_variable_value`](../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py)
 on `ThisApplicationSingleton()` to wire each environment variable to
 its corresponding runtime configuration field as a fallback.  Both the
-singleton and the variable descriptors live in `automojo.thisapp` —
+singleton and the variable descriptors live in `ccai.thisapp` —
 `ThisApplicationSingleton` in
-[`automojo.thisapp.wellknown`](../../../automojo-this-app/source/packages/automojo/thisapp/wellknown.py)
+[`ccai.thisapp.wellknown`](../../../codecraftai-this-app/source/packages/ccai/thisapp/wellknown.py)
 and the `RuntimeVariablesDesc` descriptor set in
-[`automojo.thisapp.runtimevariables`](../../../automojo-this-app/source/packages/automojo/thisapp/runtimevariables.py)
-(formerly `automojo.runtime.runtimevariables`):
+[`ccai.thisapp.runtimevariables`](../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
+(formerly `ccai.runtime.runtimevariables`):
 
 ```python
-from automojo.thisapp.wellknown import ThisApplicationSingleton
-from automojo.thisapp.runtimevariables import (
+from ccai.thisapp.wellknown import ThisApplicationSingleton
+from ccai.thisapp.runtimevariables import (
     RuntimeVariables,
     RuntimeVariablesDesc,
     resolve_runtime_variables,

@@ -3,12 +3,12 @@
 > *Ubuntu came after RHEL.  It established the patterns RHEL
 > grandfathered: the OS-prefixed class names (Convention 4),
 > the shared `featurebase` imported from
-> `automojo-sysman-common` (rather than locally defined), and
+> `codecraftai-sysman-common` (rather than locally defined), and
 > the per-feature config extensions for tool quirks
 > (`DEBIAN_FRONTEND=noninteractive`, the single-zone ufw
 > abstraction).*
 
-`automojo-sysman-linux-ubuntu` is the second sysman package.
+`codecraftai-sysman-linux-ubuntu` is the second sysman package.
 Its existence is what *forced* the prefixing convention —
 two packages with `PackageManager` classes was the
 collision that prompted Convention 4.  Reading this chapter
@@ -18,7 +18,7 @@ established.
 ## Layout
 
 ```
-automojo-sysman-linux-ubuntu/source/packages/automojo/sysman/linux/ubuntu/
+codecraftai-sysman-linux-ubuntu/source/packages/ccai/sysman/linux/ubuntu/
 ├── __init__.py
 ├── packagemanagement.py
 ├── servicemanagement.py
@@ -26,13 +26,13 @@ automojo-sysman-linux-ubuntu/source/packages/automojo/sysman/linux/ubuntu/
 ├── networkconfiguration.py
 ├── bootloadermanagement.py    # covers EFI variants RHEL doesn't
 ├── ... (35 more feature modules)
-└── (no local featurebase — imports from automojo-sysman-common)
+└── (no local featurebase — imports from codecraftai-sysman-common)
 ```
 
 40 Python files.  Notably *no local `featurebase.py`* — the
 Ubuntu package imports `BaseFeatureManager`, `FeatureConfig`,
 `FeatureActionResult`, and `ActionStatus` directly from
-`automojo.sysman.common.featurebase`.
+`ccai.sysman.common.featurebase`.
 
 This is the **shared-base pattern** — the second-mover
 advantage.  RHEL was first and has its own `featurebase` for
@@ -65,8 +65,8 @@ in every name, which is what makes cross-package usage
 unambiguous:
 
 ```python
-from automojo.sysman.linux.redhat.packagemanagement import PackageManager
-from automojo.sysman.linux.ubuntu.packagemanagement import UbuntuPackageManager
+from ccai.sysman.linux.redhat.packagemanagement import PackageManager
+from ccai.sysman.linux.ubuntu.packagemanagement import UbuntuPackageManager
 
 # Distinct names; no aliasing needed.
 rhel_mgr = PackageManager(runner=rhel_runner, config=...)
@@ -84,7 +84,7 @@ the *only* exception.  Every other package follows.
 `packagemanagement.py:1–79`
 
 ```python
-from automojo.sysman.common.featurebase import (
+from ccai.sysman.common.featurebase import (
     ActionStatus,
     BaseFeatureManager,
     FeatureActionResult,
@@ -213,10 +213,10 @@ class UbuntuNetworkConfigurationManagerConfig(FeatureConfig):
                             Defaults to ``/etc/netplan``.
         :param netplan_basename: Filename of the netplan drop-in
                                  maintained by this manager.  Defaults to
-                                 ``99-automojo.yaml``.
+                                 ``99-ccai.yaml``.
     """
     netplan_dir: str = "/etc/netplan"
-    netplan_basename: str = "99-automojo.yaml"
+    netplan_basename: str = "99-ccai.yaml"
 ```
 
 Persistent IPv4 addressing on Ubuntu happens through
@@ -261,7 +261,7 @@ A reader comparing the Ubuntu and RHEL packages will notice:
 - **`tuned-management`** — RHEL-specific.
 - **`command-execution`** and **`command-runner-architecture`**
   — these are in RHEL's registry as Layer-1 features, but
-  Ubuntu inherits the runner from `automojo-sysman-common`
+  Ubuntu inherits the runner from `codecraftai-sysman-common`
   and doesn't re-register.
 
 ### Ubuntu-specific feature: `bootloader-management`
@@ -281,7 +281,7 @@ feature, the implementation honours the contract.
 ## The shared-base benefit visible
 
 A worth-pointing-out detail: when the
-`automojo-sysman-common` package's `featurebase` is
+`codecraftai-sysman-common` package's `featurebase` is
 updated (a Phase-3 audit fix, a new convention added), the
 Ubuntu package picks up the change *automatically* on its
 next dependency resolution.  The RHEL package's local
@@ -298,7 +298,7 @@ flexibility.
 ## Tests
 
 41 test files at
-`source/testroots/testbase/automojo/tests/sysman/linux/ubuntu/`.
+`source/testroots/testbase/ccai/tests/sysman/linux/ubuntu/`.
 
 Slightly fewer than RHEL's 53, reflecting:
 
@@ -339,7 +339,7 @@ handles the cases where one OS can't honour the abstraction.
 ## What's next
 
 Chapter 6 walks the macOS implementation
-(`automojo-sysman-macos`) — 49 features, 45 test files,
+(`codecraftai-sysman-macos`) — 49 features, 45 test files,
 and the most distinctive set of OS-specific quirks: Homebrew
 elevation inversion (Convention 11), launchd's `gui/<uid>`
 domain mapping for user services, pf's per-anchor file

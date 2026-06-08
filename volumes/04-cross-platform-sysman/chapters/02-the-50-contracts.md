@@ -1,7 +1,7 @@
 # Chapter 2 — The 50 Cross-OS Contracts
 
 > *The contracts are markdown.  Fifty directories under
-> `automojo-sysman-common/specs/contracts/`, each containing
+> `codecraftai-sysman-common/specs/contracts/`, each containing
 > one `contract.md` file with a fixed structure: Scope, Verbs,
 > Invariants, Data Models, Channel/Source Mapping, Elevation,
 > Execution Model, Naming, Aspect Composition, Tests, Out of
@@ -17,7 +17,7 @@ within the structure.
 ## Where the contracts live
 
 ```
-automojo-sysman-common/
+codecraftai-sysman-common/
 └── specs/
     └── contracts/
         ├── README.md                          # 361-line master index
@@ -132,7 +132,7 @@ Every contract opens identically:
 # Package-Management Contract
 
 This is the cross-OS abstract contract for the
-**package-management** feature.  Every `automojo-sysman-*`
+**package-management** feature.  Every `codecraftai-sysman-*`
 package that ships a package manager MUST honor this contract.
 ```
 
@@ -484,12 +484,12 @@ honour the contract literally:
 - Windows winget produces text output rather than a stable
   machine-readable format.  Per-OS spec MUST document the
   parsing strategy (column-position from header dashes; see
-  `automojo-sysman-windows/.../packagemanagement.py`).
+  `codecraftai-sysman-windows/.../packagemanagement.py`).
 
 - Some Linux distributions ship `apt` and `dnf`
   simultaneously (e.g., Fedora's `dnf` plus optional
   `apt`).  Implementations target one tool only; the
-  package's name (`automojo-sysman-linux-redhat` vs
+  package's name (`codecraftai-sysman-linux-redhat` vs
   `-ubuntu`) determines which.
 ```
 
@@ -518,7 +518,7 @@ The example used throughout the chapter so far.  Highlights:
 ### Example 2 — `service-management`
 
 The contract is at
-`automojo-sysman-common/specs/contracts/service-management/contract.md`.
+`codecraftai-sysman-common/specs/contracts/service-management/contract.md`.
 
 Distinctive features:
 
@@ -539,7 +539,7 @@ Distinctive features:
 ### Example 3 — `network-configuration`
 
 The contract is at
-`automojo-sysman-common/specs/contracts/network-configuration/contract.md`.
+`codecraftai-sysman-common/specs/contracts/network-configuration/contract.md`.
 
 Distinctive features:
 

@@ -7,7 +7,7 @@
 
 The previous chapter introduced the runtime variable layer.
 This chapter introduces
-[`automojo-configuration`](../../../../automojo-configuration/source/packages/automojo/configuration/),
+[`codecraftai-configuration`](../../../../codecraftai-configuration/source/packages/ccai/configuration/),
 the foundation-tier package whose job is to *load* configuration
 files — from disk, from HTTP, from CouchDB, from MongoDB —
 parse them, optionally decrypt them, validate them, and produce
@@ -51,14 +51,14 @@ The chapter walks the seven steps from bottom to top.
 ## `ConfigurationLoader` — the public surface
 
 The
-[`ConfigurationLoader`](../../../../automojo-configuration/source/packages/automojo/configuration/configurationloader.py)
+[`ConfigurationLoader`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationloader.py)
 class is the consumer-facing entry point.  Constructed with a
 list of source URIs:
 
 ```python
 loader = ConfigurationLoader(
     sources=[
-        "dir://~/.automojo/configurations/landscapes",
+        "dir://~/.ccai/configurations/landscapes",
         "http://config.staging-east.internal/landscapes",
         "couchdb://config-couch.internal/landscapes",
     ],
@@ -103,7 +103,7 @@ without having to instrument anything.
 ## The source hierarchy
 
 Every source extends
-[`ConfigurationSourceBase`](../../../../automojo-configuration/source/packages/automojo/configuration/sources/configurationsourcebase.py),
+[`ConfigurationSourceBase`](../../../../codecraftai-configuration/source/packages/ccai/configuration/sources/configurationsourcebase.py),
 the abstract base that declares two methods:
 
 ```python
@@ -139,7 +139,7 @@ The shipped source classes:
 URIs of the form `dir://path/to/directory`.  Loads files from a
 local filesystem.  Implementation detail worth naming: when the
 URI doesn't start with `dir://`, the source treats the entire
-URI as a directory path — so `~/.automojo/configurations` works
+URI as a directory path — so `~/.ccai/configurations` works
 without the prefix.
 
 The directory is expanded through `os.path.expandvars` and
@@ -166,8 +166,8 @@ is required.
 
 The chapter-9 (Volume 3) cross-reference: a `CouchDbProfile`
 data profile points at the same kind of CouchDB.  The two
-packages share the same protocol — `automojo-dataprofiles`'s
-profile is the *connection*; `automojo-configuration`'s source
+packages share the same protocol — `codecraftai-dataprofiles`'s
+profile is the *connection*; `codecraftai-configuration`'s source
 is the *configuration storage* using the same connection
 mechanics.
 
@@ -191,7 +191,7 @@ _FORMAT_BY_EXTENSION = {
 ```
 
 `ConfigurationFormat` is the small enum from
-[`configurationformat.py`](../../../../automojo-configuration/source/packages/automojo/configuration/configurationformat.py):
+[`configurationformat.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationformat.py):
 
 ```python
 class ConfigurationFormat(str, Enum):
@@ -229,7 +229,7 @@ encrypted_content: "BASE64-CIPHERTEXT-HERE"
 ```
 
 The
-[`automojo-configuration/cryptography.py`](../../../../automojo-configuration/source/packages/automojo/configuration/cryptography.py)
+[`codecraftai-configuration/cryptography.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/cryptography.py)
 module produces and consumes documents in this shape.  Volume 3
 chapter 11 ("Credentials in flight") detailed the cryptography
 primitives for credentials; the same primitives apply to *any*
@@ -311,15 +311,15 @@ per-environment runtimes, etc.); each file contributes to a
 unified resolved configuration.
 
 The composition primitive is
-[`MergeMap`](../../../../automojo-xmodules/source/packages/automojo/xmodules/xcollections/mergemap.py)
-from `automojo-xmodules` (chapter 0's foundation tier).  A
+[`MergeMap`](../../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py)
+from `codecraftai-xmodules` (chapter 0's foundation tier).  A
 `MergeMap` is a `MutableMapping` that holds an ordered list of
 component maps and composes them with *overlay* semantics — later
 maps shadow earlier maps key-by-key, but lower-priority entries
 remain inspectable.
 
-In `automojo-configuration`,
-[`configurationmaps.py`](../../../../automojo-configuration/source/packages/automojo/configuration/configurationmaps.py)
+In `codecraftai-configuration`,
+[`configurationmaps.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py)
 defines the five well-known composition targets:
 
 ```python
@@ -411,7 +411,7 @@ populated, and the rest of the application reads from them.
 
 ## The variable model the loader uses
 
-[`configurationvariables.py`](../../../../automojo-configuration/source/packages/automojo/configuration/configurationvariables.py)
+[`configurationvariables.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py)
 defines `ConfigVariablesDesc`, extending the chapter-8
 `RuntimeVariablesDesc`:
 
@@ -455,7 +455,7 @@ This is the chapter-6 descriptor model at scale.
 
 The descriptors above use *converter* functions to turn raw
 string values into typed lists:
-[`normalize.py`](../../../../automojo-configuration/source/packages/automojo/configuration/normalize.py)
+[`normalize.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/normalize.py)
 ships three:
 
 - **`split_and_normalize_name_list(value, sep=";")`** — splits
@@ -473,7 +473,7 @@ paths on Windows use `:` as a drive separator.
 
 ## The settings layer
 
-[`configurationsettings.py`](../../../../automojo-configuration/source/packages/automojo/configuration/configurationsettings.py)
+[`configurationsettings.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationsettings.py)
 provides the *one-time* initialisation function that establishes
 the application persona and the default configuration:
 
@@ -499,7 +499,7 @@ parameters; if `default_configuration` is provided, replaces
 This is the typical application's *first* call:
 
 ```python
-from automojo.configuration.configurationsettings import establish_configuration_settings
+from ccai.configuration.configurationsettings import establish_configuration_settings
 
 establish_configuration_settings(
     name="my-tool",
@@ -538,7 +538,7 @@ validation — "this dict has these specific fields with these
 specific types" — is the consumer's responsibility.  Per
 Volume 3 chapter 5 (Landscape files), the loader doesn't
 validate the landscape's apod or infrastructure shape; the
-landscape *consumer* (typically `automojo-landscaping`) does
+landscape *consumer* (typically `codecraftai-landscaping`) does
 that.
 
 The `validate` classmethod pattern from Volume 3 (chapter 8 —
@@ -568,7 +568,7 @@ The configuration loader is consumed by:
   depth; chapters 4–8 explain the per-category content; chapter
   3 lists the categories.  The current chapter is the *loader*
   side of all that material.
-- **Volume 1 (Testing)** — `automojo-testbase` calls
+- **Volume 1 (Testing)** — `codecraftai-testbase` calls
   `resolve_configuration_maps` at startup to populate the
   active configurations before tests run.
 - **Volume 5 (Interop)** — interop's per-protocol adapters
@@ -585,7 +585,7 @@ two layers compose cleanly.
 
 ## Summary
 
-- **`automojo-configuration`** is the configuration-loading
+- **`codecraftai-configuration`** is the configuration-loading
   package every higher tier uses.  The loader fetches
   configuration files from filesystem, HTTP, CouchDB, or
   MongoDB sources; detects format by extension; optionally
@@ -631,7 +631,7 @@ two layers compose cleanly.
 
 The next chapter — the last in Volume 0 — is the survey
 chapter for the remaining foundation-tier packages
-(`automojo-credentials`, `automojo-dataprofiles`, and
-`automojo-storage-database`).  These three are smaller in
+(`codecraftai-credentials`, `codecraftai-dataprofiles`, and
+`codecraftai-storage-database`).  These three are smaller in
 substance than the packages this chapter covered; the survey
 treatment fits.

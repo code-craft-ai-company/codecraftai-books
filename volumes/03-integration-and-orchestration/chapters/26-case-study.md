@@ -581,7 +581,7 @@ flow:
 
     # Provision phase (only on MR / scheduled runs)
     - task: Provision
-      tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+      tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
       specification: config/specs/spec-staging-east.yaml
       action: apply
       if: "parameters['source'] in ('merge_request_event', 'schedule')"
@@ -590,14 +590,14 @@ flow:
     - taskgroup: Test
       items:
           - task: Smoke
-            tasktype: automojo.taskplus.tasks.distributedtest@DistributedTestJobTask
-            test_root: source/testroots/automojo
-            includes: [automojo.tests.smoke]
+            tasktype: ccai.taskplus.tasks.distributedtest@DistributedTestJobTask
+            test_root: source/testroots/ccai
+            includes: [ccai.tests.smoke]
 
           - task: Integration
-            tasktype: automojo.taskplus.tasks.distributedtest@DistributedTestJobTask
-            test_root: source/testroots/automojo
-            includes: [automojo.tests.integration]
+            tasktype: ccai.taskplus.tasks.distributedtest@DistributedTestJobTask
+            test_root: source/testroots/ccai
+            includes: [ccai.tests.integration]
             onfailure: NotifyAndCleanup
 
     # Deploy phase (only on push-to-main)
@@ -620,7 +620,7 @@ flow:
             if: "parameters['notify_on_failure'] == True"
 
           - task: Teardown
-            tasktype: automojo.taskplus.tasks.provisioning@ProvisioningTask
+            tasktype: ccai.taskplus.tasks.provisioning@ProvisioningTask
             specification: config/specs/spec-staging-east.yaml
             action: teardown
             if: "parameters['cleanup_after_run'] == True"
@@ -697,8 +697,8 @@ integration-mr:
   variables:
     AM_PROFILE: integration-ci
   script:
-    - automojo testbase test run --workflow config/workflows/integration.yaml ||
-      (automojo profile capture --output failure-snapshot.json && exit 1)
+    - ccai testbase test run --workflow config/workflows/integration.yaml ||
+      (ccai profile capture --output failure-snapshot.json && exit 1)
   artifacts:
     when: on_failure
     paths:
@@ -713,7 +713,7 @@ nightly-full-sweep:
   variables:
     AM_PROFILE: nightly-full-sweep
   script:
-    - automojo testbase test run --workflow config/workflows/nightly.yaml
+    - ccai testbase test run --workflow config/workflows/nightly.yaml
   artifacts:
     when: always
     paths: [.output/]
@@ -791,7 +791,7 @@ matter as much:
 - **Configuration drift across environments became visible.**
   Before the migration, "what's different between staging-east
   and staging-west?" was a question requiring archaeology.
-  After, it's a `automojo profile diff` invocation that prints a
+  After, it's a `ccai profile diff` invocation that prints a
   side-by-side diff in two seconds.
 - **The team's mental model of the pipeline got smaller.**
   Before, debugging a pipeline failure required holding two
@@ -807,7 +807,7 @@ Honesty about what didn't change.
 ### The runner image is still a black box
 
 The `registry.example.com/runner:latest` image contains the
-toolchain (Python, Poetry, the automojo packages, AWS CLI,
+toolchain (Python, Poetry, the ccai packages, AWS CLI,
 kubectl, docker).  The image's *contents* are still managed
 through a separate Dockerfile and image-build pipeline; the
 discipline in this volume doesn't apply to that layer.  When the

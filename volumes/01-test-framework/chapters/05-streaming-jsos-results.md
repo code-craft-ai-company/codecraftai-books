@@ -6,7 +6,7 @@
 > the final report.  This chapter is about why testbase streams,
 > what it streams, and how a consumer reads it.*
 
-`automojo-testbase` writes test results in a streaming format
+`codecraftai-testbase` writes test results in a streaming format
 called **JSOS** — *JSON Separated Object Stream*.  The format
 is straightforward: each event is a self-contained JSON object,
 prefixed by an ASCII record-separator character (Unicode code
@@ -22,12 +22,12 @@ run is still a useful run.
 This chapter walks the format, the recorders that produce it,
 the result files testbase emits, and the consumer patterns
 that read the stream.  A note up front on division of labour:
-plain `automojo-testbase` defaults to a *stdout* recorder and
+plain `codecraftai-testbase` defaults to a *stdout* recorder and
 runs standalone — it writes the JSOS/JSON artefacts only when a
 run is given an output directory, and it never renders the HTML
 summary.  The full HTML-rendering recorder and the
 presence-folder results-directory layout are the responsibility
-of `IntegratedTestJob` in `automojo-integration-runtime`.  The
+of `IntegratedTestJob` in `codecraftai-integration-runtime`.  The
 *format* is identical in both cases; this chapter is about the
 format and the standalone recorder, and flags where the
 integration tier takes over.
@@ -72,9 +72,9 @@ The single line that defines the format is in the recorder
 import block:
 
 ```python
-# automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:24
+# codecraftai-testbase/source/packages/ccai/testbase/results/recorders/jsonresultrecorder.py:24
 
-from automojo.xmodules.jsos import CHAR_RECORD_SEPERATOR
+from ccai.xmodules.jsos import CHAR_RECORD_SEPERATOR
 ```
 
 `CHAR_RECORD_SEPERATOR` is the two-byte sequence `"\x1E\n"` —
@@ -119,9 +119,9 @@ conforming consumer.
 When a run is given an output directory, the recorder produces
 three files in the run's results directory.  The filenames are
 chosen by `TestJob.begin()`
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:148–150`)
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:148–150`)
 and the serialisation is performed by `JsonResultRecorder`
-(`automojo-testbase/source/packages/automojo/testbase/results/recorders/jsonresultrecorder.py:90`),
+(`codecraftai-testbase/source/packages/ccai/testbase/results/recorders/jsonresultrecorder.py:90`),
 the JSOS/JSON serialisation core both the standalone and
 integration recorders inherit from:
 
@@ -170,7 +170,7 @@ A representative `test_finished` record:
 ```json
 {
   "kind": "test_finished",
-  "test_name": "automojo.agentkit.tests.test_costtracker.test_addition_is_commutative",
+  "test_name": "ccai.agentkit.tests.test_costtracker.test_addition_is_commutative",
   "started_at": "2026-04-30T15:30:14.001Z",
   "finished_at": "2026-04-30T15:30:14.018Z",
   "duration_ms": 17,
@@ -185,7 +185,7 @@ A representative `test_finished` for a failure:
 ```json
 {
   "kind": "test_finished",
-  "test_name": "automojo.agentkit.tests.test_invoice.test_invoice_total_includes_tax",
+  "test_name": "ccai.agentkit.tests.test_invoice.test_invoice_total_includes_tax",
   "started_at": "2026-04-30T15:35:21.501Z",
   "finished_at": "2026-04-30T15:35:21.612Z",
   "duration_ms": 111,
@@ -221,7 +221,7 @@ locally for live monitoring.
 
 `TestJob.begin()` (Chapter 2) resolves the results directory and
 the artefact filenames
-(`automojo-testbase/source/packages/automojo/testbase/testjob.py:148–150`);
+(`codecraftai-testbase/source/packages/ccai/testbase/testjob.py:148–150`);
 the recorder itself is constructed later, in `TestJob.execute()`,
 through the `_create_recorder(...)` provider hook
 (`.../testbase/testjob.py:564`) and entered as a context manager
@@ -239,7 +239,7 @@ with self._create_recorder(runid=runid, start=start, render_info=render_info,
 
 > **The default recorder is `StdoutResultRecorder`, not
 > `JsonResultRecorder`.**  Plain `testbase` runs standalone — no
-> `automojo-this-app`, no `RuntimeVariables`, no HTML summary
+> `codecraftai-this-app`, no `RuntimeVariables`, no HTML summary
 > template — so `TestJob._create_recorder()` returns a
 > `StdoutResultRecorder`
 > (`.../testbase/results/recorders/stdoutresultrecorder.py:36`).
@@ -297,8 +297,8 @@ what's there.
 Everything above is the *standalone* recorder.  Three things
 that this chapter used to attribute to `testbase` are now the
 responsibility of `IntegratedTestJob` in
-`automojo-integration-runtime`
-(`automojo-integration-runtime/source/packages/automojo/integrationruntime/integratedtestjob.py:51`).
+`codecraftai-integration-runtime`
+(`codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integratedtestjob.py:51`).
 `IntegratedTestJob` extends `TestJob` and overrides exactly
 three provider hooks:
 
@@ -314,7 +314,7 @@ three provider hooks:
    `IntegratedTestJob._create_output_context()` returns a
    `RuntimeOutputContext`
    (`.../integrationruntime/runtimeoutputcontext.py:40`), which
-   delegates to `automojo.thisapp.paths` so that results,
+   delegates to `ccai.thisapp.paths` so that results,
    diagnostics, and per-testcase by-products land under the
    activated application's well-known *presence folder*.  Those
    path helpers are activation-gated — they raise `SemanticError`
@@ -354,7 +354,7 @@ agents` consumers read it.
 For runs that need to report to an external dashboard while
 running, testbase ships a *streaming encoder* and *result
 streamer* alongside the recorder
-(`automojo-testbase/source/packages/automojo/testbase/results/streaming/resultstreamer.py:44–78`).
+(`codecraftai-testbase/source/packages/ccai/testbase/results/streaming/resultstreamer.py:44–78`).
 
 The classes:
 
@@ -408,7 +408,7 @@ testbase agents testresult failures --results results/
 The `failures` subcommand reads the stream file, filters to
 `outcome != passed`, and emits a structured JSON document an
 engineer can grep through or feed to an agent.  The
-`automojo-testbase/source/packages/automojo/testbase/cli/cmdtree/agents/testresult/failures.py`
+`codecraftai-testbase/source/packages/ccai/testbase/cli/cmdtree/agents/testresult/failures.py`
 file is the implementation.
 
 ### Dashboard ingestion

@@ -548,4 +548,4 @@ of detail an engineer who must extend or operate them needs.
 
 ← Volume 8 README: [`../README.md`](../README.md).
 
-← Volume index: [`../../../automojo-volumes.md`](../../../automojo-volumes.md).
+← Volume index: [`../../../codecraftai-volumes.md`](../../../codecraftai-volumes.md).
