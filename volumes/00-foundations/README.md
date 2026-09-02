@@ -26,9 +26,12 @@ the book a senior engineer hands a new hire on day one.
 The volume draws from the foundation tier of the `codecraftai-*`
 portfolio:
 
-- `codecraftai-interfaces` — shared contract layer
-- `codecraftai-errors` — exception vocabulary + enhanced tracebacks
-- `codecraftai-waiting` — waiting primitives
+- `codecraftai-foundations` — one distribution holding the contract layer (`ccai.interfaces`),
+  the exception vocabulary and enhanced tracebacks (`ccai.errors`), the waiting primitives
+  (`ccai.waiting`), the minimal `Aspects` carrier (`ccai.aspects`) and base classes such as
+  `Freezable` (`ccai.bases`). Until 2026-09-02 these were the separate `codecraftai-interfaces`,
+  `codecraftai-errors` and `codecraftai-waiting` packages; import paths did not change, and the
+  chapters below still describe them by their subpackage names.
 - `codecraftai-this-app` — application identity + persona variables
 - `codecraftai-extension` — factory + plug-in machinery
 - `codecraftai-runtime` — runtime variables + well-known paths

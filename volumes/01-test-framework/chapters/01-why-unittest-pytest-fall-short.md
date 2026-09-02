@@ -326,8 +326,9 @@ chain of dependencies — configuration, the runtime foundation,
 this-app — that many low-level packages could not import without a
 cycle.  That chain is being severed.  testbase is becoming
 **near-standalone**: its intended dependencies are exactly
-`codecraftai-arcli`, `codecraftai-errors`, `codecraftai-interfaces`,
-`codecraftai-waiting`, and `codecraftai-xmodules` — no configuration tier,
+`codecraftai-arcli`, `codecraftai-foundations` (which consolidated
+`codecraftai-errors`, `codecraftai-interfaces` and `codecraftai-waiting`), and
+`codecraftai-xmodules` — no configuration tier,
 no runtime foundation, no this-app.  The *core* runner already lives
 on that floor: `TestJob` reads its handful of environment knobs
 directly via the dependency-free `ccai.testbase.environment`

@@ -8,7 +8,7 @@
 The previous chapter established the coding standards.  This
 chapter develops one of them in depth: the exception-handling
 discipline.  The discipline rests on
-[`codecraftai-errors`](../../../../codecraftai-errors/source/packages/ccai/errors/exceptions.py)
+[`codecraftai-errors`](../../../../codecraftai-foundations/source/packages/ccai/errors/exceptions.py)
 — a small package whose job is to provide the **typed exception
 vocabulary** every other ccai package uses.
 

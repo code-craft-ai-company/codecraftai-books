@@ -11,7 +11,7 @@ packages substitute for each other without their callers
 caring which implementation is on the other end.
 
 The package is
-[`codecraftai-interfaces`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/).
+[`codecraftai-interfaces`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/).
 Eight files; eight protocols; one purpose: **shared contract
 definitions that downstream packages implement and other
 downstream packages consume.**  The package itself contains no
@@ -57,7 +57,7 @@ walks each, anchored on the actual code.
 
 ### `ICommandRunner` — running commands across system boundaries
 
-[`icommandrunner.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/icommandrunner.py)
+[`icommandrunner.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/icommandrunner.py)
 defines the most-used protocol in the portfolio.  Its job: provide
 a uniform shape for *running a command*, regardless of whether
 the command runs locally, over SSH, in a container, or via some
@@ -111,7 +111,7 @@ received.
 
 ### `IFileOperator` — filesystem operations across boundaries
 
-[`ifileoperator.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/ifileoperator.py)
+[`ifileoperator.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/ifileoperator.py)
 is `ICommandRunner`'s sibling for filesystem work.  Five methods:
 `write_text`, `delete`, `read_text`, `list_dir`, `exists`.  Each
 takes an `elevated: bool` parameter, mirroring the privilege
@@ -140,7 +140,7 @@ these five.
 
 ### `ISerializable` — dict round-trip
 
-[`iserializable.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/iserializable.py)
+[`iserializable.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/iserializable.py)
 is the smallest protocol in the package.  Two methods:
 
 ```python
@@ -170,7 +170,7 @@ YAML/JSON.
 
 ### `IBasicCredential` — username + password
 
-[`ibasiccredential.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/ibasiccredential.py)
+[`ibasiccredential.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/ibasiccredential.py)
 is the smallest credential interface.  Two read-only properties:
 
 ```python
@@ -199,9 +199,9 @@ discipline in action.
 
 ### `IIncludeFilter` and `IExcludeFilter` — list filtering
 
-[`iincludefilter.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/iincludefilter.py)
+[`iincludefilter.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/iincludefilter.py)
 and
-[`iexcludefilter.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/iexcludefilter.py)
+[`iexcludefilter.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/iexcludefilter.py)
 provide a uniform interface for filtering lists of items.  They
 are siblings:
 
@@ -235,7 +235,7 @@ default.
 
 ### `IHint` — friendly identification
 
-[`ihint.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/ihint.py)
+[`ihint.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/ihint.py)
 is a small protocol for objects that can produce a "hint" string
 matching them against another object:
 
@@ -253,7 +253,7 @@ strings.  The protocol formalises the relationship.
 
 ### `ITestJob` — the test-job contract
 
-[`itestjob.py`](../../../../codecraftai-interfaces/source/packages/ccai/interfaces/itestjob.py)
+[`itestjob.py`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/itestjob.py)
 is the largest of the eight protocols.  It defines the contract
 for a test job — the unit of work `codecraftai-testbase` and its
 extensions execute:

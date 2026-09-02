@@ -108,8 +108,8 @@ Without it, every later book has to re-explain.
 
 **Estimated pages:** 300–400.
 
-**Portfolio source:** `codecraftai-interfaces`, `codecraftai-errors`,
-`codecraftai-waiting`, `codecraftai-this-app` (which now owns the runtime
+**Portfolio source:** `codecraftai-foundations` (the `ccai.errors`, `ccai.interfaces`,
+`ccai.waiting`, `ccai.aspects` and `ccai.bases` subpackages), `codecraftai-this-app` (which now owns the runtime
 foundation — runtime variables, well-known paths, activation, and
 enumerations), `codecraftai-extension`, `codecraftai-configuration`,
 `codecraftai-credentials`, `codecraftai-dataprofiles`,
@@ -131,7 +131,7 @@ re-export shims pointing at `ccai.thisapp`.)*
    error-message construction pattern.
 4. **Interfaces and contracts** — `ICommandRunner`, `IFileOperator`,
    `ISystemContext`; abstract-base discipline; what belongs in
-   `codecraftai-interfaces` vs in tier-specific shared packages.
+   `ccai.interfaces` (in `codecraftai-foundations`) vs in tier-specific shared packages.
 5. **Waiting with rich diagnostics** — beyond `time.sleep`; timeout
    composition, attempt logging, observable retry.
 6. **Application identity and presence** — `establish_app_persona`,
@@ -167,7 +167,7 @@ None.  Volume 0 is prerequisite for everything.
   EARS requirements + Source Module Map) gives chapter 9 a ready-made
   reference structure.
 - The foundation-tier zero-test gaps closed in a prior session (334 tests
-  across `codecraftai-errors`, `codecraftai-interfaces`, `codecraftai-storage-database`,
+  across `ccai.errors` and `ccai.interfaces` (now in `codecraftai-foundations`), `codecraftai-storage-database`,
   `codecraftai-networking`) show *what good test coverage looks like* on a
   foundation package — useful as a sidebar pattern.
 
@@ -184,8 +184,9 @@ of the platform (~40k LOC, 146 test files, mature) and `arcli` is the
 declarative CLI toolkit underneath every `codecraftai-*` CLI.  Together they
 are the single-host substrate that distributed test execution (Vol 2)
 extends.  `testbase` is now **near-standalone**: its dependencies are
-exactly `codecraftai-arcli`, `codecraftai-errors`, `codecraftai-interfaces`,
-`codecraftai-waiting`, and `codecraftai-xmodules` — it no longer depends on
+exactly `codecraftai-arcli`, `codecraftai-foundations` (which consolidated
+`codecraftai-errors`, `codecraftai-interfaces` and `codecraftai-waiting`), and
+`codecraftai-xmodules` — it no longer depends on
 `codecraftai-configuration`, the runtime foundation, or `codecraftai-this-app`.
 It reads the handful of core environment knobs (`AM_DEBUG_*`,
 `AM_DIAGNOSTICS_*`, `AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
