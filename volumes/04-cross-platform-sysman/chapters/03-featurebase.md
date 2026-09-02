@@ -33,10 +33,10 @@ re-implement:
 - Status mapping — translating the runner's `RunResult`
   into the contract's status enum.
 
-Multiplied across 50 features × 5 OSes = 250 places where
+Multiplied across ~50 features × 5 OSes = ~250 places where
 that boilerplate could go subtly wrong.  Centralising the
 boilerplate in a single helper means the boilerplate is
-correct in 250 places at once.  When a Phase-3 audit changes
+correct in ~250 places at once.  When a Phase-3 audit changes
 how dry-run is reported, the change happens in
 `_dispatch`; every implementation inherits the fix.
 
@@ -541,6 +541,77 @@ A verb that needs multiple commands in sequence (e.g.,
 volume") makes multiple `_dispatch` calls and aggregates the
 results into one `*ActionResult`.
 
+## When the substrate becomes the implementation
+
+`featurebase` is deliberately thin: it locks the invariants
+and leaves every verb to the per-OS manager.  Two feature
+bases in the same package sit one level up from it, and they
+answer opposite questions about how much can be shared.
+
+**File:**
+`codecraftai-sysman-common/source/packages/ccai/sysman/common/vpnclientmanagementbase.py`
+
+`VPNClientManagementBase` is *abstract*.  It declares the
+seven `vpn-client-management` verbs as `@abstractmethod`s and
+ships the helpers every OS needs (`_validate_provider`,
+`_short_circuit_dry_run`, `_should_elevate`,
+`_dispatch_write`).  The verbs stay per-OS because installing
+Tailscale means an apt repository on Ubuntu, a dnf
+repository on RHEL, a Homebrew cask on macOS, and an MSI on
+Windows.  The base fixes the *shape*; the OS supplies the
+*behaviour*.
+
+**File:**
+`codecraftai-sysman-common/source/packages/ccai/sysman/common/pythonenvironmentmanagementbase.py`
+
+`PythonEnvironmentManagementBase` is *concrete*.  Every
+`python-environment-management` verb — `create_environment`,
+`install_packages`, `deploy`, the read surface — is
+implemented in the base, because `python -m venv` and
+`python -m pip` are the same program on every OS.  The one
+abstract method is `_build_layout()`, which returns a
+`PythonEnvironmentLayout` from the sibling module
+`pythonenvironmentlayout.py`:
+
+```python
+class PythonEnvironmentLayout(ABC):
+    def default_interpreter_argv(self) -> list[str]: ...   # ["python3"] / ["py", "-3"]
+    def venv_python_path(self, path: str) -> str: ...      # bin/python / Scripts\python.exe
+    def build_directory_exists_argv(self, path) -> list[str]: ...   # test -d / Test-Path
+    def build_remove_tree_argv(self, path) -> list[str]: ...        # rm -rf / Remove-Item
+```
+
+A per-OS subclass is then about 200 lines: pick the layout,
+alias the shared types with the OS prefix, and add
+`ensure_prerequisites`, which delegates to that OS's existing
+package manager.
+
+Two details of the concrete base are worth noticing because
+they show where `_dispatch` stops being enough:
+
+- It calls the runner directly in its own `_dispatch_write`
+  rather than through `BaseFeatureManager._dispatch`, because
+  it needs the raw `RunResult` to read the Windows
+  `elevation_blocked` extension (Convention 6) and surface it
+  as `detail="elevation_blocked"`.  The base `_dispatch`
+  discards the raw result after mapping status.  This is the
+  "custom status mapping" escape hatch from the previous
+  section, used for a cross-OS reason rather than a per-OS
+  one.
+- Its idempotency probe for `install_packages` is a
+  conservative PEP 508 evaluator (`_requirement_satisfied`)
+  that refuses to guess: pre-release versions, URL and
+  editable requirements, and non-numeric ordering comparisons
+  all answer "not satisfied" and let pip decide.  A false
+  "not satisfied" costs one redundant pip call; a false
+  "satisfied" would silently skip a dependency.
+
+The rule the two bases illustrate: share the *shape* by
+default, and share the *behaviour* only when the underlying
+tool is provably identical across OSes.  The VPN base is the
+default; the python-environment base is the justified
+exception.
+
 ## What this chapter set up
 
 A reader who's read this chapter should:
@@ -558,10 +629,14 @@ A reader who's read this chapter should:
 - See the `_dispatch` helper as the *concrete locking
   mechanism* for the contract invariants — every write
   verb that uses it follows the contract by construction.
+- Tell an abstract feature base (`VPNClientManagementBase`)
+  from a concrete one (`PythonEnvironmentManagementBase`) and
+  know which question — "is the tool the same on every OS?"
+  — decides between them.
 
 The next five chapters walk the per-OS implementations, one
 per OS.  Each chapter shows what the OS contributes
-specifically — RHEL's 46-feature registry, Ubuntu's
+specifically — RHEL's 47-feature registry, Ubuntu's
 shared-base pattern, macOS's quirks, Windows' PowerShell
 JSON serialisation, UEFI's single-tier dispatch.
 
@@ -571,5 +646,5 @@ Chapter 4 walks the RHEL implementation
 (`codecraftai-sysman-linux-redhat`) — the historical reference
 that established the patterns.  RHEL retains unprefixed
 class names (the documented Convention 4 exception) and
-ships a 46-feature registry that's the closest thing to a
+ships a 47-feature registry that's the closest thing to a
 "complete" sysman implementation in the portfolio.

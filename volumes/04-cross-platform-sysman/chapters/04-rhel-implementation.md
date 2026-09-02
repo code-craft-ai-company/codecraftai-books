@@ -1,6 +1,6 @@
 # Chapter 4 — RHEL Implementation
 
-> *RHEL is the historical reference implementation.  46 features
+> *RHEL is the historical reference implementation.  47 features
 > in a registry, 53 test files, the unprefixed type names that
 > predate Convention 4.  This chapter walks the package's
 > structure, three representative features (`dnf`,
@@ -21,7 +21,7 @@ discipline.
 codecraftai-sysman-linux-redhat/source/packages/ccai/sysman/linux/redhat/
 ├── __init__.py
 ├── featurebase.py            # local extension to the common base
-├── featureregistry.py        # the 46-feature registry
+├── featureregistry.py        # the 47-feature registry
 ├── packagemanagement.py
 ├── servicemanagement.py
 ├── firewallmanagement.py
@@ -47,9 +47,9 @@ SELinux feature" finds it at `selinuxmanagement.py`.  The
 naming is uniform; the files map 1:1 to the feature names in
 the contract layer.
 
-## The 46-feature registry
+## The 47-feature registry
 
-**File:** `featureregistry.py:146–469`
+**File:** `featureregistry.py:146–476`
 
 The RHEL package's feature registry is a comprehensive
 catalogue of every feature the package implements.  It binds
@@ -92,7 +92,7 @@ FEATURE_DESCRIPTORS = [
 ]
 ```
 
-A representative selection of the 46 features:
+A representative selection of the 47 features:
 
 - **Layer 1 (1)**: `command-execution` (`LocalCommandRunner`).
 - **Layer 2 (1)**: `command-runner-architecture`.
@@ -364,7 +364,7 @@ detail visible only at this layer.
 
 ## The layered spec architecture
 
-`featureregistry.py:146–469` defines the three layers
+`featureregistry.py:146–476` defines the three layers
 explicitly:
 
 ```python

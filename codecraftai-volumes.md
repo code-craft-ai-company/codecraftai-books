@@ -699,13 +699,13 @@ and "works locally but doesn't scale to CI."
 
 ## Volume 4 — Cross-Platform System Management
 
-**Subtitle:** *50 Cross-OS Contracts and 5 Reference Implementations*
+**Subtitle:** *52 Cross-OS Contracts and 5 Reference Implementations*
 
 **Audience:** platform / SRE engineers who need cross-OS automation that
 actually works.
 
 **Why it earns its own volume:** the sysman tier is the most disciplined
-product line in the portfolio.  50 cross-OS contracts in
+product line in the portfolio.  52 cross-OS contracts in
 `codecraftai-sysman-common/specs/contracts/` plus five reference
 implementations (RHEL, Ubuntu, macOS, Windows, UEFI) totalling
 3,656 / 3,656 testbase tests passing.  The "do it this way" book in the
@@ -721,7 +721,7 @@ series.
 
 1. **Why a contract layer** — the trap of OS-by-OS feature flags; the
    semantic-spec discipline that prevents drift.
-2. **The 50 cross-OS contracts** — anatomy of a contract; the EARS
+2. **The 52 cross-OS contracts** — anatomy of a contract; the EARS
    structure; how "applies to my tier" is decided.
 3. **`featurebase` and the per-OS implementation pattern** — base classes;
    how a feature is added; how a feature is tested.

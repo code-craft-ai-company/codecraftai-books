@@ -1,6 +1,6 @@
 # Volume 4 — Cross-Platform System Management
 
-**Working subtitle:** *50 Cross-OS Contracts and 5 Reference Implementations*
+**Working subtitle:** *52 Cross-OS Contracts and 5 Reference Implementations*
 
 This is the working directory for Volume 4.  The series-level
 entry for this volume lives in
@@ -11,7 +11,7 @@ directory is where the volume gets drafted.
 
 Volume 4 is the **"do it this way"** book of the series.  The
 sysman tier is the most disciplined product line in the
-portfolio: 50 cross-OS contracts in
+portfolio: 52 cross-OS contracts in
 `codecraftai-sysman-common/specs/contracts/` plus five reference
 implementations (RHEL, Ubuntu, macOS, Windows, UEFI), each
 tested green to thousands of testbase tests.
@@ -34,8 +34,9 @@ Ubuntu, macOS, Windows, or UEFI consistently.
 
 ## Source material
 
-- `codecraftai-sysman-common` — the 50 contracts and the
-  `featurebase` substrate.
+- `codecraftai-sysman-common` — the 52 contracts, the
+  `featurebase` substrate, and the two feature bases (the
+  abstract VPN base and the concrete python-environment base).
 - `codecraftai-sysman-linux-redhat` — RHEL implementation.
 - `codecraftai-sysman-linux-ubuntu` — Ubuntu / Debian
   implementation.
@@ -60,7 +61,7 @@ Ubuntu, macOS, Windows, or UEFI consistently.
 | Chapter | Status | Lines |
 |---|---|---|
 | 1 — Why a contract layer | drafted | 381 |
-| 2 — The 50 cross-OS contracts | drafted | 587 |
+| 2 — The 52 cross-OS contracts | drafted | 587 |
 | 3 — `featurebase` and the per-OS implementation pattern | drafted | 575 |
 | 4 — RHEL implementation | drafted | 468 |
 | 5 — Ubuntu / Debian implementation | drafted | 347 |

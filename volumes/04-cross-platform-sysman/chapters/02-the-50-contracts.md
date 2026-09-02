@@ -1,17 +1,17 @@
-# Chapter 2 — The 50 Cross-OS Contracts
+# Chapter 2 — The 52 Cross-OS Contracts
 
-> *The contracts are markdown.  Fifty directories under
+> *The contracts are markdown.  Fifty-two directories under
 > `codecraftai-sysman-common/specs/contracts/`, each containing
 > one `contract.md` file with a fixed structure: Scope, Verbs,
 > Invariants, Data Models, Channel/Source Mapping, Elevation,
 > Execution Model, Naming, Aspect Composition, Tests, Out of
 > Scope, Implementation Drift.  This chapter walks the
-> structure and three worked examples.*
+> structure and four worked examples.*
 
 The previous chapter argued that a contract layer is the
 *right shape* for cross-OS automation.  This chapter walks
 the contracts themselves.  By the end, a reader should be
-able to open any of the 50 contracts and find what they need
+able to open any of the 52 contracts and find what they need
 within the structure.
 
 ## Where the contracts live
@@ -20,22 +20,24 @@ within the structure.
 codecraftai-sysman-common/
 └── specs/
     └── contracts/
-        ├── README.md                          # 361-line master index
+        ├── README.md                          # 525-line master index
         ├── package-management/contract.md
         ├── service-management/contract.md
         ├── network-configuration/contract.md
         ├── firewall-management/contract.md
         ├── encryption-management/contract.md
+        ├── vpn-client-management/contract.md
+        ├── python-environment-management/contract.md
         ├── ... (45 more)
 ```
 
-50 directories.  Each directory is a feature area.  Each
+52 directories.  Each directory is a feature area.  Each
 holds exactly one `contract.md` file.  No feature has its
 contract spread across multiple files; no directory has
 contracts for multiple features.
 
 The README at the directory root is the master index.  Its
-catalogue (lines 385–510) lists every contract with:
+catalogue (from line 392) lists every contract with:
 
 - **Feature name** — e.g. `package-management`.
 - **Contract path** — relative path to `contract.md`.
@@ -47,7 +49,7 @@ finds the row, follows the path.
 
 ## The three layers
 
-Per chapter 1, the 50 contracts split into three layers:
+Per chapter 1, the 52 contracts split into three layers:
 
 ### Layer 1 — Infrastructure (1 contract)
 
@@ -76,7 +78,7 @@ Centralising the report model keeps consumers (audit log
 writers, observability dashboards, time-travel debuggers
 from Volume 8) consistent.
 
-### Layer 3 — Business logic (48 contracts)
+### Layer 3 — Business logic (50 contracts)
 
 The bulk of the suite.  Each contract is one feature area:
 
@@ -558,11 +560,66 @@ Distinctive features:
   management" is out of scope on macOS (BSD `route` is
   runtime-only).
 
+### Example 4 — `python-environment-management`
+
+The contract is at
+`codecraftai-sysman-common/specs/contracts/python-environment-management/contract.md`.
+
+This one is worth reading because it is the *inverted*
+case.  The first three examples describe verbs that every OS
+implements separately, because `dnf` is not `apt-get` is not
+`brew`.  Python virtual environments are different: the
+tools are CPython's own `venv` module and `pip`, and they
+behave identically on every OS.  So the contract's
+Implementation Drift section opens with "shared
+implementation, not just shared shapes" — every verb lives
+once in `PythonEnvironmentManagementBase` in
+`codecraftai-sysman-common`, and the per-OS packages add
+about 200 lines each.
+
+Distinctive features:
+
+- 8 write verbs (create, remove, install packages, install
+  requirements, uninstall, upgrade pip, `deploy`,
+  `ensure_prerequisites`) and 8 read verbs.
+- A **Layout Mapping** section in place of the usual
+  Channel/Source Mapping.  The only OS-varying concerns are
+  where the interpreter lives inside the environment
+  (`bin/python` vs `Scripts\python.exe`), the default
+  launcher (`python3` vs `py -3`), and the directory probe
+  and removal commands (`test -d` / `rm -rf` vs PowerShell
+  `Test-Path` / `Remove-Item`).  Those are isolated behind a
+  `PythonEnvironmentLayout` strategy.
+- A **Requirement Probe** table.  `install_packages` is
+  idempotent, but deciding "already satisfied" for a PEP 508
+  specifier without a third-party version library is
+  hazardous.  The contract pins a conservative table: exact
+  pins compare strings, ordering operators compare only
+  purely numeric versions, and anything else (URLs, editable
+  installs, pre-releases) is "not satisfied" so pip decides.
+- `deploy(spec)` is a composite verb with a specified step
+  order and a first-failure short-circuit — the contract
+  spells out both.
+- `ensure_prerequisites` is the *only* per-OS verb.  It
+  delegates to the OS's existing `package-management`
+  manager (apt `python3-venv`, dnf `python3-pip`, brew
+  `python`, winget `Python.Python.3.12`) rather than issuing
+  package commands itself — Rule 10 of the AGENTS.md
+  ("prioritise reuse") applied at the contract level.
+- Credential handling lands in Convention 12's fourth
+  channel: pip index URLs carry tokens in the URL userinfo,
+  so `redact_command` scrubs `user:password@` from every
+  recorded argv.
+- Naming: the RHEL package prefixes here
+  (`RedHatPythonEnvironmentManager`), breaking its historical
+  unprefixed convention on purpose, because the types are
+  aliases of shared cross-OS types.
+
 ## What the contracts give you
 
 A reader who's read this chapter should now:
 
-- Know where the 50 contracts live and how they're
+- Know where the 52 contracts live and how they're
   organised.
 - Recognise the standard sections in any contract (Scope,
   Verbs, Invariants, Data Models, Channel/Source Mapping,
@@ -573,6 +630,9 @@ A reader who's read this chapter should now:
 - See how Convention 5 (FAILED with stable token) and
   Convention 11 (Homebrew elevation inversion) fit into
   the contracts as Implementation Drift.
+- Recognise the one contract whose verbs are implemented
+  once rather than per OS, and why the tool-level analysis
+  justified it.
 
 The contracts are the *documentation* of cross-OS
 automation.  Chapter 3 walks the *substrate* that turns the

@@ -5,7 +5,7 @@
 > branches scattered through every test.  The other is "least
 > common denominator" — strip away the platform-specific
 > concepts until the API is too anaemic to be useful.  The
-> sysman tier rejects both with a *contract layer*: 50 cross-OS
+> sysman tier rejects both with a *contract layer*: 52 cross-OS
 > contracts that lock the *semantics* of each feature without
 > committing to OS-specific *mechanism*.*
 
@@ -119,9 +119,9 @@ test code is *the same* across OSes.  The implementations
 underneath differ wildly (dnf invocations vs. apt-get vs.
 brew), but the test sees a uniform surface.
 
-## The 50-contract substrate
+## The 52-contract substrate
 
-The portfolio ships **50 contracts** — one per feature area.
+The portfolio ships **52 contracts** — one per feature area.
 The full list lives at
 `codecraftai-sysman-common/specs/contracts/README.md:385–510`,
 catalogued in three layers:
@@ -130,14 +130,14 @@ catalogued in three layers:
   The substrate for everything above.
 - **Layer 2 (Data)** — 1 contract: `maintenance-reporting`.
   Cross-feature reporting.
-- **Layer 3 (Business Logic)** — 48 contracts: firewall,
+- **Layer 3 (Business Logic)** — 50 contracts: firewall,
   service, package, network, encryption, certificate,
   user/group, kernel parameters, virtualization, container,
   ACLs, audit, authentication, backup, DNS server, mail
   transport, NFS, repository, samba, security compliance,
   storage, etc.
 
-The chapter doesn't list all 50 by name (the catalogue does
+The chapter doesn't list all 52 by name (the catalogue does
 that).  What matters is the *shape* of the layering.  A
 Layer-3 contract like `package-management` calls into Layer
 1's `command-execution` contract for actually running the
@@ -178,8 +178,8 @@ be 10–20× the file count.
 
 ## Why these five are not the same
 
-A reader might naively expect that 50 contracts × 5 OSes
-should produce 250 features × 5 implementations.  The
+A reader might naively expect that ~50 contracts × 5 OSes
+should produce ~250 features × 5 implementations.  The
 reality is messier:
 
 - **RHEL has features Ubuntu doesn't** — `selinux-management`
@@ -254,6 +254,15 @@ specify the API in English plus tables.  The shared base
 class (`BaseFeatureManager` from chapter 3) implements *some*
 of the contract uniformly, but the contract itself is text.
 
+There is one deliberate exception that proves the rule.  The
+`python-environment-management` contract is implemented
+*once*, as a concrete base class in `codecraftai-sysman-common`,
+because the tools it drives (`python -m venv`, `python -m pip`)
+do not vary by OS at all.  Chapter 3 walks that case; the
+point here is that the exception was made only after the
+tool-level analysis showed there was nothing per-OS left to
+write except paths and directory probes.
+
 The reason: per-OS implementations vary so much in *how*
 they implement the contract that a code-level abstraction
 would either be too thin (forcing duplication) or too
@@ -277,7 +286,7 @@ hand-edits, defeating the generator, or (b) become a
 prose-to-code translator that's harder to read than the
 direct hand-written code.
 
-The chapter is honest: hand-writing 50 contracts × 5
+The chapter is honest: hand-writing ~50 contracts × 5
 implementations is *expensive*.  The portfolio justifies the
 cost by treating sysman as a *foundational* tier — once it's
 correct, every higher-tier test relies on it.  The cost is
@@ -340,7 +349,7 @@ trying to skip the discipline runs into one of the three.
 
 The remaining nine chapters walk the layer in detail:
 
-- **Chapter 2** — the 50 contracts themselves.  How they're
+- **Chapter 2** — the 52 contracts themselves.  How they're
   organised, the EARS-inspired structure, three worked
   examples (package-management, service-management,
   network-configuration).
@@ -376,6 +385,6 @@ of OS.
 
 ## What's next
 
-Chapter 2 walks the 50 contracts: their structure, what
+Chapter 2 walks the 52 contracts: their structure, what
 they specify, and three worked examples that show the
 contract format end-to-end.
