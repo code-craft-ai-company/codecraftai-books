@@ -409,6 +409,13 @@ recorded `command` argv has no secret material.
 
 ### Step 4 — Map runner result to manager status
 
+(Since Phase 4 this step also checks the raw `RunResult` for a
+truthy `elevation_blocked` attribute — the Windows runners'
+Convention 6 extension — and, when present, replaces the
+caller's `detail` with the stable token
+`DETAIL_ELEVATION_BLOCKED`.  POSIX runners never set the
+attribute, so the branch is inert on Linux and macOS.)
+
 ```python
 if run_result.exit_code == 0:
     mapped_status = self.status_class.SUCCESS
@@ -589,15 +596,19 @@ package manager.
 Two details of the concrete base are worth noticing because
 they show where `_dispatch` stops being enough:
 
-- It calls the runner directly in its own `_dispatch_write`
-  rather than through `BaseFeatureManager._dispatch`, because
-  it needs the raw `RunResult` to read the Windows
+- Its `_dispatch_write` is a thin wrapper over
+  `BaseFeatureManager._dispatch`.  It did not start that way:
+  the first version called the runner directly because it
+  needed the raw `RunResult` to read the Windows
   `elevation_blocked` extension (Convention 6) and surface it
-  as `detail="elevation_blocked"`.  The base `_dispatch`
-  discards the raw result after mapping status.  This is the
-  "custom status mapping" escape hatch from the previous
-  section, used for a cross-OS reason rather than a per-OS
-  one.
+  as `detail="elevation_blocked"`, and `_dispatch` discarded
+  the raw result after mapping status.  That was the "custom
+  status mapping" escape hatch from the previous section,
+  used for a cross-OS reason rather than a per-OS one — which
+  is exactly the signal that the behaviour belonged in the
+  substrate.  The pass-through was upstreamed into
+  `_dispatch`, and every manager that routes writes through
+  it now conforms to Convention 6 for free.
 - Its idempotency probe for `install_packages` is a
   conservative PEP 508 evaluator (`_requirement_satisfied`)
   that refuses to guess: pre-release versions, URL and

@@ -27,12 +27,13 @@
 - `codecraftai-sysman-common/source/packages/ccai/sysman/common/featurebase.py:113–151` — `ActionStatus`, `FeatureConfig`, `FeatureActionResult` canonical types.
 - `featurebase.py:154–205` — `BaseFeatureManager` declaration with `result_class`, `status_class`, `feature_name` overridable class variables.
 - `featurebase.py:229–300` — `_dispatch(*, command, detail, stdin, operation, elevated_override, **extra)` — the helper enforcing dry-run, elevation, result wrapping.
-- `featurebase.py` (366 lines total).
+- `featurebase.py:_dispatch` — Convention 6 pass-through: a `RunResult` with truthy `elevation_blocked` yields `detail=DETAIL_ELEVATION_BLOCKED`.
+- `featurebase.py` (~395 lines total).
 
 ### Feature bases one level above `featurebase` (chapter 3, "When the substrate becomes the implementation")
 
 - `codecraftai-sysman-common/source/packages/ccai/sysman/common/vpnclientmanagementbase.py` — `VPNClientManagementBase(BaseFeatureManager, ABC)`; **abstract** verbs, shared helpers `_validate_provider` / `_short_circuit_dry_run` / `_should_elevate` / `_dispatch_write`.
-- `codecraftai-sysman-common/source/packages/ccai/sysman/common/pythonenvironmentmanagementbase.py` — `PythonEnvironmentManagementBase(BaseFeatureManager, ABC)`; **concrete** verbs (create / remove / install / requirements / uninstall / upgrade pip / `deploy` / reads); single abstract hook `_build_layout()`; conservative PEP 508 probe `_requirement_satisfied`; own `_dispatch_write` surfacing `elevation_blocked`.
+- `codecraftai-sysman-common/source/packages/ccai/sysman/common/pythonenvironmentmanagementbase.py` — `PythonEnvironmentManagementBase(BaseFeatureManager, ABC)`; **concrete** verbs (create / remove / install / requirements / uninstall / upgrade pip / `deploy` / reads); single abstract hook `_build_layout()`; conservative PEP 508 probe `_requirement_satisfied`; `_dispatch_write` is a thin wrapper over the shared `_dispatch`.
 - `codecraftai-sysman-common/source/packages/ccai/sysman/common/pythonenvironmentlayout.py` — `PythonEnvironmentLayout` ABC, `PosixPythonEnvironmentLayout`, `WindowsPythonEnvironmentLayout` (PowerShell `Test-Path` / `Remove-Item` scriptblocks).
 - `codecraftai-sysman-common/source/packages/ccai/sysman/common/commandredaction.py` — `redact_url_userinfo` (Convention 12 channel 4: pip index-URL credentials).
 - `codecraftai-sysman-common/specs/python-environment-management-base/` — base spec trio.
