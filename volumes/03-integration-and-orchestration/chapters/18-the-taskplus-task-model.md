@@ -267,7 +267,7 @@ Three signature notes:
   flow logic).
 
 The `AbstractMethodError` import on line 23 of `task.py`
-([`codecraftai-errors`](../../../codecraftai-foundations/source/packages/ccai/errors/exceptions.py))
+([`ccai.errors`](../../../codecraftai-foundations/source/packages/ccai/errors/exceptions.py))
 is the canonical error for "this base method must be overridden."
 A concrete task that forgets to override `perform_task` raises
 this at first call.

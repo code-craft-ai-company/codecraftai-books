@@ -23,8 +23,9 @@ runner in Chapter 4, the JSOS recorder in Chapter 5.
 
 It is worth stating up front what testbase is *not* coupled to.
 The framework's core run path is near-standalone: it depends only
-on `codecraftai-arcli`, `codecraftai-errors`, `codecraftai-interfaces`,
-`codecraftai-waiting`, and `codecraftai-xmodules`.  It does *not* depend
+on `codecraftai-arcli`, `codecraftai-foundations` (which consolidated
+the former errors, interfaces and waiting packages), and
+`codecraftai-xmodules`.  It does *not* depend
 on `codecraftai-configuration`, `codecraftai-runtime`, or
 `codecraftai-this-app`.  The handful of core environment knobs it
 needs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,

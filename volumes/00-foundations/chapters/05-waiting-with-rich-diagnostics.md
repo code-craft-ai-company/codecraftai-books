@@ -6,10 +6,11 @@
 > investment that makes the function not buggy.*
 
 The previous chapter introduced the interfaces.  This chapter
-introduces the smallest substantial package in the foundation
+introduces the smallest substantial subpackage in the foundation
 tier:
-[`codecraftai-waiting`](../../../../codecraftai-foundations/source/packages/ccai/waiting/).
-Three files, two classes, one function.  The package's job is
+[`ccai.waiting`](../../../../codecraftai-foundations/source/packages/ccai/waiting/),
+shipped by `codecraftai-foundations`.
+Three files, two classes, one function.  The subpackage's job is
 to give the rest of the portfolio a *correct* answer for "wait
 for a condition with a timeout, and tell me what happened if
 it didn't work."
@@ -57,8 +58,8 @@ of them ship subtle bugs:
 Each bug is small.  Cumulatively, they make every team's
 `wait_for` slightly different and slightly worse than it could
 be.  The
-[`codecraftai-waiting`](../../../../codecraftai-foundations/source/packages/ccai/waiting/)
-package's job is to fix all of them in one place so that every
+[`ccai.waiting`](../../../../codecraftai-foundations/source/packages/ccai/waiting/)
+subpackage's job is to fix all of them in one place so that every
 caller benefits.
 
 ## The four shipped types
@@ -562,7 +563,8 @@ expects — the two layers compose cleanly.
 
 ## Summary
 
-- **`codecraftai-waiting`** is a small package with one job: give
+- **`ccai.waiting`** is a small subpackage of `codecraftai-foundations`
+  with one job: give
   the rest of the portfolio a correct, observable, timeout-
   aware *wait for a condition* primitive.
 - The shipped API is **five concepts and one function**:

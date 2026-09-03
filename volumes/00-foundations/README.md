@@ -90,7 +90,7 @@ Same as Volume 3:
 2. Chapter 2 (Coding standards as a tool) — the rationale chapter
 3. Chapter 3 (The error vocabulary) — small, self-contained
 4. Chapter 5 (Waiting with rich diagnostics) — small package, easy
-5. Chapter 4 (Interfaces and contracts) — needs `codecraftai-interfaces` survey
+5. Chapter 4 (Interfaces and contracts) — needs `ccai.interfaces` survey
 6. Chapter 6 (Application identity and presence) — partially explored in Vol 3 prep
 7. Chapter 8 (Runtime variables and well-known paths) — small
 8. Chapter 7 (Extension and factory machinery) — substantial

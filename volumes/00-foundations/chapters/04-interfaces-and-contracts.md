@@ -10,8 +10,9 @@ chapter names the typed *interface* vocabulary that makes
 packages substitute for each other without their callers
 caring which implementation is on the other end.
 
-The package is
-[`codecraftai-interfaces`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/).
+The code is the
+[`ccai.interfaces`](../../../../codecraftai-foundations/source/packages/ccai/interfaces/)
+subpackage of `codecraftai-foundations`.
 Eight files; eight protocols; one purpose: **shared contract
 definitions that downstream packages implement and other
 downstream packages consume.**  The package itself contains no
@@ -35,7 +36,7 @@ reasons:
 
 1. **Decoupling.**  An implementer that already inherits from
    another base (or that lives in a package that doesn't depend
-   on `codecraftai-interfaces` at the inheritance level) can still
+   on `codecraftai-foundations` at the inheritance level) can still
    *be* an `ICommandRunner` if it has the right method shape.
    No forced inheritance; no diamond-inheritance problems.
 2. **Substitutability.**  Test mocks and fakes don't need to
@@ -375,11 +376,11 @@ discovery logic explicit.
 
 ## How interfaces drive the dependency graph
 
-The `codecraftai-interfaces` package sits at the bottom of the
-portfolio's dependency graph.  Specifically:
+The `ccai.interfaces` subpackage, shipped by `codecraftai-foundations`,
+sits at the bottom of the portfolio's dependency graph.  Specifically:
 
 ```
-                    codecraftai-interfaces  (this package)
+               codecraftai-foundations  (ccai.interfaces)
                             ▲
                             │ imported by everyone
                             │
@@ -396,11 +397,12 @@ portfolio's dependency graph.  Specifically:
 
 Two important properties of this graph:
 
-- **`codecraftai-interfaces` depends on nothing.**  Not even on
-  `codecraftai-errors`.  It's the leaf; it can be installed
+- **`ccai.interfaces` depends on nothing.**  Not even on
+  `ccai.errors`, its sibling inside the same distribution.
+  `codecraftai-foundations` is the leaf; it can be installed
   standalone.
 - **Every package that wants to *interoperate* depends on
-  `codecraftai-interfaces`.**  The dependency is small (eight
+  `codecraftai-foundations`.**  The dependency is small (eight
   small files); the value is large (every package speaks the
   shared contract language).
 
@@ -417,7 +419,7 @@ Three signals that a new interface is the right move:
 
 When a consuming package has *one shape it wants to consume* and
 two or more implementing packages produce that shape, the shape
-is an interface.  The interface goes in `codecraftai-interfaces`;
+is an interface.  The interface goes in `ccai.interfaces`;
 both implementers depend on the interfaces package; the consumer
 depends only on the interfaces package.
 
@@ -436,7 +438,7 @@ implementation in for a lower-tier dependency (chapter-7's
 extension and factory machinery is the substantive form of this
 pattern), the seam is an interface.
 
-The package's `codecraftai-interfaces` deliberately stays *small*.
+The `ccai.interfaces` subpackage deliberately stays *small*.
 Eight files today; growth is deliberate.  Each new interface
 goes through the question: *do at least two existing or planned
 implementations want to satisfy this shape?*  If yes, add it; if
@@ -444,8 +446,8 @@ no, don't add the interface yet.
 
 ## Summary
 
-- **`codecraftai-interfaces`** is the leaf of the portfolio's
-  dependency graph.  Eight protocol files; one purpose: shared
+- **`ccai.interfaces`**, inside `codecraftai-foundations`, is the leaf
+  of the portfolio's dependency graph.  Eight protocol files; one purpose: shared
   contract definitions for substitutable behaviour.
 - The protocols are **`typing.Protocol`** (structural typing),
   not `abc.ABC` (nominal typing).  Implementers don't inherit;

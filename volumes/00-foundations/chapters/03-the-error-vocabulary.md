@@ -8,8 +8,9 @@
 The previous chapter established the coding standards.  This
 chapter develops one of them in depth: the exception-handling
 discipline.  The discipline rests on
-[`codecraftai-errors`](../../../../codecraftai-foundations/source/packages/ccai/errors/exceptions.py)
-— a small package whose job is to provide the **typed exception
+[`ccai.errors`](../../../../codecraftai-foundations/source/packages/ccai/errors/exceptions.py)
+— a small subpackage of `codecraftai-foundations` whose job is to
+provide the **typed exception
 vocabulary** every other ccai package uses.
 
 The package's contents are simple in shape but consequential in
@@ -419,7 +420,7 @@ across every package.
 ## The vocabulary's role across the portfolio
 
 Every other package in the foundation tier uses
-`codecraftai-errors` for its exception vocabulary.  Specific uses:
+`ccai.errors` for its exception vocabulary.  Specific uses:
 
 - **Volume 0 chapter 4 (Interfaces)** uses
   `AbstractMethodError` to signal that an abstract method's stub
@@ -441,7 +442,7 @@ exception type both packages understand.
 
 ## Summary
 
-- **`codecraftai-errors`** ships a small package with ~80
+- **`ccai.errors`** is a small subpackage of `codecraftai-foundations` with ~80
   exception classes organised into seven operational categories
   plus three *special* types whose semantics matter universally.
 - **`SemanticError(BaseException)`** signals API misuse.  Must

@@ -358,9 +358,8 @@ it sits below the framework's old dependency chain.
 
 What remains on `unittest` is a small, **permanent** exclusion set:
 
-- `codecraftai-errors`
-- `codecraftai-interfaces`
-- `codecraftai-waiting`
+- `codecraftai-foundations` (formerly the separate errors, interfaces
+  and waiting packages)
 - `codecraftai-xmodules`
 - `codecraftai-arcli`
 - `codecraftai-extension`

@@ -368,9 +368,9 @@ Volume 0 has now walked the full foundation tier:
 |---|---|---|
 | (philosophy) | 1 | The ten principles |
 | (coding standards) | 2 | The rules |
-| `codecraftai-errors` | 3 | The exception vocabulary |
-| `codecraftai-interfaces` | 4 | The contract layer |
-| `codecraftai-waiting` | 5 | The wait-with-diagnostics primitive |
+| `codecraftai-foundations` (`ccai.errors`) | 3 | The exception vocabulary |
+| `codecraftai-foundations` (`ccai.interfaces`) | 4 | The contract layer |
+| `codecraftai-foundations` (`ccai.waiting`) | 5 | The wait-with-diagnostics primitive |
 | `codecraftai-this-app` | 6 | Identity + persona variables |
 | `codecraftai-extension` | 7 | Factory and plug-in machinery |
 | `codecraftai-runtime` | 8 | Runtime variables + paths + activation |
