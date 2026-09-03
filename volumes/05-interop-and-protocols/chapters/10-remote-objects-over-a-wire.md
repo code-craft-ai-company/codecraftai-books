@@ -434,9 +434,9 @@ when the peer closed first — the package once leaked one
 descriptor per peer-initiated close, and the fix is a single
 `_released` flag.  Second, an in-process socket pair
 (`core/transport/inprocess.py`) lets the whole session stack be
-tested without a listening port, and a `FaultInjecting`
-transport (`core/transport/faults.py`) lets tests drop, delay
-or truncate frames on demand.
+tested without a listening port, and `FaultInjectingTransport`
+(`core/transport/faults.py:21`) lets tests drop, delay or
+truncate frames on demand.
 
 Testing a protocol by injecting faults at the transport seam,
 rather than by mocking the session, is the single most
