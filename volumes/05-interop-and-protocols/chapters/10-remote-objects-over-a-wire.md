@@ -105,8 +105,8 @@ never has to be parsed to route a message.  That ordering is
 the whole point of a fixed header: the session's reader thread
 can match a reply to its waiter, or hand a request to the
 dispatcher, without touching the codec.  The reader is never
-blocked on a slow decode, so a heartbeat reply is seen promptly even while a large
-reply is queued behind it.
+blocked on a slow decode, so a heartbeat reply is seen
+promptly even while a large reply is queued behind it.
 
 The message classes in `core/protocol/messages.py` are thin
 dataclasses registered by `(type, code)` through a decorator
