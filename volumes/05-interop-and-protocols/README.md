@@ -79,9 +79,10 @@ Bluetooth, CAN, or a custom protocol.
 | 6 — REST client foundations | drafted | 563 |
 | 7 — The auto-generated GitHub public-API client | drafted | 416 |
 | 8 — Extension packages — UPnP, Tasker, Bluetooth, CAN | drafted | 553 |
-| 9 — Building your own interop extension | drafted | 743 |
+| 9 — Building your own interop extension | drafted | 740 |
+| 10 — Remote objects over a wire — `codecraftai-python-rpc` | drafted | 548 |
 
-**Volume 5 fully drafted: 9 chapters, 4,718 lines, ~44,000 words.**
+**Volume 5 fully drafted: 10 chapters, 5,263 lines, ~23,000 words.**
 
 ## Drafting conventions
 

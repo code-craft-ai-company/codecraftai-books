@@ -776,7 +776,7 @@ portfolio depends on.  `codecraftai-protocol-ssh` is substantial code
 **Portfolio source:** `codecraftai-interop` (protocol half),
 `codecraftai-protocol-ssh`, `codecraftai-networking`, `codecraftai-restclient-base`,
 `codecraftai-restclient-github-public`, `codecraftai-interop-ext-{upnp, tasker,
-bluetooth, can}`.
+bluetooth, can}`, `codecraftai-python-rpc`.
 
 ### Chapters
 
@@ -799,6 +799,9 @@ bluetooth, can}`.
    extension registration pattern.
 9. **Building your own interop extension** — the pattern as a
    reproducible recipe.
+10. **Remote objects over a wire** — `codecraftai-python-rpc`: a
+    pickle-free codec, correlated sessions, proxies, leases and
+    Aspects carried across the wire; when references beat operations.
 
 ### Cross-references
 

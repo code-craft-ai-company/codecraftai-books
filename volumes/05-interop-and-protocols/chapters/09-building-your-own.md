@@ -714,6 +714,9 @@ Looking back across the volume:
 - **Chapter 8** — four shipped extension packages and two
   integration patterns.
 - **Chapter 9** — the recipe for adding your own.
+- **Chapter 10** — remote objects over a wire:
+  `codecraftai-python-rpc`, where references rather than
+  operations cross between processes.
 
 A reader who's followed the volume now has:
 
@@ -726,18 +729,12 @@ A reader who's followed the volume now has:
 
 The protocol stack is no longer a black box.
 
-## End of Volume 5
+## One more package
 
-The chapters that come next are in other volumes.  Volume 4
-(*Cross-Platform System Management*) walks the sysman tier
-that uses these protocols heavily.  Volume 7 (*Building an AI
-Agent SDK*) builds on Volume 5's REST foundations for the
-agent's tool-calling layer.  Volume 8 (*Time-Travel Debugging
-in Production*) instruments wire calls for replay.
-
-Volume 5's contribution to the series is the *protocol
-discipline*.  Every other volume that involves cross-machine
-communication relies on what was established here:
-**Measured Interoperability**, applied to whatever protocol
-the situation needs, with the Aspects pattern as the
-delegation contract that makes the discipline scale.
+Chapter 10 closes the volume with the newest package on this
+floor, `codecraftai-python-rpc`.  Everything above — the
+Aspects contract, the wire discipline, the four principles — is
+what makes it possible to let *objects* cross between
+processes rather than operations, and the chapter reads the
+package from the frame upward.  The end-of-volume notes move
+there.
