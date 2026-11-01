@@ -1247,7 +1247,7 @@ sections, plus series-level questions:
     `codecraftai-agent-kit`" (reference)?
 - **Series-level:**
   - Publishing model — single publisher, per-volume or boxed set,
-    print + ebook + open-source companion?
+    print + ebook + a companion repository?
   - Voice — first-person CodeCraftX persona throughout, or
     third-person for objectivity in case studies?
   - Code samples — do they live inline in the book, or in a separate
