@@ -20,7 +20,7 @@ The chapter walks each package in turn, then closes Volume 0.
 
 ## `codecraftai-credentials` — the typed credential vocabulary
 
-[`codecraftai-credentials`](../../../../codecraftai-credentials/source/packages/ccai/credentials/)
+[`codecraftai-credentials`](https://github.com/code-craft-ai-company/codecraftai-credentials/tree/main/source/packages/ccai/credentials)
 provides the typed credential vocabulary every other package
 consumes.  Volume 3 chapter 9 covered the eleven shipped
 credential classes in extensive detail; this chapter is the
@@ -30,7 +30,7 @@ the orchestration-discipline framing.
 ### The shipped classes
 
 Eleven concrete credential classes inherit from
-[`BaseCredential`](../../../../codecraftai-credentials/source/packages/ccai/credentials/basecredential.py):
+[`BaseCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/basecredential.py):
 
 | Class | Category | Used for |
 |---|---|---|
@@ -73,7 +73,7 @@ with `BaseException`-class validation at construction time
 
 ### `CredentialManager` — the registry
 
-[`CredentialManager`](../../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py)
+[`CredentialManager`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/credentialmanager.py)
 takes a parsed dict (typically from
 `codecraftai-configuration`'s loader) and produces an
 identifier-keyed dictionary of typed instances.  Its
@@ -96,7 +96,7 @@ resolver layer the consumer builds on top.
 
 ### `CredentialManagerSingleton` — the per-process accessor
 
-[`wellknown.py`](../../../../codecraftai-credentials/source/packages/ccai/credentials/wellknown.py)
+[`wellknown.py`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/wellknown.py)
 provides the per-process singleton.  Consumers call
 `CredentialManagerSingleton().lookup_credential(name)` and get
 the typed credential object.
@@ -141,7 +141,7 @@ orchestration treatment builds on.
 
 ## `codecraftai-dataprofiles` — typed data-source profiles
 
-[`codecraftai-dataprofiles`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/)
+[`codecraftai-dataprofiles`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/tree/main/source/packages/ccai/dataprofiles)
 provides the typed data-source-profile vocabulary.  Volume 3
 chapter 8 covered the five shipped profile classes; this
 chapter is the foundation-tier baseline.
@@ -149,7 +149,7 @@ chapter is the foundation-tier baseline.
 ### The shipped classes
 
 Five concrete profile classes inherit from
-[`BaseDataProfile`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/basedataprofile.py):
+[`BaseDataProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/basedataprofile.py):
 
 | Class | Category | Used for |
 |---|---|---|
@@ -178,7 +178,7 @@ category-specific fields live on the concrete subclasses.
 
 ### `DataProfileManager` — the registry
 
-[`DataProfileManager`](../../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/dataprofilemanager.py)
+[`DataProfileManager`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/dataprofilemanager.py)
 mirrors `CredentialManager` — same dispatch pattern, different
 domain.  Five dispatch branches; lookup-by-identifier; failure-
 loudly on missing entries.
@@ -202,14 +202,14 @@ Volume 3 chapter 8 develops the orchestration-layer view.
 
 ## `codecraftai-storage-database` — database connection scaffolding
 
-[`codecraftai-storage-database`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/)
+[`codecraftai-storage-database`](https://github.com/code-craft-ai-company/codecraftai-storage-database/tree/main/source/packages/ccai/storage/database)
 is the smallest and youngest of the foundation-tier packages.
 Its job: take a data profile + a credential and produce a
 SQLAlchemy `Engine` ready for queries.
 
 ### `DatabaseConnectionFactory` — the factory
 
-[`dbconnection.py`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/dbconnection.py)
+[`dbconnection.py`](https://github.com/code-craft-ai-company/codecraftai-storage-database/blob/main/source/packages/ccai/storage/database/dbconnection.py)
 defines `DatabaseConnectionFactory`:
 
 ```python
@@ -247,7 +247,7 @@ Ubuntu, Postgres-specific extensions).
 
 ### `dbio.py` — typed CRUD helpers
 
-[`dbio.py`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/dbio.py)
+[`dbio.py`](https://github.com/code-craft-ai-company/codecraftai-storage-database/blob/main/source/packages/ccai/storage/database/dbio.py)
 provides the operational helpers built on top of the factory:
 
 - `database_exists(conn_factory, dbname=None)` — check whether
@@ -265,7 +265,7 @@ calls.
 
 ### `mixins.py` — `SerializableMixIn`
 
-[`mixins.py`](../../../../codecraftai-storage-database/source/packages/ccai/storage/database/mixins.py)
+[`mixins.py`](https://github.com/code-craft-ai-company/codecraftai-storage-database/blob/main/source/packages/ccai/storage/database/mixins.py)
 ships one mixin: `SerializableMixIn`, which adds `as_dict()`
 and `to_json()` to SQLAlchemy model classes:
 

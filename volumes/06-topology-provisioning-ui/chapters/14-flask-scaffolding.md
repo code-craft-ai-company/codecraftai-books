@@ -1,5 +1,10 @@
 # Chapter 14 — Web-Service Scaffolding with Flask
 
+> **Note (October 2026).** `codecraftai-webservice-flask` is no longer part of the portfolio.  The Code Craft AI website moved to
+> [`codecraftai-webworks`](https://github.com/code-craft-ai-company/codecraftai-webworks), which replaces the Flask patterns
+> described here.  The chapter is kept for the design it records: security-aware blueprints, role-based route protection and
+> multi-provider OAuth.  For new work, use `codecraftai-webworks`.
+
 > *Where GitLab integration was the *consumer* side of REST,
 > Flask scaffolding is the *server* side.
 > `codecraftai-webservice-flask` provides the patterns the

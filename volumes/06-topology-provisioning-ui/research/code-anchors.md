@@ -114,7 +114,7 @@
 
 - The package is currently in scaffolding/planning state: `CloudProvisioner.__init__` is `def __init__(): return`, vendor backends are empty subclasses, no checkout-or-create logic implemented yet.  Volume 6 ch.10 is honest about this.
 
-## codecraftai-gitlab (chapter 13)
+## codecraftai-restclient-gitlab (chapter 13)
 
 ### Generator + auto-generated client
 

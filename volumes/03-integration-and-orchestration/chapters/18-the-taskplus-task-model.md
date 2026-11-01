@@ -47,7 +47,7 @@ order to run it?"*  Three properties are essential:
 The taskplus task model captures these three properties in three
 classes — `FlowNode`, `Task`, `TaskGroup` — that together form a
 small inheritance hierarchy in
-[`codecraftai-taskplus/source/packages/ccai/taskplus/model/`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/).
+[`codecraftai-taskplus/source/packages/ccai/taskplus/model/`](https://github.com/code-craft-ai-company/codecraftai-taskplus/tree/main/source/packages/ccai/taskplus/model).
 The hierarchy is small enough to read in one sitting and rich
 enough to express every workflow shape Part V's chapters will
 build on.
@@ -55,7 +55,7 @@ build on.
 ## `FlowNode` — the abstract base
 
 The root of the task model is
-[`FlowNode`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flownode.py),
+[`FlowNode`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/flownode.py),
 an `abc.ABC` class with no abstract methods.  In its entirety:
 
 ```python
@@ -102,7 +102,7 @@ The ordinal is the trace key.  When a step fails, the log message
 "step 2.3.1 failed" tells the engineer exactly where in the
 workflow to look — even when the workflow has nested taskgroups
 and parallel branches that defy a flat numbering.  The shipped
-[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
+[`Workflow.parse`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/workflow.py)
 generates ordinals as it walks the YAML; tasks and taskgroups
 inherit their ordinals at construction time.
 
@@ -170,7 +170,7 @@ node info.  Workflow authors declare it like this:
 ```
 
 The expression is a Python string evaluated by the
-[`FlowEngine`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
+[`FlowEngine`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/flowengine.py)
 at execution time.  When the expression is `None` (the field was
 absent), the node always runs.  When the expression evaluates to
 falsy, the node is skipped.
@@ -267,7 +267,7 @@ Three signature notes:
   flow logic).
 
 The `AbstractMethodError` import on line 23 of `task.py`
-([`ccai.errors`](../../../codecraftai-foundations/source/packages/ccai/errors/exceptions.py))
+([`ccai.errors`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/errors/exceptions.py))
 is the canonical error for "this base method must be overridden."
 A concrete task that forgets to override `perform_task` raises
 this at first call.
@@ -490,7 +490,7 @@ state belongs in proper data stores.
 ## Summary
 
 - The taskplus task model is a small inheritance hierarchy in
-  [`codecraftai-taskplus/source/packages/ccai/taskplus/model/`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/).
+  [`codecraftai-taskplus/source/packages/ccai/taskplus/model/`](https://github.com/code-craft-ai-company/codecraftai-taskplus/tree/main/source/packages/ccai/taskplus/model).
   Three classes: **`FlowNode`** (abstract base), **`Task`**
   (leaf with work), **`TaskGroup`** (recursive grouping).
 - Every flow node carries five universal fields:

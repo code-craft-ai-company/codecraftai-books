@@ -34,7 +34,7 @@ credentials.yaml ──► YAML parser ──► dict ──►
 ```
 
 The
-[`CredentialManager`](../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py)
+[`CredentialManager`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/credentialmanager.py)
 takes a *parsed dictionary* — `credential_info` — and treats every
 string value as opaque.  When the YAML contains
 `password: hunter2`, the resulting `BasicCredential.password` is

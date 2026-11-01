@@ -547,5 +547,3 @@ of detail an engineer who must extend or operate them needs.
 ← Back to [`07-case-studies.md`](07-case-studies.md).
 
 ← Volume 8 README: [`../README.md`](../README.md).
-
-← Volume index: [`../../../codecraftai-volumes.md`](../../../codecraftai-volumes.md).

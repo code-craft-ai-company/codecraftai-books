@@ -394,7 +394,7 @@ The next volume in the series — Volume 4 — develops the
 cross-OS system-management discipline introduced briefly through
 the chapter-25 sysman bridge.  Where this volume has been about
 *how the work is orchestrated*, the next volume is about *what
-the work is*: the 50 cross-OS contracts that let a single
+the work is*: the 52 cross-OS contracts that let a single
 sysman feature run on RHEL, Ubuntu, macOS, Windows, and UEFI
 without per-OS branches in the calling code.  The discipline
 is the same; the surface area is different.

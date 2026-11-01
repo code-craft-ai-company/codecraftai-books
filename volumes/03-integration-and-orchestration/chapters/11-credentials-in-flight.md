@@ -32,7 +32,7 @@ The chapter covers three bands of the lifecycle:
 ## Encryption at rest
 
 The shipped cryptography module is
-[`codecraftai-configuration/source/packages/ccai/configuration/cryptography.py`](../../../codecraftai-configuration/source/packages/ccai/configuration/cryptography.py).
+[`codecraftai-configuration/source/packages/ccai/configuration/cryptography.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/cryptography.py).
 Four functions, all using Fernet symmetric encryption:
 
 ```python
@@ -108,7 +108,7 @@ plain.
 ### A note on the keyphrase
 
 The shipped
-[`generate_fernet_key`](../../../codecraftai-configuration/source/packages/ccai/configuration/cryptography.py)
+[`generate_fernet_key`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/cryptography.py)
 is **deterministic**: the same keyphrase always produces the same
 key.  The implementation is `random.Random(keyphrase).randbytes(32)`
 followed by URL-safe base64.

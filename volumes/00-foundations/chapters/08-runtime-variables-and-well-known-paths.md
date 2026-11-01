@@ -9,7 +9,7 @@ The previous chapter introduced the extension and factory
 machinery.  This chapter introduces the *runtime* variable set
 and the *well-known path* helpers every higher tier uses.  These
 modules now live inside
-[`codecraftai-this-app`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/),
+[`codecraftai-this-app`](https://github.com/code-craft-ai-company/codecraftai-this-app/tree/main/source/packages/ccai/thisapp),
 under the `ccai.thisapp` namespace alongside the chapter-6
 persona machinery.  (Historically they were a separate
 `codecraftai-runtime` package; that package is being retired and now
@@ -46,7 +46,7 @@ below).
 
 ## The runtime variable set
 
-[`runtimevariables.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
+[`runtimevariables.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/runtimevariables.py)
 extends `PersonaVariablesDesc` (chapter 6) with the variables
 every running process needs for *operational* concerns —
 distinct from chapter-6's *identity* concerns.
@@ -188,7 +188,7 @@ the call sites are uniform.
 
 ## Activation profiles
 
-[`enumerations.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/enumerations.py)
+[`enumerations.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/enumerations.py)
 defines the `ActivationProfile` enum with four values:
 
 - **`Command`** — the process is running as a CLI command.
@@ -211,7 +211,7 @@ section below shows, the test-reporting path helpers are
 *activation-gated* on `AM_JOB_TYPE` being something other than
 `Unknown`.
 
-[`activation.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/activation.py)
+[`activation.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/activation.py)
 provides four `activate_profile_*` functions — one per profile:
 `activate_profile_command`, `activate_profile_console`,
 `activate_profile_service`, and `activate_profile_job(job_type)`
@@ -287,7 +287,7 @@ to process initialization.
 
 ## Well-known paths
 
-[`paths.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/paths.py)
+[`paths.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/paths.py)
 provides helpers for the directories every running process needs.
 Each helper returns an *absolute path*, creating the directory
 if it doesn't exist.
@@ -354,7 +354,7 @@ only make sense inside a results-collecting job:
 > **These activation-gated helpers are consumed by
 > integration-runtime, not testbase.**  Their only caller is
 > `RuntimeOutputContext` in
-> [`codecraftai-integration-runtime`](../../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/runtimeoutputcontext.py),
+> [`codecraftai-integration-runtime`](https://github.com/code-craft-ai-company/codecraftai-integration-runtime/blob/main/source/packages/ccai/integrationruntime/runtimeoutputcontext.py),
 > which `IntegratedTestJob` installs by overriding
 > `TestJob._create_output_context()`.  Because the helpers raise
 > `SemanticError` unless the process was activated as a job, this
@@ -385,7 +385,7 @@ consumers; no per-application directory layout decisions.
 
 ## Option overrides
 
-[`optionoverrides.py`](../../../../codecraftai-runtime/source/packages/ccai/runtime/optionoverrides.py)
+[`optionoverrides.py`](https://github.com/code-craft-ai-company/codecraftai-runtime/blob/main/source/packages/ccai/runtime/optionoverrides.py)
 provides programmatic override helpers for runtime variables.
 (Unlike the other runtime modules, this one has *not* yet been
 folded into `ccai.thisapp` — it still lives in
@@ -503,7 +503,7 @@ for whatever job is running; the running is elsewhere.
 > needs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`, `AM_RUN_ID`,
 > `AM_DEBUG_*`, `AM_DIAGNOSTICS_*`, `AM_TESTRUN_TIMEOUT`) directly
 > from `os.environ` via a tiny, dependency-free module,
-> [`ccai.testbase.environment`](../../../../codecraftai-testbase/source/packages/ccai/testbase/environment.py).
+> [`ccai.testbase.environment`](https://github.com/code-craft-ai-company/codecraftai-testbase/blob/main/source/packages/ccai/testbase/environment.py).
 > Standalone testbase runs *without* activation — no presence
 > folder, no `RuntimeVariables`, no `codecraftai-this-app` — and
 > records its run summary to stdout.  The full runtime variable

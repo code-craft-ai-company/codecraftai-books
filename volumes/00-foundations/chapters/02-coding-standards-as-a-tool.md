@@ -12,8 +12,8 @@ the rules without the reasons are arbitrary, and arbitrary rules
 get worked around.
 
 The canonical source of these rules is the
-[`CLAUDE.md`](../../../../CLAUDE.md) file at the root of
-`/Users/myron/repos/`.  The file's job is to tell automated coding
+`CLAUDE.md` file kept at the root of the engineering
+workspace, outside any one repository.  The file's job is to tell automated coding
 assistants what the project's conventions are; the same file
 serves equally well as the human-readable reference for the
 team.  This chapter unpacks each rule with the rationale and a

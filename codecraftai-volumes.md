@@ -754,7 +754,7 @@ series.
 
 - The sysman tier is fully green and stable.  Every chapter has a
   reference implementation already shipped.
-- The 50 contracts at `codecraftai-sysman-common/specs/contracts/` are the
+- The 52 contracts at `codecraftai-sysman-common/specs/contracts/` are the
   cleanest spec set in the portfolio.
 
 ---
@@ -1091,7 +1091,7 @@ Currently more aspirational than written-up, but the design is locked.
 **Estimated pages:** 200.
 
 **Portfolio source:** `RELEASE-PIPELINE.md`,
-`website-automationmojo`, the per-repo Poetry / pyproject scaffolding.
+the Code Craft AI website repository, the per-repo Poetry / pyproject scaffolding.
 
 ### Chapters
 

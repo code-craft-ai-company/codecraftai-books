@@ -154,7 +154,7 @@ def add_item(item, items=None):
 
 More verbose.  Explicit about the default.  No shared mutable
 state across calls.  The discipline appears in
-[`CLAUDE.md`](../../../../CLAUDE.md) under the "Default Values"
+`CLAUDE.md` under the "Default Values"
 heading and is enforced in code review.
 
 ### Named parameter passing

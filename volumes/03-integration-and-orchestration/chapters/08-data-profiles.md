@@ -69,7 +69,7 @@ has three universal fields and a category-specific extension:
 ```
 
 The three universals come from
-[`BaseDataProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/basedataprofile.py):
+[`BaseDataProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/basedataprofile.py):
 
 | Field | Purpose |
 |---|---|
@@ -78,7 +78,7 @@ The three universals come from
 | `credential` | A reference to a credential identifier (chapters 9–12) — never the credential value |
 
 Everything else depends on the category.  Five categories ship in
-[`codecraftai-dataprofiles`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/);
+[`codecraftai-dataprofiles`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/tree/main/source/packages/ccai/dataprofiles);
 each is implemented as a concrete class inheriting from
 `BaseDataProfile` with its own additional fields and its own
 `validate` classmethod.
@@ -89,7 +89,7 @@ each is implemented as a concrete class inheriting from
 
 For databases reached over TCP with host and port, regardless of
 engine.  The shipped class is
-[`DatabaseBasicTcpProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/databasebasictcpprofile.py).
+[`DatabaseBasicTcpProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/databasebasictcpprofile.py).
 
 ```yaml
 - identifier: staging-db-readwrite
@@ -111,7 +111,7 @@ select the right driver.
 For databases reached over a Unix domain socket — same engine
 catalogue as `basic-tcp` but with a filesystem path instead of host
 and port.  The shipped class is
-[`DatabaseBasicSocketProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/databasebasicsocketprofile.py).
+[`DatabaseBasicSocketProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/databasebasicsocketprofile.py).
 
 ```yaml
 - identifier: local-postgres
@@ -133,7 +133,7 @@ were present.  Two categories make the dispatch a single
 ### `couchdb` — CouchDB
 
 For CouchDB instances.  The shipped class is
-[`CouchDbProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/couchdbprofile.py).
+[`CouchDbProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/couchdbprofile.py).
 
 ```yaml
 - identifier: staging-couchdb
@@ -150,7 +150,7 @@ Required fields: `credential`, `dbname`, `host`, `port`.  Optional:
 because its connection-string format is non-standard (the database
 name lives in the path, the auth lives in the userinfo) and because
 the
-[`codecraftai-configuration`](../../../codecraftai-configuration/source/packages/ccai/configuration/sources/couchdbsource.py)
+[`codecraftai-configuration`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/sources/couchdbsource.py)
 loader supports CouchDB as a *configuration source* — the same
 profile shape doubles for "database we read from" and "config store
 we read configuration from."
@@ -158,7 +158,7 @@ we read configuration from."
 ### `mongodb-atlas` — MongoDB Atlas
 
 For MongoDB Atlas deployments.  The shipped class is
-[`MongoDBAtlasProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/mongodbatlasprofile.py).
+[`MongoDBAtlasProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/mongodbatlasprofile.py).
 
 ```yaml
 - identifier: staging-atlas
@@ -172,7 +172,7 @@ is the Atlas connection *template* — the literal string MongoDB Atlas
 gives you in its console — with `<username>` and `<password>`
 placeholders.  At runtime the credential is materialised and the
 template is expanded by
-[`MongoDBAtlasProfile.connection_string(credobj)`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/mongodbatlasprofile.py).
+[`MongoDBAtlasProfile.connection_string(credobj)`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/mongodbatlasprofile.py).
 
 This category exists separately from `basic-tcp` because Atlas's
 `mongodb+srv://` scheme expands to a list of hosts via DNS at
@@ -183,7 +183,7 @@ what Atlas actually requires.
 ### `snowflake` — Snowflake
 
 For Snowflake databases.  The shipped class is
-[`SnowflakeProfile`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/snowflakeprofile.py).
+[`SnowflakeProfile`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/snowflakeprofile.py).
 
 ```yaml
 - identifier: staging-snowflake
@@ -309,7 +309,7 @@ becomes a process-environment value.
 
 Every Data Profile has a `category` field that selects which
 concrete class to instantiate when the file is loaded.  The
-[`DataProfileManager`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/dataprofilemanager.py)
+[`DataProfileManager`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/dataprofilemanager.py)
 performs this dispatch:
 
 ```python
@@ -420,7 +420,7 @@ of one duplicated hostname.
 ## The `DataProfileManager` and lookup-by-name
 
 At runtime the orchestration interacts with profiles through the
-[`DataProfileManagerSingleton`](../../../codecraftai-dataprofiles/source/packages/ccai/dataprofiles/wellknown.py):
+[`DataProfileManagerSingleton`](https://github.com/code-craft-ai-company/codecraftai-dataprofiles/blob/main/source/packages/ccai/dataprofiles/wellknown.py):
 
 ```python
 from ccai.dataprofiles.wellknown import DataProfileManagerSingleton

@@ -7,7 +7,7 @@
 
 The previous chapter introduced the abstract task model.  This
 chapter walks the five concrete `Task` subclasses shipped under
-[`codecraftai-taskplus/source/packages/ccai/taskplus/tasks/`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/).
+[`codecraftai-taskplus/source/packages/ccai/taskplus/tasks/`](https://github.com/code-craft-ai-company/codecraftai-taskplus/tree/main/source/packages/ccai/taskplus/tasks).
 Each is a concrete implementation of `perform_task` — small in
 LOC, big in cumulative usefulness.  The five together let workflow
 authors build real orchestrations without writing a single line of
@@ -56,7 +56,7 @@ type.
 ```
 
 One required field beyond the universals:
-[`command`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/runcommand.py) —
+[`command`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/tasks/runcommand.py) —
 the shell command to execute.  The shell is the system's default
 shell; the command is invoked with `shell=True`.
 
@@ -164,14 +164,14 @@ sit on its own line for readability.
 ```
 
 One required field:
-[`script`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/shellscript.py) —
+[`script`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/tasks/shellscript.py) —
 a list of strings.  Each string becomes one line of the temp
 script.  The lines are joined with `os.linesep` before writing.
 
 ### Implementation
 
 The task writes the script to a temp file (using
-[`get_temporary_file`](../../../codecraftai-runtime/source/packages/ccai/runtime/paths.py)
+[`get_temporary_file`](https://github.com/code-craft-ai-company/codecraftai-runtime/blob/main/source/packages/ccai/runtime/paths.py)
 from `codecraftai-runtime`), chmods it executable, runs it, captures
 output:
 
@@ -276,7 +276,7 @@ orchestration's interpreter rather than a fresh one.
 ```
 
 One required field:
-[`script`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/embeddedpython.py) —
+[`script`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/tasks/embeddedpython.py) —
 a list of Python source lines.  Joined with `os.linesep` before
 `exec`.
 

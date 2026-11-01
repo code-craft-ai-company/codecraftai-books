@@ -16,7 +16,7 @@ in flight (rotation, encryption, audit); chapter 12 is credentials
 across environments.
 
 The portfolio's
-[`codecraftai-credentials`](../../../codecraftai-credentials/source/packages/ccai/credentials/)
+[`codecraftai-credentials`](https://github.com/code-craft-ai-company/codecraftai-credentials/tree/main/source/packages/ccai/credentials)
 package is the substantive subject of Part III.  An important
 finding from the research that grounded this volume is worth stating
 up front: **`codecraftai-credentials` is a pure vocabulary layer**.
@@ -36,7 +36,7 @@ follows is the recipe for building it well.
 ## The three universal fields
 
 Every credential is an instance of a class inheriting from
-[`BaseCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/basecredential.py).
+[`BaseCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/basecredential.py).
 The base class declares three universal fields that every concrete
 credential carries:
 
@@ -83,7 +83,7 @@ tag the framework recognises.  Every concrete credential class
 *requires* a specific category tag to be present in the list and
 raises `ConfigurationError` at construction time if it's missing.
 For example,
-[`SshCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/sshcredential.py)
+[`SshCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/sshcredential.py)
 requires the `ssh` category:
 
 ```python
@@ -146,7 +146,7 @@ recognise the privilege tier without parsing the identifier name.
 
 The `categories` list serves a second function beyond filtering:
 the *first matching tag* tells the
-[`CredentialManager`](../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py)
+[`CredentialManager`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/credentialmanager.py)
 which concrete credential class to instantiate.  This is the
 category-as-discriminator pattern shared with Data Profiles (chapter
 8) and CloudDevices (chapter 4).
@@ -182,7 +182,7 @@ backend layer is separate.
 
 ### Basic auth
 
-[`BasicCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/basiccredential.py)
+[`BasicCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/basiccredential.py)
 — the workhorse type for username/password authentication.  Used
 for HTTP Basic, REST Basic, database `BasicCredential`-driven
 auth.  Two category tags accepted: `basic` (general) and
@@ -199,7 +199,7 @@ Required fields: `username`, `password`.
 
 ### SSH
 
-[`SshCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/sshcredential.py)
+[`SshCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/sshcredential.py)
 — SSH credential with multiple authentication modes.  The
 constructor accepts any of: password, keyfile, raw key, or
 SSH-agent flag, and validates that at least one mechanism is
@@ -226,7 +226,7 @@ subsystem.
 
 Three flavours of token-based auth.
 
-[`ApiTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/apitokencredential.py)
+[`ApiTokenCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/apitokencredential.py)
 — a single opaque token.  Used for service tokens that don't have a
 notion of a per-user identity.
 
@@ -236,7 +236,7 @@ notion of a per-user identity.
   token: ${VAULT:/secret/staging/jira/service-token}
 ```
 
-[`PersonalApiTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/personalapitokencredential.py)
+[`PersonalApiTokenCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/personalapitokencredential.py)
 — a token bound to a username.  Used for personal access tokens
 where the username appears in audit logs (Atlassian, Jira, Bitbucket,
 many SaaS APIs).
@@ -248,7 +248,7 @@ many SaaS APIs).
   token: ${VAULT:/secret/staging/jira/ci-bot-pat}
 ```
 
-[`SecretTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/secrettokencredential.py)
+[`SecretTokenCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/secrettokencredential.py)
 — a token paired with the verification *endpoint* the consumer
 must call.  Used for third-party verification services (hCaptcha,
 reCAPTCHA, similar challenge-response APIs) where the token only
@@ -265,7 +265,7 @@ makes sense in the context of a particular service URL.
 
 Two cloud-specific shapes.
 
-[`AwsAccessKeyCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/awsaccesskeycredential.py)
+[`AwsAccessKeyCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/awsaccesskeycredential.py)
 — the AWS access-key-id + secret-access-key pair.
 
 ```yaml
@@ -275,7 +275,7 @@ Two cloud-specific shapes.
   secret: ${VAULT:/secret/aws/ci-runner-secret}
 ```
 
-[`AzureClientSecretCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/azureclientsecretcredential.py)
+[`AzureClientSecretCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/azureclientsecretcredential.py)
 — Azure application credential (tenant id + client id + client
 secret), used for non-interactive Azure access.
 
@@ -295,7 +295,7 @@ the `CredentialManager`.
 
 ### Generic asymmetric keys
 
-[`PublicKeyCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/publickeycredential.py)
+[`PublicKeyCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/publickeycredential.py)
 — a generic public/private keypair, not tied to any particular
 protocol.  Used for application-level signing (JWT signing,
 artifact signing, code-signing keypairs).
@@ -320,7 +320,7 @@ doesn't model.
 GitHub has two shipped classes because it has two distinct
 authentication flows.
 
-[`GithubTokenCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/githubtokencredential.py)
+[`GithubTokenCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/githubtokencredential.py)
 — a personal access token (PAT) with a username.  GitHub doesn't
 verify the username for PATs, so the field defaults to `"git"`; it
 exists for logging and tracking.
@@ -332,7 +332,7 @@ exists for logging and tracking.
   token: ${VAULT:/secret/github/ci-bot-pat}
 ```
 
-[`GithubAppCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/githubappcredential.py)
+[`GithubAppCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/githubappcredential.py)
 — GitHub Apps authenticate using a private key (or list of keys
 for rotation) signed against the App's identifier.  The credential
 holds either keyfiles, raw keys, or both, with optional passphrase.
@@ -358,7 +358,7 @@ failing silently at first use.
 
 ### WiFi networks
 
-[`WifiChoiceCredential`](../../../codecraftai-credentials/source/packages/ccai/credentials/wifichoicecredential.py)
+[`WifiChoiceCredential`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/wifichoicecredential.py)
 — a list of SSID+password pairs the consumer can iterate through,
 trying each in turn.  Used for IoT / embedded / mobile-device
 automation where the client may move through several networks
@@ -510,7 +510,7 @@ on a Topology come from the Landscape entries the Topology references.
 
 The runtime equivalent of the Data Profiles' `DataProfileManager` is
 the
-[`CredentialManager`](../../../codecraftai-credentials/source/packages/ccai/credentials/credentialmanager.py).
+[`CredentialManager`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/credentialmanager.py).
 Same pattern, different domain:
 
 ```python

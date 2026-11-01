@@ -8,7 +8,7 @@ The previous two chapters introduced the task model and the five
 shipped task types.  This chapter introduces the *YAML format*
 that workflow authors write to compose those types into a
 runnable orchestration, plus the
-[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
+[`Workflow.parse`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/workflow.py)
 classmethod that translates the YAML into the in-memory tree
 chapter 18 described.
 
@@ -41,7 +41,7 @@ parameters:
 ```
 
 The shipped
-[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
+[`Workflow.parse`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/workflow.py)
 implementation enforces this structure.  Two ConfigurationError
 checks at the top:
 
@@ -111,7 +111,7 @@ environment:
 ```
 
 The shipped
-[`execute_workflow`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/execution.py)
+[`execute_workflow`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/execution.py)
 function exports each entry into `os.environ` before the flow
 executes.  This is the workflow's hook into the
 plumbing-vs-content boundary discussed in chapter 7: the
@@ -194,7 +194,7 @@ without being rejected.
 Two fields are required: `task` (the label) and `tasktype` (the
 module-and-class reference).  The `if`, `onfailure`, and
 `onsuccess` fields are optional and consumed by the
-[`Task`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/task.py)
+[`Task`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/task.py)
 base class (chapter 18).  Task-specific fields — `command` for
 `RunCommand`, `script` for `ShellScript`, `variables` for
 `CreateEnvironment` — are read by the concrete task class
@@ -207,7 +207,7 @@ tasktype: ccai.taskplus.tasks.runcommand@RunCommand
 ```
 
 The parser splits on `@`, imports the module via
-[`import_by_name`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/ximport.py)
+[`import_by_name`](https://github.com/code-craft-ai-company/codecraftai-xmodules/blob/main/source/packages/ccai/xmodules/ximport.py)
 from `codecraftai-xmodules`, and looks up the class:
 
 ```python
@@ -267,7 +267,7 @@ through the failure of its constituent tasks.
 ## The recursive walk and ordinal generation
 
 The parser's
-[`_process_flow_info_items`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
+[`_process_flow_info_items`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/workflow.py)
 method is the recursion that produces the in-memory tree.  It
 takes a list of node info dictionaries and an `ordinal_prefix`
 string, and returns a list of `FlowNode` instances:

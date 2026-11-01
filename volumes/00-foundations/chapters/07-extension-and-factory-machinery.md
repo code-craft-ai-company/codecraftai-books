@@ -7,7 +7,7 @@
 > precedence ordering, with substitutability.*
 
 This chapter introduces
-[`codecraftai-extension`](../../../../codecraftai-extension/source/packages/ccai/extension/),
+[`codecraftai-extension`](https://github.com/code-craft-ai-company/codecraftai-extension/tree/main/source/packages/ccai/extension),
 the foundation-tier package whose job is to provide the
 plug-in machinery the rest of the portfolio uses.  The package
 defines three kinds of artifact:
@@ -53,7 +53,7 @@ factory; the consumer code doesn't change.
 
 ### `FactoryProtocolBase` — the contract for protocols
 
-[`factoryprotocolbase.py`](../../../../codecraftai-extension/source/packages/ccai/extension/factory/factoryprotocolbase.py)
+[`factoryprotocolbase.py`](https://github.com/code-craft-ai-company/codecraftai-extension/blob/main/source/packages/ccai/extension/factory/factoryprotocolbase.py)
 defines the marker base for any factory protocol declaration.  In
 its entirety:
 
@@ -131,7 +131,7 @@ default RHEL implementation ships its own factory with a higher
 
 ### `SuperFactory` — the dispatch engine
 
-[`superfactory.py`](../../../../codecraftai-extension/source/packages/ccai/extension/factory/superfactory.py)
+[`superfactory.py`](https://github.com/code-craft-ai-company/codecraftai-extension/blob/main/source/packages/ccai/extension/factory/superfactory.py)
 is the engine.  Its job: discover all registered factory
 classes at startup, sort them by precedence, and provide
 dispatch methods for protocol-specific lookups.

@@ -406,7 +406,7 @@ A short chapter for a large package.  The reader should now:
 - Know the smoke-vs-comprehensive testing strategy.
 - See the connection between
   `codecraftai-restclient-github-public` (this chapter) and
-  `codecraftai-gitlab` (Volume 6 chapter 13) — same pattern,
+  `codecraftai-restclient-gitlab` (Volume 6 chapter 13) — same pattern,
   different APIs.
 
 The next chapter walks the four protocol extension packages

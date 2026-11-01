@@ -58,13 +58,13 @@ own file because relationships vary independently from inventory.*
 ## A note on the schema
 
 A Landscape file has a shipped schema and a shipped example
-([`codecraftai-automation-kit/userguide/examples/landscape.yaml`](../../../codecraftai-automation-kit/userguide/examples/landscape.yaml)).
+([`codecraftai-automation-kit/userguide/examples/landscape.yaml`](https://github.com/code-craft-ai-company/codecraftai-automation-kit/blob/main/userguide/examples/landscape.yaml)).
 A Topology file at the time of writing has the *configuration
 plumbing* in place — `codecraftai-configuration` loads topology files
 through the standard `MergeMap` mechanism and exposes them through
-[`AM_CONFIG_TOPOLOGY_NAMES`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py)
+[`AM_CONFIG_TOPOLOGY_NAMES`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationvariables.py)
 and the `TOPOLOGY_CONFIGURATION_MAP`, and the
-[`TopologyIntegrationLayer`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/layers/topologyintegrationlayer.py)
+[`TopologyIntegrationLayer`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/layers/topologyintegrationlayer.py)
 class is shipped as the runtime hook — but the *schema content* is
 consumer-defined.  Different orchestration teams have different
 notions of what relationships matter to them.
@@ -73,7 +73,7 @@ There is **one exception** to the consumer-defined schema rule.
 The framework consumes a `clusters` section with a fixed shape:
 each cluster has a `name`, a `group`, a list of `nodes`, and a
 list of `spares`.  The shape is consumed by
-[`LandscapeOperationalLayer._create_clusters`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/layers/landscapeoperationallayer.py)
+[`LandscapeOperationalLayer._create_clusters`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/layers/landscapeoperationallayer.py)
 which materialises `LandscapeDeviceCluster` objects from the
 data.  This is the framework's only structural requirement on
 the Topology file's content — every other top-level section
@@ -172,7 +172,7 @@ Two fields:
 
 A cluster is a named group of Landscape members that the
 orchestration treats as a logical unit.  The
-[`LandscapeDeviceCluster`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscapedevicecluster.py)
+[`LandscapeDeviceCluster`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/landscapedevicecluster.py)
 class in `codecraftai-landscaping` is the runtime model the
 orchestration interacts with; the Topology file is the
 configuration that produces the runtime cluster.

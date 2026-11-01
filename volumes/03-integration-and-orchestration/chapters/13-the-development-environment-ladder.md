@@ -547,24 +547,24 @@ chapters build on.  Each chapter cites the building blocks it
 extends:
 
 - **`override_variable_value`**
-  ([`codecraftai-this-app/.../thisapplication.py`](../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py))
+  ([`codecraftai-this-app/.../thisapplication.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/thisapplication.py))
   — the primitive for runtime variable overrides.  Chapter 14 uses
   it to implement profile composition.
 - **`MergeMap`**
-  ([`codecraftai-xmodules/.../mergemap.py`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py))
+  ([`codecraftai-xmodules/.../mergemap.py`](https://github.com/code-craft-ai-company/codecraftai-xmodules/blob/main/source/packages/ccai/xmodules/xcollections/mergemap.py))
   — the primitive for layered configuration with overlay
   semantics.  Chapter 14 uses it to implement file-level profile
   composition.
 - **`AppVarSet`**
-  ([`codecraftai-this-app/.../appvarset.py`](../../../codecraftai-this-app/source/packages/ccai/thisapp/appvarset.py))
+  ([`codecraftai-this-app/.../appvarset.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/appvarset.py))
   — iterating the active descriptor set.  Chapter 14 uses it as
   the basis for the proposed `ccai profile show` CLI command.
 - **`ContextPaths`**
-  ([`codecraftai-this-app/.../contextpaths.py`](../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py))
+  ([`codecraftai-this-app/.../contextpaths.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/contextpaths.py))
   — the well-known-path enumeration where active configurations
   live.  Chapter 14 proposes adding `ACTIVE_PROFILE` here.
 - **`AM_*_NAMES`**
-  ([`codecraftai-configuration/.../configurationvariables.py`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py))
+  ([`codecraftai-configuration/.../configurationvariables.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationvariables.py))
   — the existing five environment-variable selectors for the
   configuration categories.  Chapter 14 extends the family with
   the proposed `AM_PROFILE`.

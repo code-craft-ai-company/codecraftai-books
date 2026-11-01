@@ -7,7 +7,7 @@
 
 The previous chapter introduced the runtime variable layer.
 This chapter introduces
-[`codecraftai-configuration`](../../../../codecraftai-configuration/source/packages/ccai/configuration/),
+[`codecraftai-configuration`](https://github.com/code-craft-ai-company/codecraftai-configuration/tree/main/source/packages/ccai/configuration),
 the foundation-tier package whose job is to *load* configuration
 files — from disk, from HTTP, from CouchDB, from MongoDB —
 parse them, optionally decrypt them, validate them, and produce
@@ -51,7 +51,7 @@ The chapter walks the seven steps from bottom to top.
 ## `ConfigurationLoader` — the public surface
 
 The
-[`ConfigurationLoader`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationloader.py)
+[`ConfigurationLoader`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationloader.py)
 class is the consumer-facing entry point.  Constructed with a
 list of source URIs:
 
@@ -103,7 +103,7 @@ without having to instrument anything.
 ## The source hierarchy
 
 Every source extends
-[`ConfigurationSourceBase`](../../../../codecraftai-configuration/source/packages/ccai/configuration/sources/configurationsourcebase.py),
+[`ConfigurationSourceBase`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/sources/configurationsourcebase.py),
 the abstract base that declares two methods:
 
 ```python
@@ -191,7 +191,7 @@ _FORMAT_BY_EXTENSION = {
 ```
 
 `ConfigurationFormat` is the small enum from
-[`configurationformat.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationformat.py):
+[`configurationformat.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationformat.py):
 
 ```python
 class ConfigurationFormat(str, Enum):
@@ -229,7 +229,7 @@ encrypted_content: "BASE64-CIPHERTEXT-HERE"
 ```
 
 The
-[`codecraftai-configuration/cryptography.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/cryptography.py)
+[`codecraftai-configuration/cryptography.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/cryptography.py)
 module produces and consumes documents in this shape.  Volume 3
 chapter 11 ("Credentials in flight") detailed the cryptography
 primitives for credentials; the same primitives apply to *any*
@@ -311,7 +311,7 @@ per-environment runtimes, etc.); each file contributes to a
 unified resolved configuration.
 
 The composition primitive is
-[`MergeMap`](../../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py)
+[`MergeMap`](https://github.com/code-craft-ai-company/codecraftai-xmodules/blob/main/source/packages/ccai/xmodules/xcollections/mergemap.py)
 from `codecraftai-xmodules` (chapter 0's foundation tier).  A
 `MergeMap` is a `MutableMapping` that holds an ordered list of
 component maps and composes them with *overlay* semantics — later
@@ -319,7 +319,7 @@ maps shadow earlier maps key-by-key, but lower-priority entries
 remain inspectable.
 
 In `codecraftai-configuration`,
-[`configurationmaps.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py)
+[`configurationmaps.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationmaps.py)
 defines the five well-known composition targets:
 
 ```python
@@ -411,7 +411,7 @@ populated, and the rest of the application reads from them.
 
 ## The variable model the loader uses
 
-[`configurationvariables.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py)
+[`configurationvariables.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationvariables.py)
 defines `ConfigVariablesDesc`, extending the chapter-8
 `RuntimeVariablesDesc`:
 
@@ -455,7 +455,7 @@ This is the chapter-6 descriptor model at scale.
 
 The descriptors above use *converter* functions to turn raw
 string values into typed lists:
-[`normalize.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/normalize.py)
+[`normalize.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/normalize.py)
 ships three:
 
 - **`split_and_normalize_name_list(value, sep=";")`** — splits
@@ -473,7 +473,7 @@ paths on Windows use `:` as a drive separator.
 
 ## The settings layer
 
-[`configurationsettings.py`](../../../../codecraftai-configuration/source/packages/ccai/configuration/configurationsettings.py)
+[`configurationsettings.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationsettings.py)
 provides the *one-time* initialisation function that establishes
 the application persona and the default configuration:
 

@@ -64,7 +64,7 @@ Five rules apply to all six categories:
 1. **Typed file at rest.**  Each category is one or more YAML or JSON
    files.  The loader tries `.yaml`, `.yml`, `.json` in that order.
    This is implemented in `codecraftai-configuration`'s
-   [`DirectorySource`](../../../codecraftai-configuration/source/packages/ccai/configuration/sources/directorysource.py)
+   [`DirectorySource`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/sources/directorysource.py)
    for filesystem sources; the same fallback applies to HTTP, CouchDB,
    and MongoDB sources.
 
@@ -81,11 +81,11 @@ Five rules apply to all six categories:
    key with the ciphertext and a `"format"` field for the inner
    payload's format.  The loader transparently decrypts when given a
    key or keyphrase.  This is done at
-   [`ConfigurationLoader`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationloader.py).
+   [`ConfigurationLoader`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationloader.py).
 
 4. **Composition through MergeMap, not through string substitution.**
    Each category's resolved configuration is a
-   [`MergeMap`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py),
+   [`MergeMap`](https://github.com/code-craft-ai-company/codecraftai-xmodules/blob/main/source/packages/ccai/xmodules/xcollections/mergemap.py),
    which holds an ordered list of source maps and composes them with
    overlay semantics — later maps shadow earlier maps key by key, but
    the lower-priority entries are preserved and inspectable.  This is
@@ -94,7 +94,7 @@ Five rules apply to all six categories:
 5. **Resolved into the application context.**  After loading, each
    category (except Credentials) is inserted into the shared
    serializable application context at a known
-   [`ContextPath`](../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py).
+   [`ContextPath`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/contextpaths.py).
    This is how the configuration travels with the process and reaches
    distributed workers.  Credentials are deliberately *not* inserted
    into the context — that's a security boundary, covered in
@@ -202,7 +202,7 @@ infrastructure:
 
 A landscape is loaded by name — `landscape-staging-east` — and
 resolved into the
-[`LANDSCAPE_CONFIGURATION_MAP`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationvariables.py).
+[`LANDSCAPE_CONFIGURATION_MAP`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationvariables.py).
 Anywhere in the pipeline that needs to know "what hosts are
 participating," the answer comes from the resolved map, not from a
 hardcoded list.

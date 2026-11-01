@@ -77,7 +77,7 @@ not logic.
 
 A taskplus workflow that runs a distributed test job invokes a
 `DistributedTestJob` from Volume 2's
-[`codecraftai-testplus`](../../../codecraftai-testplus/source/packages/ccai/testplus/).
+[`codecraftai-testplus`](https://github.com/code-craft-ai-company/codecraftai-testplus/tree/main/source/packages/ccai/testplus).
 The chain of classes — `TestJob` (in testbase) →
 `InteropLibraryTestJob` (in interop) → `DistributedTestJob` (in
 testplus) — is Volume 2's territory; this chapter just shows the
@@ -250,7 +250,7 @@ propagate to remote workers? — should read Volume 2 chapter 4
 A workflow that runs a sysman feature against a fleet — for
 example, "set the firewall ruleset on every host in the active
 landscape" — invokes one of the
-[`codecraftai-sysman-*`](../../../codecraftai-sysman-common/) packages
+[`codecraftai-sysman-*`](https://github.com/code-craft-ai-company/codecraftai-sysman-common) packages
 through a small bridge task.
 
 ### YAML shape
@@ -357,7 +357,7 @@ A workflow that says `feature: networking.firewall` on a
 landscape with one Linux runner and two macOS runners gets
 *three different per-OS implementations* dispatched
 automatically.  The cross-OS contract from Volume 4 chapter 2
-(the 50 contracts catalogued there) is the typed surface; the
+(the 52 contracts catalogued there) is the typed surface; the
 per-OS implementations are the dispatch targets.
 
 The workflow author writing `feature: networking.firewall` does
@@ -383,7 +383,7 @@ extend.
 
 ### Cross-references to Volume 4
 
-The full sysman story — the 50 cross-OS contracts, the
+The full sysman story — the 52 cross-OS contracts, the
 `featurebase` machinery, the per-OS implementations for RHEL,
 Ubuntu, macOS, Windows, UEFI — is Volume 4.  The bridge above
 is the *entrance* from a workflow.  Readers who want more than
@@ -396,7 +396,7 @@ relevant to their fleet.
 A workflow that needs to provision (or tear down) cloud
 resources before (or after) the rest of its work invokes
 `ProvisioningEngine` from
-[`codecraftai-provisioning`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/),
+[`codecraftai-provisioning`](https://github.com/code-craft-ai-company/codecraftai-provisioning/tree/main/source/packages/ccai/provisioning),
 introduced in chapter 4.
 
 ### YAML shape

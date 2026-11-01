@@ -12,7 +12,7 @@ runs.
 
 Specifications are the only one of the six categories that does not
 live inside `codecraftai-configuration`.  They live in
-[`codecraftai-provisioning`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/).
+[`codecraftai-provisioning`](https://github.com/code-craft-ai-company/codecraftai-provisioning/tree/main/source/packages/ccai/provisioning).
 The reason is structural: the other five categories are loaded *by*
 the orchestration as it starts; Specifications are consumed *before*
 the orchestration starts.  They describe a state of the world that the
@@ -74,7 +74,7 @@ profiles:
 ```
 
 The structure is parsed by
-[`ProvisioningEngine.create_provisioning_engine(specification=...)`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/provisioningengine.py)
+[`ProvisioningEngine.create_provisioning_engine(specification=...)`](https://github.com/code-craft-ai-company/codecraftai-provisioning/blob/main/source/packages/ccai/provisioning/provisioningengine.py)
 which loads the YAML and instantiates four kinds of model objects.
 The four are layered abstractions, not a flat list.  Understanding
 the layering is the key to writing maintainable specs.
@@ -82,7 +82,7 @@ the layering is the key to writing maintainable specs.
 ### Layer 1 — CloudVenue: where we provision
 
 A
-[`CloudVenue`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudvenue.py)
+[`CloudVenue`](https://github.com/code-craft-ai-company/codecraftai-provisioning/blob/main/source/packages/ccai/provisioning/model/cloud/cloudvenue.py)
 describes a target account in a cloud provider:
 
 ```yaml
@@ -106,13 +106,13 @@ Multiple venues can coexist in one Specification — you can provision
 across AWS and Azure in a single spec — but the typical case is one
 venue per spec, with multiple specs for multi-cloud setups.  Per
 the per-provider provisioners shipped under
-[`venues/{aws,azure,google}/`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/venues/),
+[`venues/{aws,azure,google}/`](https://github.com/code-craft-ai-company/codecraftai-provisioning/tree/main/source/packages/ccai/provisioning/venues),
 the supported providers are AWS, Azure, and Google Cloud.
 
 ### Layer 2 — CloudGroup: how resources are organised
 
 A
-[`CloudGroup`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudgroup.py)
+[`CloudGroup`](https://github.com/code-craft-ai-company/codecraftai-provisioning/blob/main/source/packages/ccai/provisioning/model/cloud/cloudgroup.py)
 describes a logical grouping with associated tags:
 
 ```yaml
@@ -136,7 +136,7 @@ systems, so the cost-center attribution is automatic.
 ### Layer 3 — CloudResourceProfile: what kind of resource
 
 A
-[`CloudResourceProfile`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/cloudresourceprofile.py)
+[`CloudResourceProfile`](https://github.com/code-craft-ai-company/codecraftai-provisioning/blob/main/source/packages/ccai/provisioning/model/cloud/cloudresourceprofile.py)
 is a parameterised template for resources of a particular shape:
 
 ```yaml
@@ -172,7 +172,7 @@ cloud.
 ### Layer 4 — CloudDevice: which specific resources
 
 A
-[`CloudDevice`](../../../codecraftai-provisioning/source/packages/ccai/provisioning/model/cloud/clouddevice.py)
+[`CloudDevice`](https://github.com/code-craft-ai-company/codecraftai-provisioning/blob/main/source/packages/ccai/provisioning/model/cloud/clouddevice.py)
 is a single instance to be provisioned, referencing a group, a
 profile, and a role:
 
@@ -466,7 +466,7 @@ Honest scoping notes:
   cloud APIs.  A lab full of physical hardware needs a different
   provisioning approach (PXE, Ansible against a static inventory, or
   the kind of orchestrated lab-power package
-  [`codecraftai-interop`](../../../codecraftai-interop/) ships).  Treat the
+  [`codecraftai-interop`](https://github.com/code-craft-ai-company/codecraftai-interop) ships).  Treat the
   static inventory as the Landscape (chapter 5) and skip the
   Specification.
 - **SaaS-only environments.**  If the environment is "an account in

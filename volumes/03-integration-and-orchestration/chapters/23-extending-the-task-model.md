@@ -12,7 +12,7 @@ chapter closes Part V with the *extension recipe* — how to add a
 new task type when the shipped five don't cover the use case.
 
 The chapter uses a worked target: turning the shipped
-[`GitCheckout`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/tasks/gitcheckout.py)
+[`GitCheckout`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/tasks/gitcheckout.py)
 stub from chapter 19 into a real Git checkout implementation.
 The same recipe applies to any other extension; `GitCheckout` is
 chosen because it's the smallest visible gap in the shipped set
@@ -221,7 +221,7 @@ Four implementation notes:
 #### Credential resolution
 
 The credential is fetched through the
-[`CredentialManagerSingleton`](../../../codecraftai-credentials/source/packages/ccai/credentials/wellknown.py)
+[`CredentialManagerSingleton`](https://github.com/code-craft-ai-company/codecraftai-credentials/blob/main/source/packages/ccai/credentials/wellknown.py)
 (chapter 9) via a helper:
 
 ```python
@@ -320,7 +320,7 @@ reference:
 ```
 
 The
-[`Workflow.parse`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
+[`Workflow.parse`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/workflow.py)
 loader (chapter 20) resolves the reference at parse time:
 imports the module, looks up the class, instantiates with the
 chapter-18 constructor signature.
@@ -344,7 +344,7 @@ Two observations on registration:
 
 Every shipped task in `codecraftai-taskplus` has a corresponding
 test file in
-[`source/testroots/ccai/tests/singlehost/taskplus/`](../../../codecraftai-taskplus/source/testroots/ccai/tests/singlehost/taskplus/).
+[`source/testroots/ccai/tests/singlehost/taskplus/`](https://github.com/code-craft-ai-company/codecraftai-taskplus/tree/main/source/testroots/ccai/tests/singlehost/taskplus).
 A new task type adds a new test file with the same shape.
 
 A minimal test suite for `GitCheckout`:

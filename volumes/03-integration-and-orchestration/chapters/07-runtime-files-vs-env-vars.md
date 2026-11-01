@@ -261,7 +261,7 @@ hostnames, parallelism — you are paying the plumbing tax.
 ## What moves into configuration files: the content
 
 Everything else.  Concretely, the runtime YAML in
-[`codecraftai-testbase`](../../../codecraftai-testbase/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml)
+[`codecraftai-testbase`](https://github.com/code-craft-ai-company/codecraftai-testbase/blob/main/source/testroots/report-tests/result-tests/v2/example2/runtime-declared.yaml)
 — a real shipped file — has the following top-level keys:
 
 ```yaml
@@ -295,7 +295,7 @@ opening claim.
 
 The portfolio ships one well-known environment variable that
 controls runtime behaviour:
-[`TESTBASE_MAX_EXAMPLES_CAP`](../../../codecraftai-testbase/userguide/10-04-03-testing-frameworks-testbase.rst).
+[`TESTBASE_MAX_EXAMPLES_CAP`](https://github.com/code-craft-ai-company/codecraftai-testbase/blob/main/userguide/10-04-03-testing-frameworks-testbase.rst).
 It caps the number of cases each property test will run.  Set
 `TESTBASE_MAX_EXAMPLES_CAP=10` and a property declared with
 `@given(constraints={"max_examples": 50})` runs only 10 cases.
@@ -432,7 +432,7 @@ log_level = RuntimeVariables.AM_LOG_LEVEL_CONSOLE
 > `RuntimeVariables` accessor set, and the activation that lights up
 > the well-known presence folder — belongs to the **integration**
 > layer.  `codecraftai-integration-runtime` performs it during its
-> [`initialize`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/initialize.py)
+> [`initialize`](https://github.com/code-craft-ai-company/codecraftai-integration-runtime/blob/main/source/packages/ccai/integrationruntime/initialize.py)
 > step (`resolve_runtime_variables` + `activate_profile_job`) and only
 > `IntegratedTestJob` consumes it.  The standalone `testbase`
 > test-execution core (the `TestJob` / `TestSequencer` / recorder path)
@@ -440,7 +440,7 @@ log_level = RuntimeVariables.AM_LOG_LEVEL_CONSOLE
 > of core execution knobs (`AM_TESTROOT`, `AM_OUTPUT_DIRECTORY`,
 > `AM_RUN_ID`, `AM_TESTRUN_TIMEOUT`, the `AM_DEBUG_*`/`AM_DIAGNOSTICS_*`
 > family) straight from `os.environ` through the tiny dependency-free
-> [`ccai.testbase.environment`](../../../codecraftai-testbase/source/packages/ccai/testbase/environment.py)
+> [`ccai.testbase.environment`](https://github.com/code-craft-ai-company/codecraftai-testbase/blob/main/source/packages/ccai/testbase/environment.py)
 > module.  The integration layer sets those same environment variables,
 > so the fixed-interface variable *names* are identical whether a job
 > runs standalone or under the runtime — only the resolution machinery
@@ -465,14 +465,14 @@ configuration file, support both forms in parallel for a release,
 then remove the environment-variable form.
 
 Use
-[`override_variable_value`](../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py)
+[`override_variable_value`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/thisapplication.py)
 on `ThisApplicationSingleton()` to wire each environment variable to
 its corresponding runtime configuration field as a fallback.  Both the
 singleton and the variable descriptors live in `ccai.thisapp` —
 `ThisApplicationSingleton` in
-[`ccai.thisapp.wellknown`](../../../codecraftai-this-app/source/packages/ccai/thisapp/wellknown.py)
+[`ccai.thisapp.wellknown`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/wellknown.py)
 and the `RuntimeVariablesDesc` descriptor set in
-[`ccai.thisapp.runtimevariables`](../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
+[`ccai.thisapp.runtimevariables`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/runtimevariables.py)
 (formerly `ccai.runtime.runtimevariables`):
 
 ```python

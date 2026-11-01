@@ -20,7 +20,7 @@ Specification was the exception).  Every orchestration consumes
 exactly one resolved Landscape — the resolution is the result of
 loading one or more landscape files by name and merging them through
 the standard
-[`MergeMap`](../../../codecraftai-xmodules/source/packages/ccai/xmodules/xcollections/mergemap.py)
+[`MergeMap`](https://github.com/code-craft-ai-company/codecraftai-xmodules/blob/main/source/packages/ccai/xmodules/xcollections/mergemap.py)
 mechanism introduced in chapter 3.
 
 ## The structure of a Landscape file
@@ -53,7 +53,7 @@ or as a no-op landscape for syntax-only test runs; not useful for
 actual work.
 
 A real landscape — the one shipped at
-[`codecraftai-automation-kit/userguide/examples/landscape.yaml`](../../../codecraftai-automation-kit/userguide/examples/landscape.yaml)
+[`codecraftai-automation-kit/userguide/examples/landscape.yaml`](https://github.com/code-craft-ai-company/codecraftai-automation-kit/blob/main/userguide/examples/landscape.yaml)
 — populates both sections:
 
 ```yaml
@@ -218,18 +218,18 @@ code, not by the landscape format.
 ## The `codecraftai-landscaping` runtime model
 
 The Landscape file is the configuration; the
-[`Landscape`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscape.py)
+[`Landscape`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/landscape.py)
 class in `codecraftai-landscaping` is the runtime model the
 orchestration interacts with.  Volume 6 of this series covers the
 runtime model in depth; Chapter 5 of this volume cares only about
 the file-to-runtime boundary.
 
 In the runtime model, each apod `client` becomes a
-[`LandscapeDevice`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscapedevice.py),
+[`LandscapeDevice`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/landscapedevice.py),
 each infrastructure `service` becomes a
-[`LandscapeService`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscapeservice.py),
+[`LandscapeService`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/landscapeservice.py),
 and the whole landscape is wrapped in a
-[`Landscape`](../../../codecraftai-landscaping/source/packages/ccai/landscaping/landscape.py)
+[`Landscape`](https://github.com/code-craft-ai-company/codecraftai-landscaping/blob/main/source/packages/ccai/landscaping/landscape.py)
 singleton with checkin / checkout primitives for safe coordinated
 access.  The mapping is one-to-one: every entry in the YAML produces
 exactly one runtime object.  No magic, no inference.

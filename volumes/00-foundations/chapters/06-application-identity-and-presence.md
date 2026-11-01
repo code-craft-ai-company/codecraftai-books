@@ -7,7 +7,7 @@
 
 The previous chapter introduced the waiting primitives.  This
 chapter introduces the *identity* primitives —
-[`codecraftai-this-app`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/),
+[`codecraftai-this-app`](https://github.com/code-craft-ai-company/codecraftai-this-app/tree/main/source/packages/ccai/thisapp),
 the package whose `ThisApplication` singleton represents the
 running process to itself.  Every higher tier of the portfolio
 calls into `ThisApplication` to resolve configuration variables,
@@ -70,7 +70,7 @@ its persona doesn't get a `None` back — it gets a clear
 ## `establish_app_persona` — the canonical entry point
 
 The function lives in
-[`persona.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/persona.py).
+[`persona.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/persona.py).
 The signature:
 
 ```python
@@ -174,7 +174,7 @@ construction cost upfront.
 ## `ThisApplication` — the singleton's surface
 
 The
-[`ThisApplication`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py)
+[`ThisApplication`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/thisapplication.py)
 class exposes seven properties (read-only views of the persona
 fields) and four methods (the *active* surface for variable
 resolution and overrides):
@@ -297,7 +297,7 @@ The volume's other variable sets follow the same pattern.
 `ConfigVariablesDesc` (in `codecraftai-configuration`) declares the
 configuration-related descriptors.  `RuntimeVariablesDesc` —
 formerly in `codecraftai-runtime`, now in
-[`ccai.thisapp.runtimevariables`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
+[`ccai.thisapp.runtimevariables`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/runtimevariables.py)
 — declares the runtime-related descriptors and itself subclasses
 `PersonaVariablesDesc`.  Each subsystem owns its own variable set;
 the sets compose at the `ThisApplication` level.
@@ -391,7 +391,7 @@ identity of the running application.  Subsystems write
 configuration data into it; consumers read it out.
 
 The well-known paths live in
-[`ContextPaths`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py)
+[`ContextPaths`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/contextpaths.py)
 — a string enum:
 
 ```python
@@ -475,7 +475,7 @@ chapter just introduced.
 
 ### `RuntimeVariablesDesc` / `RuntimeVariables` — the runtime descriptor set
 
-[`runtimevariables.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/runtimevariables.py)
+[`runtimevariables.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/runtimevariables.py)
 declares `RuntimeVariablesDesc`, which *subclasses*
 `PersonaVariablesDesc` — so a single descriptor set carries both the
 persona fields and the runtime fields.  It is a large set: build
@@ -506,7 +506,7 @@ It guards against double resolution with a module-level
 
 ### Well-known paths
 
-[`paths.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/paths.py)
+[`paths.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/paths.py)
 turns the resolved runtime variables into concrete on-disk
 locations.  The shipped helpers include:
 
@@ -544,7 +544,7 @@ results tree does not exist for it.
 
 ### Profile and job enumerations
 
-[`enumerations.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/enumerations.py)
+[`enumerations.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/enumerations.py)
 defines two string enums that govern *how* a process is activated:
 
 ```python
@@ -571,7 +571,7 @@ sequence builds (`Build`, `Infrastructure`, `Orchestration`,
 
 ### The activation sequence
 
-[`activation.py`](../../../../codecraftai-this-app/source/packages/ccai/thisapp/activation.py)
+[`activation.py`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/activation.py)
 ties the enumerations, the runtime variables, and the well-known
 paths together.  It exposes one function per profile —
 `activate_profile_command()`, `activate_profile_console()`,

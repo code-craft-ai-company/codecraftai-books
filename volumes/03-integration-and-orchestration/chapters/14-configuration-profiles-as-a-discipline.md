@@ -187,7 +187,7 @@ mechanical:
 2. Walk the `extends:` chain to assemble the final `select:` map.
 3. For each entry in the merged `select:`, set the corresponding
    `AM_CONFIG_*_NAMES` variable by calling
-   [`override_variable_value`](../../../codecraftai-this-app/source/packages/ccai/thisapp/thisapplication.py)
+   [`override_variable_value`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/thisapplication.py)
    on the appropriate descriptor.
 4. For each entry in the merged `overlay:`, register the patch
    with the configuration loader so that it gets composed onto the
@@ -198,7 +198,7 @@ mechanical:
 
 After step 5, control hands off to the existing configuration
 loaders.  Each `resolve_*_configuration` function in
-[`configurationmaps.py`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py)
+[`configurationmaps.py`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationmaps.py)
 runs unchanged — it reads the `AM_CONFIG_*_NAMES` variables the
 profile resolver just set, loads the named files, and inserts the
 results into the shared application context.
@@ -211,7 +211,7 @@ replace the loaders; it *parameterises* them.
 ## The proposed `ACTIVE_PROFILE` context path
 
 The shipped
-[`ContextPaths`](../../../codecraftai-this-app/source/packages/ccai/thisapp/contextpaths.py)
+[`ContextPaths`](https://github.com/code-craft-ai-company/codecraftai-this-app/blob/main/source/packages/ccai/thisapp/contextpaths.py)
 enumeration has slots for `JOB_ID`, `JOB_NAME`, `PIPELINE_ID`,
 `RUN_ID`, and similar process-identity fields.  It does not have
 a slot for the active profile name.  Adding one is a one-line
@@ -589,7 +589,7 @@ Implementation: every `ccai` CLI command's argument-parsing
 intercepts `--profile` before any command-specific parsing,
 sets `os.environ["AM_PROFILE"]`, and then runs the rest of the
 command normally.  The shipped
-[`arcli`](../../../codecraftai-arcli/source/packages/ccai/arcli/)
+[`arcli`](https://github.com/code-craft-ai-company/codecraftai-arcli/tree/main/source/packages/ccai/arcli)
 machinery already supports global flags of this shape; adding
 `--profile` is a small extension to the CLI tree's root.
 

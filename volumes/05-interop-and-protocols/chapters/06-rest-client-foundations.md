@@ -9,7 +9,7 @@
 
 `codecraftai-restclient-base` is the REST foundation that
 `codecraftai-restclient-github-public` (chapter 7) and
-Volume 6's `codecraftai-gitlab` (chapter 13 of Volume 6)
+Volume 6's `codecraftai-restclient-gitlab` (chapter 13 of Volume 6)
 build on.  This chapter walks the foundation classes —
 `RestClientBase`, `AspectsRest`, `RestApiGroup`,
 `ItemsResult` — and the auto-generation infrastructure that

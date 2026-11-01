@@ -46,7 +46,7 @@ parameters, flowstate, and resolved configurations.**
 ## Channel 1 — Environment exports
 
 The first and narrowest channel.  The
-[`Workflow`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/workflow.py)
+[`Workflow`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/workflow.py)
 class's `environment:` field becomes a set of `os.environ`
 exports applied before the flow runs:
 
@@ -70,7 +70,7 @@ shell, a child Python process invoked through `EmbeddedPython`,
 a containerised job started by a custom task), the subprocess
 inherits the parent's `os.environ` — so the subprocess sees the
 same six entries.  At its own startup the subprocess uses
-[`codecraftai-configuration`](../../../codecraftai-configuration/source/packages/ccai/configuration/configurationmaps.py)
+[`codecraftai-configuration`](https://github.com/code-craft-ai-company/codecraftai-configuration/blob/main/source/packages/ccai/configuration/configurationmaps.py)
 to resolve each `AM_*_NAMES` value into the corresponding loaded
 configuration.
 
@@ -306,7 +306,7 @@ could leak through the audit boundary.  The
 
 Tasks routinely produce files — build artifacts, test reports,
 captured profiles, logs.  The convention in
-[`codecraftai-taskplus`](../../../codecraftai-taskplus/) is that every
+[`codecraftai-taskplus`](https://github.com/code-craft-ai-company/codecraftai-taskplus) is that every
 task that produces files writes them under the configured
 output directory (the runtime configuration's `paths.output`
 field).  The output directory is per-orchestration-run; tasks
@@ -512,9 +512,9 @@ selector contract is identical for both.
   the right shape for a unit-style job invoked by a `RunCommand`
   that simply needs a pass/fail and a stdout transcript.  It is
   launched through testbase's standalone
-  [`generic_test_entrypoint`](../../../codecraftai-testbase/source/packages/ccai/testbase/entrypoints.py).
+  [`generic_test_entrypoint`](https://github.com/code-craft-ai-company/codecraftai-testbase/blob/main/source/packages/ccai/testbase/entrypoints.py).
 - **`IntegratedTestJob`.**  The integration-tier job from
-  [`codecraftai-integration-runtime`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integratedtestjob.py).
+  [`codecraftai-integration-runtime`](https://github.com/code-craft-ai-company/codecraftai-integration-runtime/blob/main/source/packages/ccai/integrationruntime/integratedtestjob.py).
   It *extends* `TestJob` and overrides exactly three provider
   hooks: `_create_output_context()` returns a
   `RuntimeOutputContext` (results land under the activated app's
@@ -526,7 +526,7 @@ selector contract is identical for both.
   `_create_recorder()` returns a `JsonResultRecorder` (JSOS
   streaming *plus* the rendered HTML summary).  It is launched
   through
-  [`integrated_test_entrypoint`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/entrypoints.py),
+  [`integrated_test_entrypoint`](https://github.com/code-craft-ai-company/codecraftai-integration-runtime/blob/main/source/packages/ccai/integrationruntime/entrypoints.py),
   which first performs this-app activation (establish app persona,
   `resolve_runtime_variables`, `activate_profile_job(JobType.TestRun)`)
   and *then* delegates to the same standalone
@@ -543,7 +543,7 @@ and resolve the same configurations independently.
 `IntegratedTestJob` does not have to be named explicitly.  When
 `codecraftai-integration-runtime` is installed, its
 `IntegrationRuntimeDefaultTypeFactory`
-([`integrationruntimedefaulttypefactory.py`](../../../codecraftai-integration-runtime/source/packages/ccai/integrationruntime/integrationruntimedefaulttypefactory.py))
+([`integrationruntimedefaulttypefactory.py`](https://github.com/code-craft-ai-company/codecraftai-integration-runtime/blob/main/source/packages/ccai/integrationruntime/integrationruntimedefaulttypefactory.py))
 registers through `codecraftai-extension`'s factory protocol so the
 super-factory search path resolves `DefaultIntegratedTestJob` as
 the integration-tier default job type — sitting above testbase's
@@ -627,7 +627,7 @@ Volume 2 develops the distributed-orchestration story in detail.
 This chapter notes that the four channels generalise cleanly:
 
 - **Channel 1** generalises to the
-  [`InteropLibraryTestJob`](../../../codecraftai-interop/source/packages/ccai/interop/testing/testjob.py)
+  `InteropLibraryTestJob`
   hooks: when the coordinator activates a remote worker, the
   hook propagates the `AM_*_NAMES` env vars to the worker's
   process.  Same names, same configurations on both sides.
@@ -728,6 +728,6 @@ The next chapter turns to flow control: how `if_expr`,
 `onfailure`, and `onsuccess` become the engine's actual
 sequencing decisions.  The `JumpContext` and the
 `evaluate_expression` machinery from
-[`flowengine.py`](../../../codecraftai-taskplus/source/packages/ccai/taskplus/model/flowengine.py)
+[`flowengine.py`](https://github.com/code-craft-ai-company/codecraftai-taskplus/blob/main/source/packages/ccai/taskplus/model/flowengine.py)
 get walked end-to-end with the same code-anchored fidelity that
 chapters 18–20 used.

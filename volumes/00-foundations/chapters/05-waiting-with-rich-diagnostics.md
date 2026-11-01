@@ -8,7 +8,7 @@
 The previous chapter introduced the interfaces.  This chapter
 introduces the smallest substantial subpackage in the foundation
 tier:
-[`ccai.waiting`](../../../../codecraftai-foundations/source/packages/ccai/waiting/),
+[`ccai.waiting`](https://github.com/code-craft-ai-company/codecraftai-foundations/tree/main/source/packages/ccai/waiting),
 shipped by `codecraftai-foundations`.
 Three files, two classes, one function.  The subpackage's job is
 to give the rest of the portfolio a *correct* answer for "wait
@@ -58,14 +58,14 @@ of them ship subtle bugs:
 Each bug is small.  Cumulatively, they make every team's
 `wait_for` slightly different and slightly worse than it could
 be.  The
-[`ccai.waiting`](../../../../codecraftai-foundations/source/packages/ccai/waiting/)
+[`ccai.waiting`](https://github.com/code-craft-ai-company/codecraftai-foundations/tree/main/source/packages/ccai/waiting)
 subpackage's job is to fix all of them in one place so that every
 caller benefits.
 
 ## The four shipped types
 
 The package defines exactly four types in
-[`waitmodel.py`](../../../../codecraftai-foundations/source/packages/ccai/waiting/waitmodel.py):
+[`waitmodel.py`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/waitmodel.py):
 
 - **`TimeoutContext`** — the state object that tracks a single
   wait operation.
@@ -82,7 +82,7 @@ Plus one context manager:
   for them on exit.
 
 And one function in
-[`waitfunction.py`](../../../../codecraftai-foundations/source/packages/ccai/waiting/waitfunction.py):
+[`waitfunction.py`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/waitfunction.py):
 
 - **`wait_for_it(looper, *args, ..., wctx=None)`** — the
   public entry point.
@@ -95,7 +95,7 @@ larger interface.
 ## `TimeoutContext` — the state object
 
 The
-[`TimeoutContext`](../../../../codecraftai-foundations/source/packages/ccai/waiting/waitmodel.py)
+[`TimeoutContext`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/waitmodel.py)
 is the chapter's substantive contribution.  It tracks a single
 wait operation and exposes the operation's progress to both the
 caller and the looper function.
@@ -189,7 +189,7 @@ required.
 
 Internal fields track the operation's state through five
 states (`TimeoutState` enum from
-[`constants.py`](../../../../codecraftai-foundations/source/packages/ccai/waiting/constants.py)):
+[`constants.py`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/constants.py)):
 
 - `NotStarted` — the context exists but `mark_begin()` hasn't been
   called.
@@ -204,7 +204,7 @@ The state machine is internal but observable through the
 ## `wait_for_it` — the function
 
 The public entry point in
-[`waitfunction.py`](../../../../codecraftai-foundations/source/packages/ccai/waiting/waitfunction.py)
+[`waitfunction.py`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/waitfunction.py)
 is *one function*.  Annotated with the chapter's discipline:
 
 ```python
@@ -263,7 +263,7 @@ Five things worth naming.
 
 `DEFAULT_WAIT_DELAY = 0`, `DEFAULT_WAIT_INTERVAL = 5`, and
 `DEFAULT_WAIT_TIMEOUT = 60` are defined in
-[`constants.py`](../../../../codecraftai-foundations/source/packages/ccai/waiting/constants.py).
+[`constants.py`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/constants.py).
 Keeping the defaults as named constants makes them
 greppable across the codebase and changeable in one place.
 
@@ -344,7 +344,7 @@ Two additional types address the *cross-thread waiting* case.
 
 ### `WaitGate` — a threading.Event with metadata
 
-[`WaitGate`](../../../../codecraftai-foundations/source/packages/ccai/waiting/waitmodel.py)
+[`WaitGate`](https://github.com/code-craft-ai-company/codecraftai-foundations/blob/main/source/packages/ccai/waiting/waitmodel.py)
 wraps a `threading.Event` and adds three pieces of metadata:
 
 ```python

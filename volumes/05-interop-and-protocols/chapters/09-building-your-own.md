@@ -108,10 +108,8 @@ packages = [{include = "ccai", from = "source/packages"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-codecraftai-interop = { git = "https://github.com/automationmojo/codecraftai-interop.git",
-                     branch = "main" }
-codecraftai-landscaping = { git = "https://github.com/automationmojo/codecraftai-landscaping.git",
-                         branch = "main" }
+codecraftai-interop = ">=1.0.0,<2.0.0"
+codecraftai-landscaping = ">=1.0.0,<2.0.0"
 # ... your protocol's third-party dependencies ...
 ```
 
