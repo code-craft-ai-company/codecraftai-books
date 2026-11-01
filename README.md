@@ -4,8 +4,8 @@ A series of nine volumes and an appendix on building durable automation software
 series teaches a discipline (debuggability, explicitness, contracts that cut across packages) that works whether or not you keep using
 these packages, and every claim in it is anchored to a file and line in the public source.
 
-**Read online:** <https://code-craft.ai/references/codecraftai>.  The site publishes the text of this repository, so what you read there is
-what is here.
+The text is written in the open in the [codecraftai-books repository](https://github.com/code-craft-ai-company/codecraftai-books) and
+published at <https://code-craft.ai/references/codecraftai>.  The two are the same text.
 
 ## The volumes
 
@@ -52,7 +52,8 @@ unclear or out of date with the code, we want to know.
 
 ## Errata, questions and suggestions
 
-Open an issue in this repository's **Issues** tab, and say which chapter and passage you mean.  Issues are the only contribution we accept;
+Open an issue in the [codecraftai-books repository](https://github.com/code-craft-ai-company/codecraftai-books/issues), and say which
+chapter and passage you mean.  Issues are the only contribution we accept;
 see [CONTRIBUTING.md](https://github.com/code-craft-ai-company/codecraftai-books/blob/main/CONTRIBUTING.md).
 
 ## Copyright
