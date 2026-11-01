@@ -31,3 +31,14 @@ The foundation document is 'codecraftai-volumes.md' at the root of the repositor
 As volumes move from planning into drafting, each will fork into its own planning directory under 'volumes/<NN-volume-name>/'.  Audit transcripts captured under 'case-studies/' become appendix material for the relevant volume.
 
 This repository contains no executable code — only planning documents, drafts, case-study transcripts, and supporting reference material for the book series.
+
+# Publishing
+This repository is public and is published on the Code Craft AI website at https://code-craft.ai/references/codecraftai.  The website pulls this repository's default branch and renders it, so a change merged to 'main' is on the site within the hour.  Keep these rules so the site and the repository stay correct:
+
+- The published files are 'README.md' (the series page), each 'volumes/<NN-name>/README.md' (the volume's contents page) and each 'volumes/<NN-name>/chapters/*.md'.  Nothing else is published: not 'codecraftai-volumes.md', not 'research/', not 'outline.md', not this file.
+- A volume's README is its table of contents, in reading order.  When you add, rename or retitle a chapter, update the README's Contents list, and the series page's table when a chapter count changes.
+- A chapter file starts with a single '# Chapter N — Title' heading (or '# Foreword').  The site takes the chapter's title from it.
+- Link chapters to each other with relative '.md' paths; the site rewrites them.  Link source code with an absolute 'https://github.com/code-craft-ai-company/<repo>/blob/main/<path>' URL, so the link works on GitHub and on the site.  Check that the file is in the repository before you link it.
+- Cite only repositories that are public.  The retired packages ('codecraftai-errors', 'codecraftai-interfaces', 'codecraftai-waiting') are described as parts of 'codecraftai-foundations'.
+- Raw HTML in the Markdown is shown as text on the site, never run.  Do not use it.
+- Contribution policy: issues only, no pull requests (see 'CONTRIBUTING.md').  Never describe the project as 'open source'.

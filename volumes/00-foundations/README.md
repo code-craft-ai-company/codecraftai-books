@@ -1,12 +1,8 @@
 # Volume 0 — Foundations of Automation Engineering with Python
 
-**Working subtitle:** *The CodeCraftX Discipline and the Foundation Tier*
+*The CodeCraftX Discipline and the Foundation Tier*
 
-This is the working directory for Volume 0.  The series-level entry
-for this volume lives in [`codecraftai-volumes.md`](../../codecraftai-volumes.md);
-this directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 0 is **prerequisite reading** for the rest of the series.
 Every later volume references the CodeCraftX persona, the error
@@ -15,7 +11,7 @@ the configuration model, and the application-identity machinery
 introduced here.  Without Volume 0, every later volume would have
 to re-explain the foundations.
 
-## Audience
+## Who it is for
 
 Any Python engineer building a serious automation platform —
 SDETs, platform engineers, SREs, integration engineers.  This is
@@ -41,58 +37,19 @@ portfolio:
 - `codecraftai-storage-database` — DB scaffolding
 - `codecraftai-xmodules` — xformatting, ximport, xcollections, etc.
 
-## Layout
+## Contents
 
-```
-00-foundations/
-├── README.md            # this file
-├── outline.md           # detailed chapter-by-chapter outline
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
+- [Chapter 1 — The CodeCraftX Philosophy](chapters/01-the-codecraftai-x-philosophy.md)
+- [Chapter 2 — Coding Standards as a Tool, Not a Style Guide](chapters/02-coding-standards-as-a-tool.md)
+- [Chapter 3 — The Error Vocabulary](chapters/03-the-error-vocabulary.md)
+- [Chapter 4 — Interfaces and Contracts](chapters/04-interfaces-and-contracts.md)
+- [Chapter 5 — Waiting with Rich Diagnostics](chapters/05-waiting-with-rich-diagnostics.md)
+- [Chapter 6 — Application Identity and Presence](chapters/06-application-identity-and-presence.md)
+- [Chapter 7 — Extension and Factory Machinery](chapters/07-extension-and-factory-machinery.md)
+- [Chapter 8 — Runtime Variables and Well-Known Paths](chapters/08-runtime-variables-and-well-known-paths.md)
+- [Chapter 9 — Configuration Loading](chapters/09-configuration-loading.md)
+- [Chapter 10 — Credentials, Data Profiles, Storage Scaffolding](chapters/10-credentials-data-profiles-storage.md)
 
-## Status
+---
 
-| Chapter | Status | Lines |
-|---|---|---|
-| 1 — The CodeCraftX philosophy | drafted | 438 |
-| 2 — Coding standards as a tool, not a style guide | drafted | 546 |
-| 3 — The error vocabulary | drafted | 481 |
-| 4 — Interfaces and contracts | drafted | 483 |
-| 5 — Waiting with rich diagnostics | drafted | 600 |
-| 6 — Application identity and presence | drafted | 550 |
-| 7 — Extension and factory machinery | drafted | 458 |
-| 8 — Runtime variables and well-known paths | drafted | 522 |
-| 9 — Configuration loading | drafted | 637 |
-| 10 — Credentials, data profiles, storage scaffolding | drafted | 502 |
-
-**Volume 0 fully drafted: 10 chapters, ~5,200 lines, ~48,000 words.**
-
-## Drafting conventions
-
-Same as Volume 3:
-
-- Markdown throughout.  Code samples in fenced blocks with the
-  language tag.
-- Every claim is anchored on a concrete file:line reference into
-  one of the `codecraftai-*` source repositories.
-- Chapter files start with a one-paragraph chapter abstract, then
-  section structure (`##` for sections, `###` for subsections).
-- Forward / backward cross-references link to the relevant chapter
-  file with the `chapters/NN-name.md#section-anchor` form.
-
-## Drafting order
-
-1. Chapter 1 (The CodeCraftX philosophy) — voice setter; conceptual
-2. Chapter 2 (Coding standards as a tool) — the rationale chapter
-3. Chapter 3 (The error vocabulary) — small, self-contained
-4. Chapter 5 (Waiting with rich diagnostics) — small package, easy
-5. Chapter 4 (Interfaces and contracts) — needs `ccai.interfaces` survey
-6. Chapter 6 (Application identity and presence) — partially explored in Vol 3 prep
-7. Chapter 8 (Runtime variables and well-known paths) — small
-8. Chapter 7 (Extension and factory machinery) — substantial
-9. Chapter 9 (Configuration loading) — explored deeply in Vol 3 prep; Vol 0 angle is loader mechanics
-10. Chapter 10 (Credentials / data profiles / storage scaffolding) — survey-style closer
+Part of [The Code Craft AI Books](../../README.md).

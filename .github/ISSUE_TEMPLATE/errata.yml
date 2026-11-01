@@ -1,0 +1,35 @@
+name: Error or unclear passage
+description: A chapter is wrong, unclear, or no longer matches the code.
+title: "[Errata]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reading closely. These books take issues only, not pull requests.
+        **Do not report a security problem here.** Use the Security tab, then "Report a vulnerability".
+  - type: input
+    id: where
+    attributes:
+      label: Volume and chapter
+      description: For example "Volume 2, chapter 8", or the page address on code-craft.ai.
+    validations:
+      required: true
+  - type: textarea
+    id: passage
+    attributes:
+      label: The passage
+      description: Quote the sentence, code block or citation you mean.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or unclear
+      description: What the text says, and what you found instead (in the code, the documentation or by running it).
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version, if the code is involved
+      description: The `codecraftai-*` package and version you checked against.

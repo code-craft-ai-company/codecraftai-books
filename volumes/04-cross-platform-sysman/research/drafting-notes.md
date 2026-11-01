@@ -1,0 +1,18 @@
+# Drafting notes for Volume 4
+
+Moved here from the volume README when the README became the reader's contents page. Not published on the website.
+
+## Drafting conventions
+
+Same as Volumes 0–3, 5, 6:
+
+- Markdown throughout.  Code samples in fenced blocks with the
+  language tag.
+- Every claim is anchored on a concrete file:line reference
+  into one of the `codecraftai-sysman-*` source repositories.
+- Chapter files start with a one-paragraph chapter abstract,
+  then section structure (`##` for sections, `###` for
+  subsections).
+- Forward / backward cross-references link to the relevant
+  chapter file with the `chapters/NN-name.md#section-anchor`
+  form.

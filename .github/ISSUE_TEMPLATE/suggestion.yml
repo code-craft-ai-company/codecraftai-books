@@ -1,0 +1,16 @@
+name: Suggestion
+description: Suggest a topic, an example or a clearer way to explain something.
+title: "[Suggestion]: "
+body:
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Your suggestion
+      description: What would make the books more useful, and where in the series it would go.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it helps
+      description: What you were trying to do when you looked for it.

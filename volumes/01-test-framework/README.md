@@ -1,12 +1,8 @@
 # Volume 1 — Building a Test Framework
 
-**Working subtitle:** *testbase, arcli, and Single-Host Test Infrastructure*
+*testbase, arcli, and Single-Host Test Infrastructure*
 
-This is the working directory for Volume 1.  The series-level entry
-for this volume lives in [`codecraftai-volumes.md`](../../codecraftai-volumes.md);
-this directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 1 stands up the *single-host* test framework on top of the
 foundation tier from Volume 0.  Everything Volume 2 (distributed)
@@ -16,7 +12,7 @@ results pipeline, and the landscape boundary.  Volume 3 reaches
 into Volume 1 for orchestration-level invocation — taskplus
 calling a testbase test run from a workflow.
 
-## Audience
+## Who it is for
 
 SDETs and test-infrastructure engineers.  This is the volume to
 hand a senior SDET who has been writing pytest for a decade and
@@ -31,49 +27,20 @@ test is no longer a single Python process.
 - `codecraftai-agent-kit` — case study source (a 3,700+ test
   single-host suite)
 
-## Layout
+## Contents
 
-```
-01-test-framework/
-├── README.md            # this file
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
+- [Chapter 1 — Why `unittest` and `pytest` Fall Short for Automation](chapters/01-why-unittest-pytest-fall-short.md)
+- [Chapter 2 — `testbase` Architecture](chapters/02-testbase-architecture.md)
+- [Chapter 3 — Resource Factories and Dependency Injection](chapters/03-resource-factories-and-di.md)
+- [Chapter 4 — Property-Based Testing with `@given`](chapters/04-property-based-given.md)
+- [Chapter 5 — Streaming JSOS Results](chapters/05-streaming-jsos-results.md)
+- [Chapter 6 — The `testbase agents` Machine-Readable CLI](chapters/06-testbase-agents-cli.md)
+- [Chapter 7 — Mocking and Stubbing Without the Framework Getting in the Way](chapters/07-mocking-and-stubbing.md)
+- [Chapter 8 — `arcli`: The Declarative CLI Toolkit](chapters/08-arcli-the-declarative-cli-toolkit.md)
+- [Chapter 9 — Building Tests Around Landscape Concepts (Single-Host Edition)](chapters/09-landscape-concepts-single-host.md)
+- [Chapter 10 — Case Study: A 3,700-Test Suite That Runs on One Host](chapters/10-case-study-agent-kit-suite.md)
 
-## Status
-
-| Chapter | Status | Lines |
-|---|---|---|
-| 1 — Why `unittest` / `pytest` fall short for automation | drafted | 334 |
-| 2 — `testbase` architecture | drafted | 386 |
-| 3 — Resource factories and dependency injection | drafted | 415 |
-| 4 — Property-based testing with `@given` | drafted | 377 |
-| 5 — Streaming JSOS results | drafted | 390 |
-| 6 — The `testbase agents` machine-readable CLI | drafted | 380 |
-| 7 — Mocking and stubbing without the framework getting in the way | drafted | 372 |
-| 8 — `arcli` — the declarative CLI toolkit | drafted | 501 |
-| 9 — Building tests around landscape concepts (single-host edition) | drafted | 339 |
-| 10 — Case study: a 3,700-test suite that runs on one host | drafted | 378 |
-
-**Volume 1 fully drafted: 10 chapters, 3,872 lines, ~36,000 words.**
-
-## Drafting conventions
-
-Same as Volumes 0 and 3:
-
-- Markdown throughout.  Code samples in fenced blocks with the
-  language tag.
-- Every claim is anchored on a concrete file:line reference into
-  one of the `codecraftai-*` source repositories.
-- Chapter files start with a one-paragraph chapter abstract, then
-  section structure (`##` for sections, `###` for subsections).
-- Forward / backward cross-references link to the relevant chapter
-  file with the `chapters/NN-name.md#section-anchor` form.
-
-## Cross-volume forward references
+## How it connects to the other volumes
 
 - Volume 2 (Distributed Automation) extends `TestJob` →
   `InteropLibraryTestJob` → `DistributedTestJob`.  Chapter 9
@@ -84,3 +51,7 @@ Same as Volumes 0 and 3:
   decorators in chapter 8 are the same ones taskplus uses.
 - Volume 7 (AI Agent SDK) reaches into Volume 1 for the `testbase
   agents` machine-readable subcommand surface in chapter 6.
+
+---
+
+Part of [The Code Craft AI Books](../../README.md).

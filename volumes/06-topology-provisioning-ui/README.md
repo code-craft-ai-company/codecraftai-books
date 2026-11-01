@@ -1,13 +1,8 @@
 # Volume 6 — Topology, Provisioning, and UI Automation
 
-**Working subtitle:** *Modelling the Environment Under Automation*
+*Modelling the Environment Under Automation*
 
-This is the working directory for Volume 6.  The series-level
-entry for this volume lives in
-[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
-directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 6 is the *environment model* the rest of the platform
 operates on.  Volumes 1, 2, and 3 referenced "the Landscape" and
@@ -33,7 +28,7 @@ Volume 6 walks what's *in* those inputs.  Specifically:
   ProtocolExtension model applied to UI elements rather than
   network protocols.
 
-## Audience
+## Who it is for
 
 Test / automation engineers wiring up complex environments.
 Platform engineers building automation infrastructure.
@@ -46,59 +41,35 @@ GUI application.
 - `codecraftai-landscaping` — the environment model itself.
 - `codecraftai-provisioning` — cloud provisioning backends.
 - `codecraftai-uia` — cross-platform UI automation.
-- `codecraftai-gitlab` — REST integration worked example.
-- `codecraftai-webservice-flask` — web-service scaffolding.
+- `codecraftai-restclient-gitlab` — REST integration worked example.
+- `codecraftai-webservice-flask` — web-service scaffolding (retired; see the note at the top of chapter 14).
 
-## Layout
+## Contents
 
-```
-06-topology-provisioning-ui/
-├── README.md            # this file
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
-
-## Status
-
-| Chapter | Status | Lines |
+| Part | Chapters | Theme |
 |---|---|---|
-| 1 — Landscape — physical inventory and wiring | drafted | 400 |
-| 2 — Inside a device declaration | drafted | 321 |
-| 3 — Coordinators, Agents, ProtocolExtensions, Features | drafted | 386 |
-| 4 — Device discovery and friendly identifiers | drafted | 324 |
-| 5 — Topology — logical organisation and roles, with verification | drafted | 296 |
-| 6 — Topology as an executable assertion | drafted | 364 |
-| 7 — Subclassing `Landscape` and `Topology` — the customisation mechanism | drafted | 385 |
-| 8 — Service-specific framework extensions | drafted | 229 |
-| 9 — The Pod model — landscape + topology realised | drafted | 238 |
-| 10 — Cloud provisioning model | drafted | 293 |
-| 11 — Cross-platform UI automation | drafted | 353 |
-| 12 — Declarative UI mappings | drafted | 380 |
-| 13 — GitLab integration | drafted | 344 |
-| 14 — Web-service scaffolding with Flask | drafted | 310 |
-| 15 — Case study | drafted | 475 |
+| I — The Environment Model | 1, 2, 3, 4 | Landscape, device declaration, Coordinator/Agent/ProtocolExtension/Feature, FriendlyIdentifier |
+| II — Topology and Customisation | 5, 6, 7, 8, 9 | Canonical clusters shape, verification overload, subclassing, BaseExt, Pod realisation |
+| III — Beyond the Environment | 10, 11, 12, 13, 14 | Provisioning scaffolding, UI automation, declarative mappings, GitLab, Flask |
+| IV — Worked Example | 15 | 4-OS sysman feature campaign with the full machinery |
 
-**Volume 6 fully drafted: 15 chapters, 5,098 lines, ~47,000 words.**
+- [Chapter 1 — Landscape — Physical Inventory and Wiring](chapters/01-landscape-physical-inventory.md)
+- [Chapter 2 — Inside a Device Declaration](chapters/02-inside-a-device-declaration.md)
+- [Chapter 3 — Coordinators, Agents, ProtocolExtensions, Features](chapters/03-coordinators-agents-protocol-extensions-features.md)
+- [Chapter 4 — Device Discovery and Friendly Identifiers](chapters/04-friendly-identifier.md)
+- [Chapter 5 — Topology — Logical Organisation and Roles, with Verification](chapters/05-topology-logical-organisation.md)
+- [Chapter 6 — Topology as an Executable Assertion](chapters/06-topology-as-executable-assertion.md)
+- [Chapter 7 — Subclassing `Landscape` and `Topology` — The Customisation Mechanism](chapters/07-subclassing-landscape-and-topology.md)
+- [Chapter 8 — Service-Specific Framework Extensions](chapters/08-service-specific-baseext.md)
+- [Chapter 9 — The Pod Model — Landscape + Topology Realised](chapters/09-the-pod-model.md)
+- [Chapter 10 — Cloud Provisioning Model](chapters/10-cloud-provisioning-model.md)
+- [Chapter 11 — Cross-Platform UI Automation](chapters/11-cross-platform-ui-automation.md)
+- [Chapter 12 — Declarative UI Mappings](chapters/12-declarative-ui-mappings.md)
+- [Chapter 13 — GitLab Integration](chapters/13-gitlab-integration.md)
+- [Chapter 14 — Web-Service Scaffolding with Flask](chapters/14-flask-scaffolding.md)
+- [Chapter 15 — Case Study: A Landscape That Drives a Sysman Feature Test Across Four OSes](chapters/15-case-study.md)
 
-## Drafting conventions
-
-Same as Volumes 0, 1, 2, 3:
-
-- Markdown throughout.  Code samples in fenced blocks with the
-  language tag.
-- Every claim is anchored on a concrete file:line reference into
-  one of the `codecraftai-*` source repositories.
-- Chapter files start with a one-paragraph chapter abstract,
-  then section structure (`##` for sections, `###` for
-  subsections).
-- Forward / backward cross-references link to the relevant
-  chapter file with the `chapters/NN-name.md#section-anchor`
-  form.
-
-## Cross-volume reference points
+## How it connects to the other volumes
 
 - **Volume 0** — foundation tier (configuration loading, error
   vocabulary, factory model from ch.7).
@@ -117,3 +88,7 @@ Same as Volumes 0, 1, 2, 3:
 - **Volume 5** — interop and protocols; the wire that
   ProtocolExtensions wrap.  Volume 6 references the wire as
   given.
+
+---
+
+Part of [The Code Craft AI Books](../../README.md).

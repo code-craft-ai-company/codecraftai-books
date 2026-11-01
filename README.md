@@ -1,142 +1,61 @@
-# codecraftai-books
+# The Code Craft AI Books
 
-Planning and drafting workspace for the book series drawn from the
-`codecraftai-*` software portfolio.
+A series of nine volumes and an appendix on building durable automation software in Python, drawn from the `codecraftai-*` packages.  The
+series teaches a discipline (debuggability, explicitness, contracts that cut across packages) that works whether or not you keep using
+these packages, and every claim in it is anchored to a file and line in the public source.
 
-This repo is a sibling of the code repositories at
-`/Users/myron/repos/ccai/`.  It holds:
+**Read online:** <https://code-craft.ai/references/codecraftai>.  The site publishes the text of this repository, so what you read there is
+what is here.
 
-- [`codecraftai-volumes.md`](codecraftai-volumes.md) — the foundation document
-  detailing every volume, the chapter-level table of contents, audience,
-  cross-references, and source-material notes.  Start here for the
-  full series picture.
+## The volumes
 
-As volumes move from planning into drafting, each forks into its own
-working directory under `volumes/<NN-volume-name>/`.  The master
-`codecraftai-volumes.md` stays the single source of truth for cross-volume
-structure.
+The recommended reading order is Volume 0 through Volume 8, then the appendix.  Each title opens that volume's contents page.
 
-## Volume index
+| Vol | Title | Subtitle | Chapters |
+|----:|-------|----------|--------:|
+| **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/README.md) | The CodeCraftX Discipline and the Foundation Tier | 10 |
+| **1** | [**Building a Test Framework**](volumes/01-test-framework/README.md) | testbase, arcli, and Single-Host Test Infrastructure | 10 |
+| **2** | [**Distributed Automation**](volumes/02-distributed-automation/README.md) | The TestJob Inheritance Chain and Multi-Host Test Execution | 16 |
+| **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/README.md) | Typed Configurations as the Contract Between Orchestrations and Jobs | 28 |
+| **4** | [**Cross-Platform System Management**](volumes/04-cross-platform-sysman/README.md) | 52 Cross-OS Contracts and 5 Reference Implementations | 10 |
+| **5** | [**Interop and Protocols**](volumes/05-interop-and-protocols/README.md) | The Aspects Pattern, the Wire, and the Extension Model | 10 |
+| **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/README.md) | Modelling the Environment Under Automation | 15 |
+| **7** | [**Building an AI Agent SDK**](volumes/07-ai-agent-sdk/README.md) | Lifecycle, Tools, Memory, and Observability for Production Agents | 9 |
+| **8** | [**Time-Travel Debugging in Production**](volumes/08-timetravel-debugging/README.md) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | 8 |
+| App. | Operating a Code Craft AI Subscription Platform | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
 
-The series is nine volumes plus an appendix.  The recommended technical
-reading order is `0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → Appendix`.
+## Who should read which volume
 
-| Vol | Title | Subtitle | Status |
-|----:|-------|----------|--------|
-| **0** | [**Foundations of Automation Engineering with Python**](volumes/00-foundations/) | The CodeCraftX Discipline and the Foundation Tier | **drafted** |
-| **1** | [**Building a Test Framework**](volumes/01-test-framework/) | testbase, arcli, and Single-Host Test Infrastructure | **drafted** |
-| **2** | [**Distributed Automation**](volumes/02-distributed-automation/) | The TestJob Inheritance Chain and Multi-Host Test Execution | **drafted** |
-| **3** | [**Integration Automation and CI Orchestration**](volumes/03-integration-and-orchestration/) | Typed Configurations as the Contract Between Orchestrations and Jobs | **drafted** |
-| **4** | [**Cross-Platform System Management**](volumes/04-cross-platform-sysman/) | 50 Cross-OS Contracts and 5 Reference Implementations | **drafted** |
-| **5** | [**Interop and Protocols**](volumes/05-interop-and-protocols/) | The Aspects Pattern, the Wire, and the Extension Model | **drafted** |
-| **6** | [**Topology, Provisioning, and UI Automation**](volumes/06-topology-provisioning-ui/) | Modelling the Environment Under Automation | **drafted** |
-| **7** | [**Building an AI Agent SDK**](volumes/07-ai-agent-sdk/) | Lifecycle, Tools, Memory, and Observability for Production Agents | **drafted** |
-| **8** | [**Time-Travel Debugging in Production**](volumes/08-timetravel-debugging/) | Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow | **drafted** |
-| App. | [Operating a Code Craft AI Subscription Platform](codecraftai-volumes.md#appendix-volume--operating-a-code-craft-ai-subscription-platform) | From Git-SHA Pinning to a Published-Package Ecosystem | planned |
-
-### Volume 8 — drafted
-
-Volume 8 is fully drafted in [`volumes/08-timetravel-debugging/`](volumes/08-timetravel-debugging/).
-
-| Part | Chapters | Theme |
-|---|---|---|
-| I — Motivation and Surface | 1, 2 | Why time-travel debugging; the gateway / portal / registry triad |
-| II — Wire and Ingestion | 3, 4 | Hybrid struct+pickle protocol (with a documented format-mismatch honesty point); TCP/Unix receivers, hysteresis flow control, atomic temp→final |
-| III — Control and Operations | 5, 6 | JSON-lines + MCP; spec gap on configuration; multi-tenant data, retention, analysis tier, scaffolded REST API tier |
-| IV — Practice | 7, 8 | Three case studies (CI flake / agent / sysman) with code-anchored walkthroughs; granularity-cost-storage trade-offs and the when-to-enable policy |
-
-### Volume 7 — drafted
-
-Volume 7 is fully drafted in [`volumes/07-ai-agent-sdk/`](volumes/07-ai-agent-sdk/).
-
-| Part | Chapters | Theme |
-|---|---|---|
-| I — Foundations | 1, 2, 3 | SDK vs framework; multi-provider LLM; tool design |
-| II — State and Flow | 4, 5, 6 | Memory architecture; workflow orchestration; observability |
-| III — Discipline | 7, 8 | Mock-first testing (305 files); property tests at scale (72 files) |
-| IV — Worked Example | 9 | Agent that uses the rest of the ccai portfolio |
-
-### Volume 4 — drafted
-
-Volume 4 is fully drafted in [`volumes/04-cross-platform-sysman/`](volumes/04-cross-platform-sysman/).
-
-| Part | Chapters | Theme |
-|---|---|---|
-| I — The Contract Layer | 1, 2, 3 | Why contracts; the 50 contracts; `featurebase` substrate |
-| II — Five Reference Implementations | 4, 5, 6, 7, 8 | RHEL, Ubuntu, macOS, Windows, UEFI |
-| III — The Discipline | 9, 10 | 11 Implementation Conventions; cross-OS test parity |
-
-### Volume 5 — drafted
-
-Volume 5 is fully drafted in [`volumes/05-interop-and-protocols/`](volumes/05-interop-and-protocols/).
-
-| Part | Chapters | Theme |
-|---|---|---|
-| I — Philosophy and Foundation | 1, 2, 3 | Measured Interoperability; the Aspects pattern; `codecraftai-interop` survey |
-| II — Worked Protocols | 4, 5, 6, 7 | SSH from scratch; networking primitives; REST foundations; the auto-generated GitHub client |
-| III — Extensions | 8, 9 | UPnP / Tasker / Bluetooth / CAN; recipe for your own |
-
-### Volume 6 — drafted
-
-Volume 6 is fully drafted in [`volumes/06-topology-provisioning-ui/`](volumes/06-topology-provisioning-ui/).
-
-| Part | Chapters | Theme |
-|---|---|---|
-| I — The Environment Model | 1, 2, 3, 4 | Landscape, device declaration, Coordinator/Agent/ProtocolExtension/Feature, FriendlyIdentifier |
-| II — Topology and Customisation | 5, 6, 7, 8, 9 | Canonical clusters shape, verification overload, subclassing, BaseExt, Pod realisation |
-| III — Beyond the Environment | 10, 11, 12, 13, 14 | Provisioning scaffolding, UI automation, declarative mappings, GitLab, Flask |
-| IV — Worked Example | 15 | 4-OS sysman feature campaign with the full machinery |
-
-### Volume 2 — drafted
-
-Volume 2 is fully drafted in [`volumes/02-distributed-automation/`](volumes/02-distributed-automation/).
-
-| Part | Chapters | Theme |
-|---|---|---|
-| I — The Discipline | 1, 2, 3 | Why distributed automation is hard; single-actor determinism; the Pod model |
-| II — The Customisation Cascade | 4, 5, 6, 7 | TestJob inheritance chain; tandem testing; landscape activation; verified CI hand-off |
-| III — The Runtime Machinery | 8, 9, 10, 11, 12, 13 | Sequencer; job_seed; the wire; credentials; data profiles; result aggregation |
-| IV — Honesty and Diagnosis | 14, 15, 16 | Partial-run semantics; debugging a distributed failure; 5-host case study |
-
-### Volume 1 — drafted
-
-Volume 1 is fully drafted in [`volumes/01-test-framework/`](volumes/01-test-framework/).
-
-| Chapter | Theme |
+| Profile | Volumes most relevant |
 |---|---|
-| 1 | Why `unittest` / `pytest` fall short for automation |
-| 2 | `testbase` architecture: TestRef, TestCollector, TestSequencer, TestJob, JsonResultRecorder |
-| 3 | Resource factories and dependency injection (originators, attachments, the Graph phase) |
-| 4 | Property-based testing with `@given`, `TESTBASE_MAX_EXAMPLES_CAP`, deterministic per-test seeds |
-| 5 | Streaming JSOS results (JSON Separated Object Stream) |
-| 6 | The `testbase agents` machine-readable CLI (`summary`, `testresult`, `config`) |
-| 7 | Mocking and stubbing — testbase's bespoke `Mock` / `SpecViolationError` / `SideEffect` |
-| 8 | `arcli` — the declarative CLI toolkit underneath every `codecraftai-*` CLI |
-| 9 | Single-host landscape contract — the boundary Volume 2 extends |
-| 10 | Case study: the `codecraftai-agent-kit` 3,700-test single-host suite |
+| Junior Python engineer entering automation work | 0, 1, 3 |
+| SDET / test-infra engineer | 0, 1, 2, 3 |
+| Platform / DevOps engineer building CI pipelines | 0, 3, 4, 6 |
+| SRE running cross-OS automation at scale | 0, 3, 4, 6 |
+| Integration engineer building protocol implementations | 0, 5 |
+| AI / agent developer shipping production agents | 0, 5, 7 |
+| Senior engineer / architect needing observability for long-lived services | 0, 8 |
+| Internal-tool maintainer running a package distribution | Appendix |
 
-### Volume 3 — drafted
+## How the books are written
 
-Volume 3 is fully drafted in [`volumes/03-integration-and-orchestration/`](volumes/03-integration-and-orchestration/).
+- The text is Markdown.  Code is in fenced blocks with a language tag.
+- Every claim is anchored to a concrete file and line in one of the `codecraftai-*` repositories.  Line numbers move as the code does, so
+  treat them as a pointer to where to look.
+- The series is narrated in the voice of CodeCraftX, the engineering persona used across the portfolio.
+- Each volume lives in `volumes/<NN-name>/`: a `README.md` that is its contents page, and one file per chapter under `chapters/`.
 
-| Part | Chapters | Theme |
-|---|---|---|
-| I — The Discipline | Foreword + 1, 2, 3 | The orchestration-vs-jobs layered model; the six-category contract |
-| II — Configuration Categories | 4, 5, 6, 7, 8 | Specifications, Landscapes, Topologies, Runtimes, Data Profiles |
-| III — Credential Management | 9, 10, 11, 12 | Vocabulary, resolution discipline, in-flight lifecycle, environment spanning |
-| IV — Workflow Across Environments | 13, 14, 15, 16, 17 | The four-environment ladder, profile composition, local-dev tax cancellation, CI-failure replay, profile promotion |
-| V — taskplus + FlowEngine | 18, 19, 20, 21, 22, 23 | Task model, built-in tasks, YAML grammar, info-passing contract, flow control, extension recipe |
-| VI — Real-World Wiring | 24, 25, 26, 27 | CI-vendor shim, bridges to other volumes, case-study capstone, honest scoping |
+## Status
 
-Drafting reading order: start at the volume directory's [`README.md`](volumes/03-integration-and-orchestration/README.md) for status, then [`outline.md`](volumes/03-integration-and-orchestration/outline.md) for the granular chapter outline, then the chapter files in numeric order.
+Volumes 0 to 8 are drafted in full.  The appendix is planned.  These are working drafts, and a draft has errors: where a chapter is wrong,
+unclear or out of date with the code, we want to know.
 
-## Conventions
+## Errata, questions and suggestions
 
-- The series narrator is the `CodeCraftX` Principal-SWE persona used
-  across the portfolio's `AGENTS.md` files.
-- Every claim is anchored on a concrete file:line reference into one
-  of the `codecraftai-*` source repositories.
-- Audit transcripts captured under `volumes/<vol>/case-studies/` become
-  appendix material for the relevant volume.
-- Markdown throughout for chapter content; YAML / Python / shell in
-  fenced blocks with the appropriate language tag.
+Open an issue in this repository's **Issues** tab, and say which chapter and passage you mean.  Issues are the only contribution we accept;
+see [CONTRIBUTING.md](https://github.com/code-craft-ai-company/codecraftai-books/blob/main/CONTRIBUTING.md).
+
+## Copyright
+
+Copyright © 2026 Code Craft AI LLC.  All rights reserved.  The software the books describe is licensed separately, in each `codecraftai-*`
+repository.

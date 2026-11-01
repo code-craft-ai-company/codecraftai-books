@@ -1,13 +1,8 @@
 # Volume 4 — Cross-Platform System Management
 
-**Working subtitle:** *52 Cross-OS Contracts and 5 Reference Implementations*
+*52 Cross-OS Contracts and 5 Reference Implementations*
 
-This is the working directory for Volume 4.  The series-level
-entry for this volume lives in
-[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
-directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 4 is the **"do it this way"** book of the series.  The
 sysman tier is the most disciplined product line in the
@@ -24,7 +19,7 @@ configure the firewall, manage boot order.  The tier sits
 "actuator" position: it's the layer test code reaches for
 when it needs to *change the system under test*.
 
-## Audience
+## Who it is for
 
 Platform / SRE engineers who need cross-OS automation that
 actually works.  System-management-tier maintainers who want
@@ -44,51 +39,26 @@ Ubuntu, macOS, Windows, or UEFI consistently.
 - `codecraftai-sysman-windows` — Windows implementation.
 - `codecraftai-sysman-uefi` — UEFI firmware implementation.
 
-## Layout
+## Contents
 
-```
-04-cross-platform-sysman/
-├── README.md            # this file
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
-
-## Status
-
-| Chapter | Status | Lines |
+| Part | Chapters | Theme |
 |---|---|---|
-| 1 — Why a contract layer | drafted | 381 |
-| 2 — The 52 cross-OS contracts | drafted | 587 |
-| 3 — `featurebase` and the per-OS implementation pattern | drafted | 575 |
-| 4 — RHEL implementation | drafted | 468 |
-| 5 — Ubuntu / Debian implementation | drafted | 347 |
-| 6 — macOS implementation | drafted | 406 |
-| 7 — Windows implementation | drafted | 420 |
-| 8 — UEFI firmware implementation | drafted | 361 |
-| 9 — Spec-driven development for system administration | drafted | 494 |
-| 10 — Building cross-OS test parity | drafted | 476 |
+| I — The Contract Layer | 1, 2, 3 | Why contracts; the 52 contracts; `featurebase` substrate |
+| II — Five Reference Implementations | 4, 5, 6, 7, 8 | RHEL, Ubuntu, macOS, Windows, UEFI |
+| III — The Discipline | 9, 10 | 11 Implementation Conventions; cross-OS test parity |
 
-**Volume 4 fully drafted: 10 chapters, 4,515 lines, ~42,000 words.**
+- [Chapter 1 — Why a Contract Layer](chapters/01-why-a-contract-layer.md)
+- [Chapter 2 — The 52 Cross-OS Contracts](chapters/02-the-50-contracts.md)
+- [Chapter 3 — `featurebase` and the Per-OS Implementation Pattern](chapters/03-featurebase.md)
+- [Chapter 4 — RHEL Implementation](chapters/04-rhel-implementation.md)
+- [Chapter 5 — Ubuntu / Debian Implementation](chapters/05-ubuntu-implementation.md)
+- [Chapter 6 — macOS Implementation](chapters/06-macos-implementation.md)
+- [Chapter 7 — Windows Implementation](chapters/07-windows-implementation.md)
+- [Chapter 8 — UEFI Firmware Implementation](chapters/08-uefi-implementation.md)
+- [Chapter 9 — Spec-Driven Development for System Administration](chapters/09-spec-driven-development.md)
+- [Chapter 10 — Building Cross-OS Test Parity](chapters/10-cross-os-test-parity.md)
 
-## Drafting conventions
-
-Same as Volumes 0–3, 5, 6:
-
-- Markdown throughout.  Code samples in fenced blocks with the
-  language tag.
-- Every claim is anchored on a concrete file:line reference
-  into one of the `codecraftai-sysman-*` source repositories.
-- Chapter files start with a one-paragraph chapter abstract,
-  then section structure (`##` for sections, `###` for
-  subsections).
-- Forward / backward cross-references link to the relevant
-  chapter file with the `chapters/NN-name.md#section-anchor`
-  form.
-
-## Cross-volume reference points
+## How it connects to the other volumes
 
 - **Volume 0** — error vocabulary, configuration loading,
   application identity (the foundation tier).
@@ -100,3 +70,7 @@ Same as Volumes 0–3, 5, 6:
   use to reach remote systems.
 - **Volume 6** — landscape (which devices to reach) and
   topology (the configured state).
+
+---
+
+Part of [The Code Craft AI Books](../../README.md).

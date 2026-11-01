@@ -1,13 +1,8 @@
 # Volume 7 — Building an AI Agent SDK
 
-**Working subtitle:** *Lifecycle, Tools, Memory, and Observability for Production Agents*
+*Lifecycle, Tools, Memory, and Observability for Production Agents*
 
-This is the working directory for Volume 7.  The series-level
-entry for this volume lives in
-[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
-directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 7 is the *largest* volume by source-material size.
 `codecraftai-agent-kit` is the largest codebase in the portfolio
@@ -29,7 +24,7 @@ The volume *uses* the patterns established in Volumes 0, 1,
 - Volume 5's Measured Interoperability — tools follow the
   Aspects pattern for behaviour parameterisation.
 
-## Audience
+## Who it is for
 
 Developers building production AI agents.  This is the book
 the team that ships an agent product reads to learn what
@@ -41,49 +36,26 @@ for building an agent that runs reliably in production.
 
 - `codecraftai-agent-kit` — the SDK itself.
 
-## Layout
+## Contents
 
-```
-07-ai-agent-sdk/
-├── README.md            # this file
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
-
-## Status
-
-| Chapter | Status | Lines |
+| Part | Chapters | Theme |
 |---|---|---|
-| 1 — Why an SDK and not a framework | drafted | 454 |
-| 2 — Multi-provider LLM abstraction | drafted | 480 |
-| 3 — Tool design | drafted | 602 |
-| 4 — Memory architecture | drafted | 457 |
-| 5 — Workflow orchestration for agents | drafted | 512 |
-| 6 — Observability for agents | drafted | 494 |
-| 7 — Testing AI agents | drafted | 453 |
-| 8 — Property tests at scale | drafted | 485 |
-| 9 — Building an agent that uses the rest of the ccai portfolio | drafted | 518 |
+| I — Foundations | 1, 2, 3 | SDK vs framework; multi-provider LLM; tool design |
+| II — State and Flow | 4, 5, 6 | Memory architecture; workflow orchestration; observability |
+| III — Discipline | 7, 8 | Mock-first testing (305 files); property tests at scale (72 files) |
+| IV — Worked Example | 9 | Agent that uses the rest of the ccai portfolio |
 
-**Volume 7 fully drafted: 9 chapters, 4,455 lines, ~41,000 words.**
+- [Chapter 1 — Why an SDK and Not a Framework](chapters/01-why-an-sdk-not-a-framework.md)
+- [Chapter 2 — Multi-Provider LLM Abstraction](chapters/02-multi-provider-llm.md)
+- [Chapter 3 — Tool Design](chapters/03-tool-design.md)
+- [Chapter 4 — Memory Architecture](chapters/04-memory-architecture.md)
+- [Chapter 5 — Workflow Orchestration for Agents](chapters/05-workflow-orchestration.md)
+- [Chapter 6 — Observability for Agents](chapters/06-observability.md)
+- [Chapter 7 — Testing AI Agents](chapters/07-testing-ai-agents.md)
+- [Chapter 8 — Property Tests at Scale](chapters/08-property-tests-at-scale.md)
+- [Chapter 9 — Building an Agent That Uses the Rest of the Code Craft AI Portfolio](chapters/09-portfolio-integration.md)
 
-## Drafting conventions
-
-Same as Volumes 0–6:
-
-- Markdown throughout.
-- Every claim is anchored on a concrete file:line reference
-  into `codecraftai-agent-kit`.
-- Chapter files start with a one-paragraph chapter abstract,
-  then section structure (`##` for sections, `###` for
-  subsections).
-- Forward / backward cross-references link to the relevant
-  chapter file with the `chapters/NN-name.md#section-anchor`
-  form.
-
-## Cross-volume reference points
+## How it connects to the other volumes
 
 - **Volume 0** — foundation tier (errors, configuration,
   application identity).
@@ -98,3 +70,7 @@ Same as Volumes 0–6:
   for tool dispatch.
 - **Volume 8** — time-travel debugging an agent run; ch.6's
   observability composes into Vol 8's replay tooling.
+
+---
+
+Part of [The Code Craft AI Books](../../README.md).

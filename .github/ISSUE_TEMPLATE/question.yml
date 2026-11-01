@@ -1,0 +1,20 @@
+name: Question
+description: Ask what a chapter means or how its advice applies.
+title: "[Question]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the volume's contents page and the chapter first. **Do not post passwords, tokens or keys.**
+  - type: input
+    id: where
+    attributes:
+      label: Volume and chapter
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true

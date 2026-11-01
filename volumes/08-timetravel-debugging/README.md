@@ -1,14 +1,8 @@
 # Volume 8 — Time-Travel Debugging in Production
 
-**Working subtitle:** *Pod Instrumentation, Server Ingestion, and the
-Replay-Driven Debugging Workflow*
+*Pod Instrumentation, Server Ingestion, and the Replay-Driven Debugging Workflow*
 
-This is the working directory for Volume 8.  The series-level
-entry for this volume lives in
-[`codecraftai-volumes.md`](../../codecraftai-volumes.md); this
-directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 8 covers the marquee artefact of the portfolio:
 `codecraftai-timetravel-pod` (the in-process recorder) and
@@ -30,7 +24,7 @@ The volume *uses* concepts from earlier volumes:
   agents.  Volume 8 replaces the per-agent shim with the general
   pod/server tier.
 
-## Audience
+## Who it is for
 
 Senior engineers and platform / infrastructure teams running
 long-lived Python services in production.  The book the on-call
@@ -49,51 +43,25 @@ ingestion, queryable replay.
   service.  ~45 modules.  Layers S0 (persistence) through S5
   (REST API), built on `codecraftai-webworks`.
 
-## Layout
+## Contents
 
-```
-08-timetravel-debugging/
-├── README.md            # this file
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
-
-## Status
-
-| Chapter | Status | Lines |
+| Part | Chapters | Theme |
 |---|---|---|
-| 1 — Why time-travel debugging | drafted | 463 |
-| 2 — Pod instrumentation | drafted | 818 |
-| 3 — The trace-event protocol | drafted | 688 |
-| 4 — Server-side ingestion | drafted | 791 |
-| 5 — Remote debug control | drafted | 712 |
-| 6 — Session management at scale | drafted | 702 |
-| 7 — Case studies | drafted | 674 |
-| 8 — Performance and storage trade-offs | drafted | 551 |
+| I — Motivation and Surface | 1, 2 | Why time-travel debugging; the gateway / portal / registry triad |
+| II — Wire and Ingestion | 3, 4 | Hybrid struct+pickle protocol (with a documented format-mismatch honesty point); TCP/Unix receivers, hysteresis flow control, atomic temp→final |
+| III — Control and Operations | 5, 6 | JSON-lines + MCP; spec gap on configuration; multi-tenant data, retention, analysis tier, scaffolded REST API tier |
+| IV — Practice | 7, 8 | Three case studies (CI flake / agent / sysman) with code-anchored walkthroughs; granularity-cost-storage trade-offs and the when-to-enable policy |
 
-**Volume 8 fully drafted: 8 chapters, 5,399 lines, ~52,000 words.**
+- [Chapter 1 — Why Time-Travel Debugging](chapters/01-why-time-travel.md)
+- [Chapter 2 — Pod Instrumentation](chapters/02-pod-instrumentation.md)
+- [Chapter 3 — The Trace-Event Protocol](chapters/03-trace-event-protocol.md)
+- [Chapter 4 — Server-Side Ingestion](chapters/04-server-ingestion.md)
+- [Chapter 5 — Remote Debug Control](chapters/05-remote-debug-control.md)
+- [Chapter 6 — Session Management at Scale](chapters/06-session-management-at-scale.md)
+- [Chapter 7 — Case Studies](chapters/07-case-studies.md)
+- [Chapter 8 — Performance and Storage Trade-offs](chapters/08-performance-storage-tradeoffs.md)
 
-## Drafting conventions
-
-Same as Volumes 0–7:
-
-- Markdown throughout.
-- Every claim is anchored on a concrete file:line reference
-  into `codecraftai-timetravel-pod` or `codecraftai-timetravel-server`.
-- Formal vocabulary: "Measured Interoperability", "persistence
-  behaviours", "Pod" capitalised, "tandem" testing (one driver /
-  many observers — bicycle metaphor).
-- Chapter files start with a one-paragraph chapter abstract,
-  then section structure (`##` for sections, `###` for
-  subsections).
-- Forward / backward cross-references link to the relevant
-  chapter file with the `chapters/NN-name.md#section-anchor`
-  form.
-
-## Cross-volume reference points
+## How it connects to the other volumes
 
 - **Volume 0** — foundation tier (errors, configuration,
   application identity, `ConfigurationError` / `SemanticError`
@@ -110,3 +78,7 @@ Same as Volumes 0–7:
   command dispatcher uses Aspects-shaped behaviour parameters.
 - **Volume 7 ch. 6** — agent observability; `ExecutionRecorder`
   composes into the pod's portal-scoped recording.
+
+---
+
+Part of [The Code Craft AI Books](../../README.md).

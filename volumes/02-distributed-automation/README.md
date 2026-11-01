@@ -1,12 +1,8 @@
 # Volume 2 — Distributed Automation
 
-**Working subtitle:** *The TestJob Inheritance Chain and Multi-Host Test Execution*
+*The TestJob Inheritance Chain and Multi-Host Test Execution*
 
-This is the working directory for Volume 2.  The series-level entry
-for this volume lives in [`codecraftai-volumes.md`](../../codecraftai-volumes.md);
-this directory is where the volume gets drafted.
-
-## Volume role in the series
+## About this volume
 
 Volume 2 is the *implementation* of the contracts Volume 1 set up.
 Volume 1 introduced `TestJob`, the five `fire_*` lifecycle hooks
@@ -23,7 +19,7 @@ Volume 3 then *invokes* what Volume 2 builds.  Volume 3's
 orchestration layer hands off names; Volume 2's job layer
 realises them, verifies them, and runs the suite.
 
-## Audience
+## Who it is for
 
 Test engineers running multi-host integration suites.  Platform
 engineers building automation that crosses machine boundaries.
@@ -48,57 +44,33 @@ when host 7 of 12 went down mid-run.
   cross-machine bits Volume 3 owns at orchestration scale and
   Volume 2 owns at job scale.
 
-## Layout
+## Contents
 
-```
-02-distributed-automation/
-├── README.md            # this file
-├── chapters/            # per-chapter draft files
-├── research/            # findings on open questions; code-anchor index
-├── case-studies/        # full worked-example transcripts
-├── exercises/           # reader-exercise material per chapter
-└── figures/             # diagrams referenced from chapters
-```
-
-## Status
-
-| Chapter | Status | Lines |
+| Part | Chapters | Theme |
 |---|---|---|
-| 1 — Why distributed automation is genuinely hard | drafted | 279 |
-| 2 — Single actor, multiple observers — the determinism model | drafted | 294 |
-| 3 — The Pod model — where parallelism actually lives | drafted | 258 |
-| 4 — The TestJob inheritance chain — the customisation cascade | drafted | 443 |
-| 5 — Tandem testing in depth | drafted | 437 |
-| 6 — Landscape activation | drafted | 418 |
-| 7 — The CI → job hand-off as a verified contract | drafted | 386 |
-| 8 — The `DistributedTestSequencer` | drafted | 304 |
-| 9 — `job_seed` and reproducibility | drafted | 313 |
-| 10 — The remote-execution wire | drafted | 380 |
-| 11 — Credentials at scale | drafted | 348 |
-| 12 — Data profiles in remote workers | drafted | 294 |
-| 13 — Result aggregation | drafted | 274 |
-| 14 — Partial-run semantics | drafted | 314 |
-| 15 — Debugging a distributed failure | drafted | 361 |
-| 16 — Case study: a 5-host integration test for a sysman feature | drafted | 492 |
+| I — The Discipline | 1, 2, 3 | Why distributed automation is hard; single-actor determinism; the Pod model |
+| II — The Customisation Cascade | 4, 5, 6, 7 | TestJob inheritance chain; tandem testing; landscape activation; verified CI hand-off |
+| III — The Runtime Machinery | 8, 9, 10, 11, 12, 13 | Sequencer; job_seed; the wire; credentials; data profiles; result aggregation |
+| IV — Honesty and Diagnosis | 14, 15, 16 | Partial-run semantics; debugging a distributed failure; 5-host case study |
 
-**Volume 2 fully drafted: 16 chapters, 5,595 lines, ~52,000 words.**
+- [Chapter 1 — Why Distributed Automation Is Genuinely Hard](chapters/01-why-distributed-automation-is-hard.md)
+- [Chapter 2 — Single Actor, Multiple Observers — The Determinism Model](chapters/02-single-actor-determinism.md)
+- [Chapter 3 — The Pod Model — Where Parallelism Actually Lives](chapters/03-the-pod-model.md)
+- [Chapter 4 — The `TestJob` Inheritance Chain — The Customisation Cascade](chapters/04-the-testjob-inheritance-chain.md)
+- [Chapter 5 — Tandem Testing in Depth](chapters/05-tandem-testing-in-depth.md)
+- [Chapter 6 — Landscape Activation](chapters/06-landscape-activation.md)
+- [Chapter 7 — The CI → Job Hand-off as a Verified Contract](chapters/07-ci-handoff-as-verified-contract.md)
+- [Chapter 8 — The `DistributedTestSequencer`](chapters/08-distributed-test-sequencer.md)
+- [Chapter 9 — `job_seed` and Reproducibility](chapters/09-job-seed-and-reproducibility.md)
+- [Chapter 10 — The Remote-Execution Wire](chapters/10-the-remote-execution-wire.md)
+- [Chapter 11 — Credentials at Scale](chapters/11-credentials-at-scale.md)
+- [Chapter 12 — Data Profiles in Remote Workers](chapters/12-data-profiles-in-remote-workers.md)
+- [Chapter 13 — Result Aggregation](chapters/13-result-aggregation.md)
+- [Chapter 14 — Partial-Run Semantics](chapters/14-partial-run-semantics.md)
+- [Chapter 15 — Debugging a Distributed Failure](chapters/15-debugging-a-distributed-failure.md)
+- [Chapter 16 — Case Study: A 5-Host Integration Test for a Sysman Feature](chapters/16-case-study.md)
 
-## Drafting conventions
-
-Same as Volumes 0, 1, and 3:
-
-- Markdown throughout.  Code samples in fenced blocks with the
-  language tag.
-- Every claim is anchored on a concrete file:line reference into
-  one of the `codecraftai-*` source repositories.
-- Chapter files start with a one-paragraph chapter abstract,
-  then section structure (`##` for sections, `###` for
-  subsections).
-- Forward / backward cross-references link to the relevant
-  chapter file with the `chapters/NN-name.md#section-anchor`
-  form.
-
-## Cross-volume reference points
+## How it connects to the other volumes
 
 - **Volume 0** — error vocabulary, waiting primitives, application
   identity, configuration loading, the CodeCraftX philosophy
@@ -117,3 +89,7 @@ Same as Volumes 0, 1, and 3:
   treats them as inputs; Volume 6 walks their schemas).
 - **Volume 8** — time-travel debugging in production; Volume 2
   ch.15 sketches the post-mortem flow and forwards.
+
+---
+
+Part of [The Code Craft AI Books](../../README.md).
